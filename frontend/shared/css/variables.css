@@ -1,0 +1,17 @@
+/* =========================================================
+   Variables de marca UGB Plus
+   Compartidas por la landing y el panel admin.
+   ========================================================= */
+:root{
+  --cyan:#12c2e9;
+  --violet:#c471ed;
+  --coral:#f64f59;
+  --ink:#000120;
+  --black:#1a1a1a;
+  --paper:#f9f9f9;
+  --muted:#6d7280;
+  --line:#e9e9f2;
+  --card:#ffffff;
+  --grad:linear-gradient(110deg,var(--cyan) 0%,var(--violet) 48%,var(--coral) 100%);
+  --shadow:0 18px 55px rgba(7, 7, 40, .10);
+}

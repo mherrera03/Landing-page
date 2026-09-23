@@ -1,0 +1,58 @@
+/* =========================================================
+   Topbar + Header (logo y navegación)
+   ========================================================= */
+.topbar{
+  background:var(--ink);
+  color:#fff;
+  padding:9px 5%;
+  font-size:13px;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.topbar span{opacity:.86}
+.topbar a{font-weight:600}
+
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(249,249,249,.86);
+  backdrop-filter: blur(16px);
+  border-bottom:1px solid rgba(0,1,32,.06);
+}
+.nav{
+  max-width:1200px;
+  margin:auto;
+  padding:16px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:26px;
+}
+.brand{
+  display:flex;align-items:center;gap:12px;
+  min-width:190px;
+}
+.brandmark{
+  width:46px;height:46px;border-radius:14px 14px 14px 4px;
+  background:var(--grad);
+  position:relative;
+  box-shadow:0 8px 24px rgba(196,113,237,.25);
+}
+.brandmark:before,.brandmark:after{
+  content:"";position:absolute;background:white;border-radius:99px;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+}
+.brandmark:before{width:22px;height:7px}
+.brandmark:after{width:7px;height:22px}
+.brandtext{font-weight:800;font-size:27px;letter-spacing:-1.5px}
+.brandtext .ugb{background:var(--grad);-webkit-background-clip:text;color:transparent}
+.brandtext .plus{color:#22bde7;font-weight:400}
+.brand small{display:block;font-size:8px;letter-spacing:3px;margin-top:-4px;text-align:center}
+
+.links{display:flex;align-items:center;gap:24px;font-size:14px;font-weight:600}
+.links a{position:relative}
+.links a:after{
+  content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;background:var(--grad);transition:.25s
+}
+.links a:hover:after{width:100%}

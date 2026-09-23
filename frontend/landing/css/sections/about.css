@@ -1,0 +1,17 @@
+/* =========================================================
+   Nosotros
+   ========================================================= */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:24px;padding:30px}
+.panel h3{margin:0 0 12px;color:var(--ink)}
+.panel p{color:var(--muted);line-height:1.75;margin:0}
+.feature-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.feature{
+  padding:20px;border:1px solid var(--line);border-radius:18px;background:#fff
+}
+.feature .icon{
+  width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(18,194,233,.18),rgba(196,113,237,.22));
+  display:grid;place-items:center;margin-bottom:12px;font-weight:800;color:#7c3daf
+}
+.feature b{display:block;color:var(--ink);font-size:14px}
+.feature span{font-size:12px;color:var(--muted)}

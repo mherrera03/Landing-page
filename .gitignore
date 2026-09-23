@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+
+# Base de datos local (se genera sola al arrancar)
+backend/data/*.db
+backend/data/*.db-*
+backend/data/.jwt-secret
+
+# Variables de entorno
+.env
+
+# Sistema
+.DS_Store
+Thumbs.db

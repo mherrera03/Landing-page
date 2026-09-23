@@ -1,0 +1,40 @@
+/* =========================================================
+   Botón con resplandor (Enviar / Solicitar información)
+   Debe cargarse DESPUÉS de buttons.css para sobrescribir .btn
+   ========================================================= */
+.glow-wrap{
+  position:relative;
+  display:inline-block;
+  isolation:isolate;
+}
+.glow-wrap::before{
+  content:"";
+  position:absolute;
+  inset:-14px;
+  background:var(--grad);
+  filter:blur(24px);
+  opacity:0;
+  border-radius:999px;
+  z-index:0;
+  pointer-events:none;
+  transition:opacity .35s ease, filter .35s ease;
+}
+.glow-wrap:hover::before{
+  opacity:.9;
+  filter:blur(30px);
+}
+.btn-glow{
+  position:relative;
+  z-index:1;
+  background:#fff;
+  color:var(--ink);
+  border:1.5px solid rgba(0,1,32,.85);
+  border-radius:999px;
+  padding:16px 26px;
+  cursor:pointer;
+}
+.glow-wrap:focus-within::before{
+  opacity:.9;
+  filter:blur(30px);
+}
+.btn-glow:hover{background:#fff}

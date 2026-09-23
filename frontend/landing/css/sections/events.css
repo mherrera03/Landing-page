@@ -1,0 +1,11 @@
+/* =========================================================
+   Noticias y eventos
+   ========================================================= */
+.events-wrap{background:var(--ink);color:#fff;border-radius:34px;padding:42px}
+.events-wrap .kicker{color:#c89bea}
+.events-wrap h2{color:#fff;margin-top:6px}
+.events{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+.event{border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:20px;background:rgba(255,255,255,.05)}
+.event .date{font-size:12px;color:#b9c4ff}
+.event h3{margin:10px 0;font-size:18px}
+.event p{font-size:12px;color:#bfc1ce;line-height:1.6}

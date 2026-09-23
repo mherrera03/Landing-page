@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UGB Plus — Panel administrativo</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <div class="brand">
+      <div class="brandmark" aria-hidden="true"></div>
+      <div class="brandtext"><span class="ugb">UGB</span><span class="plus">plus</span></div>
+    </div>
+    <h1>Panel administrativo</h1>
+    <p class="muted">Ingresa para administrar la landing.</p>
+
+    <form id="loginForm" class="stack">
+      <div class="field">
+        <label for="correo">Correo</label>
+        <input id="correo" name="correo" type="email" required autocomplete="username" />
+      </div>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password" />
+      </div>
+      <p class="msg" id="loginMsg" role="alert"></p>
+      <button class="btn btn-primary" type="submit">Ingresar</button>
+    </form>
+
+    <a class="back" href="/">← Volver a la landing</a>
+  </main>
+
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>

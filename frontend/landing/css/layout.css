@@ -1,0 +1,9 @@
+/* =========================================================
+   Layout de secciones (contenedor + encabezados)
+   ========================================================= */
+section{padding:78px 22px}
+.container{max-width:1200px;margin:auto}
+.section-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:34px}
+.section-head h2{font-size:clamp(30px,4vw,46px);letter-spacing:-2px;margin:8px 0;color:var(--ink)}
+.section-head p{max-width:560px;color:var(--muted);line-height:1.7}
+.kicker{font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:800;color:#a24fd1}

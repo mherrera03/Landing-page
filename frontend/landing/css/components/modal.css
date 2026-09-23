@@ -1,0 +1,28 @@
+/* =========================================================
+   Modal: ficha de curso / inscripción
+   ========================================================= */
+.modal{
+  position:fixed;inset:0;background:rgba(0,1,32,.68);display:none;align-items:center;justify-content:center;
+  z-index:100;padding:18px;backdrop-filter:blur(8px)
+}
+.modal.show{display:flex}
+
+/* PENDIENTE: .modal-card estaba definido dos veces en el archivo original.
+   Se conservan ambas reglas en el mismo orden para no cambiar el aspecto actual;
+   la segunda pisa el padding:0 y por eso el banner no llega a los bordes. */
+.modal-card{background:#fff;border-radius:26px;max-width:460px;width:100%;padding:0;position:relative;overflow:hidden}
+.modal-card{background:#fff;border-radius:24px;max-width:480px;width:100%;padding:26px;position:relative}
+
+.modal-banner{position:relative;height:160px;padding:16px;display:flex;align-items:flex-start;justify-content:space-between;color:#fff;overflow:hidden}
+.modal-banner .badge{position:relative;z-index:1;background:rgba(255,255,255,.24);backdrop-filter:blur(6px);padding:7px 12px;border-radius:999px;font-size:11px;font-weight:700}
+.modal-close{position:relative;z-index:1;background:rgba(255,255,255,.24);width:32px;height:32px;border-radius:50%;border:0;color:#fff;font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.modal-banner .deco{position:absolute;opacity:.5}
+.modal-body{padding:26px}
+.modal-body h3{margin:0 0 8px;color:var(--ink)}
+.modal-body .desc{color:var(--muted);font-size:13px;line-height:1.65;margin:0 0 20px}
+.modal-stats{display:flex;justify-content:space-between;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 4px;margin-bottom:20px}
+.modal-stats div{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted);text-align:center;flex:1}
+.modal-stats b{font-size:14px;color:var(--ink);font-weight:800}
+
+.modal-card h3{margin:0 0 8px;color:var(--ink)}
+.modal-card p{color:var(--muted);font-size:13px;line-height:1.6}

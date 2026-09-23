@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UGB Plus — Formación Continua</title>
+  <meta name="description" content="Mockup funcional de landing page para UGB Plus, Formación Continua." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="topbar">
+    <span>UGB Plus · Formación Continua</span>
+    <div><a href="mailto:ugbplus@ugb.edu.sv">ugbplus@ugb.edu.sv</a> · <a href="#contacto">Contáctanos</a></div>
+  </div>
+
+  <header>
+    <nav class="nav">
+      <a href="#inicio" class="brand" aria-label="UGB Plus">
+        <div class="brandmark" aria-hidden="true"></div>
+        <div>
+          <div class="brandtext"><span class="ugb">UGB</span><span class="plus">plus</span></div>
+          <small>FORMACIÓN CONTINUA</small>
+        </div>
+      </a>
+
+      <button class="menu" id="menuBtn" aria-label="Abrir menú">☰</button>
+
+      <div class="links" id="navLinks">
+        <a href="#nosotros">Nosotros</a>
+        <a href="#programas">Cursos</a>
+        <a href="#eventos">Eventos</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+
+      <button class="btn btn-primary" data-modal="general">Inscribirme</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> Formación que impulsa tu siguiente nivel</div>
+        <h1>Actualiza tus habilidades. <span class="gradient">Expande tu futuro.</span></h1>
+        <p>
+          Programas, cursos y experiencias de formación continua pensadas para profesionales,
+          estudiantes y organizaciones que buscan mantenerse relevantes en un entorno que cambia.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#programas">Explorar programas</a>
+          <a class="btn btn-ghost" href="#nosotros">Conocer UGB Plus</a>
+        </div>
+        <div class="hero-meta">
+          <div class="meta"><strong>+20</strong><span>programas activos</span></div>
+          <div class="meta"><strong>100%</strong><span>enfoque práctico</span></div>
+          <div class="meta"><strong>Flexible</strong><span>modalidades y horarios</span></div>
+        </div>
+      </div>
+
+      <div class="visual" aria-label="Vista destacada de un curso">
+        <div class="blob"></div>
+        <div class="float-card float-1"><b>UGB+</b>Aprende · Aplica · Avanza</div>
+        <div class="glass-card">
+          <div class="course-cover">
+            <span>Programa destacado</span>
+            <h3>Innovación Digital para Profesionales</h3>
+          </div>
+          <div class="course-info">
+            <span class="chip">Próxima apertura</span>
+            <span class="price">$—</span>
+          </div>
+        </div>
+        <div class="float-card float-2"><b>Nuevo</b>Cupos limitados</div>
+      </div>
+    </section>
+
+    <section id="nosotros">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">UGB Plus</div>
+            <h2>Formación continua, simple y cercana.</h2>
+          </div>
+          <p>
+            Esta propuesta organiza la información institucional, la oferta académica y los llamados a la acción
+            en una experiencia clara, visual y preparada para crecer con un CMS.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <div class="panel">
+            <h3>¿Quiénes somos?</h3>
+            <p>
+              UGB Plus es el espacio de formación continua de la Universidad Gerardo Barrios.
+              Su objetivo es acercar oportunidades de actualización profesional mediante programas,
+              cursos, talleres y experiencias de aprendizaje pertinentes.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Una plataforma pensada para evolucionar</h3>
+            <p>
+              El sitio se plantea modular, responsivo y administrable, para que el equipo de UGB Plus
+              pueda publicar cursos, eventos, banners y noticias sin depender de conocimientos técnicos.
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature"><div class="icon">01</div><b>Oferta actualizable</b><span>Cursos y programas editables desde CMS.</span></div>
+          <div class="feature"><div class="icon">02</div><b>Inscripción rápida</b><span>Formulario conectado a correo o base de datos.</span></div>
+          <div class="feature"><div class="icon">03</div><b>Responsive + SEO</b><span>Preparado para móvil, buscadores y accesibilidad.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="programas">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Explora</div>
+            <h2>Programas y cursos</h2>
+          </div>
+          <p>Tarjetas administrables desde CMS, con filtros por categoría, modalidad y estado.</p>
+        </div>
+
+        <div class="filters">
+          <button class="filter active" data-filter="all">Todos</button>
+          <button class="filter" data-filter="tecnologia">Tecnología</button>
+          <button class="filter" data-filter="negocios">Negocios</button>
+          <button class="filter" data-filter="habilidades">Habilidades</button>
+        </div>
+
+        <div class="courses">
+          <article class="course" data-category="tecnologia">
+            <div class="thumb one"><span class="tag">Tecnología</span><strong>Fundamentos de Inteligencia Artificial</strong></div>
+            <div class="course-body">
+              <p>Introducción práctica al uso responsable de herramientas y conceptos de IA.</p>
+              <div class="course-meta">
+                <span>👥 98 estudiantes</span><span>📶 Básico</span><span>⏱ 30 horas</span>
+              </div>
+              <div class="course-bottom"><small>Modalidad híbrida</small><button class="link-btn" data-modal="ia">Ver curso →</button></div>
+            </div>
+          </article>
+
+          <article class="course" data-category="negocios">
+            <div class="thumb two"><span class="tag">Negocios</span><strong>Marketing Digital Estratégico</strong></div>
+            <div class="course-body">
+              <p>Diseña campañas, contenidos y métricas con enfoque en resultados.</p>
+              <div class="course-meta">
+                <span>👥 145 estudiantes</span><span>📶 Intermedio</span><span>⏱ 25 horas</span>
+              </div>
+              <div class="course-bottom"><small>Modalidad virtual</small><button class="link-btn" data-modal="marketing">Ver curso →</button></div>
+            </div>
+          </article>
+
+          <article class="course" data-category="habilidades">
+            <div class="thumb three"><span class="tag">Habilidades</span><strong>Liderazgo y Gestión de Equipos</strong></div>
+            <div class="course-body">
+              <p>Fortalece comunicación, liderazgo y coordinación de equipos de trabajo.</p>
+              <div class="course-meta">
+                <span>👥 76 estudiantes</span><span>📶 Intermedio</span><span>⏱ 20 horas</span>
+              </div>
+              <div class="course-bottom"><small>Modalidad presencial</small><button class="link-btn" data-modal="liderazgo">Ver curso →</button></div>
+            </div>
+          </article>
+
+          <article class="course" data-category="tecnologia">
+            <div class="thumb four"><span class="tag">Tecnología</span><strong>Ciberseguridad para Organizaciones</strong></div>
+            <div class="course-body">
+              <p>Buenas prácticas para reducir riesgos y proteger información institucional.</p>
+              <div class="course-meta">
+                <span>👥 Próx. apertura</span><span>📶 Avanzado</span><span>⏱ 35 horas</span>
+              </div>
+              <div class="course-bottom"><small>Próximamente</small><button class="link-btn" data-modal="ciber">Ver curso →</button></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="eventos">
+      <div class="container">
+        <div class="events-wrap">
+          <div class="kicker">Agenda UGB Plus</div>
+          <h2>Noticias y próximos eventos</h2>
+          <div class="events">
+            <article class="event">
+              <div class="date">PRÓXIMAMENTE</div>
+              <h3>Masterclass abierta</h3>
+              <p>Espacio para promocionar eventos, charlas o lanzamientos administrados desde el CMS.</p>
+            </article>
+            <article class="event">
+              <div class="date">NUEVA EDICIÓN</div>
+              <h3>Nuevos programas 2026</h3>
+              <p>Bloque editorial para novedades, aperturas de cohortes o noticias institucionales.</p>
+            </article>
+            <article class="event">
+              <div class="date">PARA EMPRESAS</div>
+              <h3>Capacitación a medida</h3>
+              <p>Promoción de programas corporativos y soluciones de formación para organizaciones.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto">
+      <div class="container contact">
+        <div class="contact-copy">
+          <div class="kicker" style="color:#fff;opacity:.78">Conversemos</div>
+          <h2>Tu próxima formación puede empezar aquí.</h2>
+          <p>Deja tus datos y el equipo de UGB Plus podrá contactarte para brindarte información del programa que te interesa.</p>
+        </div>
+
+        <form class="form" id="contactForm">
+          <div class="form-grid">
+            <div class="field">
+              <label>Nombre completo</label>
+              <input required placeholder="Tu nombre" />
+            </div>
+            <div class="field">
+              <label>Correo</label>
+              <input type="email" required placeholder="nombre@correo.com" />
+            </div>
+            <div class="field">
+              <label>Teléfono</label>
+              <input placeholder="+503 0000-0000" />
+            </div>
+            <div class="field">
+              <label>Interés</label>
+              <select>
+                <option>Selecciona una opción</option>
+                <option>Cursos</option>
+                <option>Diplomados</option>
+                <option>Capacitación empresarial</option>
+                <option>Otros</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label>Mensaje</label>
+              <textarea rows="4" placeholder="Cuéntanos qué formación buscas"></textarea>
+            </div>
+            <div class="full">
+              <div class="glow-wrap">
+                <button class="btn btn-glow" type="submit">Enviar solicitud</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer">
+      <div>
+        <div class="brand" style="min-width:auto">
+          <div class="brandmark" style="width:38px;height:38px"></div>
+          <div>
+            <div class="brandtext" style="font-size:22px"><span class="ugb">UGB</span><span class="plus">plus</span></div>
+          </div>
+        </div>
+        <p>Mockup conceptual para UGB Plus · Formación Continua. Textos, precios, fechas y datos de contacto deben ser reemplazados por información oficial.</p>
+      </div>
+      <div class="mini-links">
+        <a href="#nosotros">Nosotros</a>
+        <a href="#programas">Programas</a>
+        <a href="#eventos">Eventos</a>
+        <a href="#contacto">Contacto</a>
+        <a href="/admin/">Admin / CMS</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div class="modal-banner" id="modalBanner">
+        <span class="badge" id="modalCategory">Tecnología</span>
+        <button class="modal-close" data-modal-close>×</button>
+        <svg class="deco" width="90" height="90" viewBox="0 0 90 90" style="right:-10px;bottom:-20px" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="70" height="70" rx="20" fill="#fff" opacity=".18"/></svg>
+        <svg class="deco" width="46" height="46" viewBox="0 0 46 46" style="right:70px;bottom:-14px" xmlns="http://www.w3.org/2000/svg"><circle cx="23" cy="23" r="23" fill="#fff" opacity=".16"/></svg>
+      </div>
+      <div class="modal-body">
+        <h3 id="modalTitle">Inscripción</h3>
+        <p class="desc" id="modalDesc">Descripción del curso.</p>
+        <div class="modal-stats">
+          <div><b id="modalStudents">—</b>Estudiantes</div>
+          <div><b id="modalLevel">—</b>Nivel</div>
+          <div><b id="modalDuration">—</b>Duración</div>
+        </div>
+        <div class="field" style="margin:0 0 12px">
+          <label>Correo electrónico</label>
+          <input type="email" placeholder="nombre@correo.com">
+        </div>
+        <div class="glow-wrap" style="display:block">
+          <button class="btn btn-glow" style="width:100%" data-modal-close>Solicitar información</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

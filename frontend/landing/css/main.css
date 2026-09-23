@@ -1,0 +1,19 @@
+/* =========================================================
+   UGB Plus — Landing
+   Punto de entrada de estilos. El ORDEN importa (cascada).
+   ========================================================= */
+@import url("../../shared/css/variables.css");
+@import url("base.css");
+@import url("sections/header.css");
+@import url("components/buttons.css");
+@import url("sections/hero.css");
+@import url("layout.css");
+@import url("sections/about.css");
+@import url("sections/courses.css");
+@import url("sections/events.css");
+@import url("sections/contact.css");
+@import url("components/forms.css");
+@import url("sections/footer.css");
+@import url("components/glow-button.css");
+@import url("components/modal.css");
+@import url("responsive.css");

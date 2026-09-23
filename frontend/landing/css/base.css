@@ -1,0 +1,13 @@
+/* =========================================================
+   Base: reset, tipografía y layout general
+   ========================================================= */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:var(--black);
+  background:var(--paper);
+}
+a{text-decoration:none;color:inherit}
+button,input,textarea,select{font:inherit}

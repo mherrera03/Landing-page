@@ -1,0 +1,73 @@
+/* =========================================================
+   Hero (portada)
+   ========================================================= */
+.hero{
+  max-width:1200px;margin:0 auto;
+  padding:82px 22px 64px;
+  display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:7px 11px;border:1px solid #e7dcf3;border-radius:999px;background:#fff;
+  font-size:12px;font-weight:700;color:#6e40a1;
+}
+.dot{width:8px;height:8px;background:var(--grad);border-radius:50%}
+h1{
+  font-size:clamp(44px,6vw,76px);
+  line-height:.98;
+  letter-spacing:-4px;
+  margin:18px 0 20px;
+  color:var(--ink);
+}
+h1 .gradient{background:var(--grad);-webkit-background-clip:text;color:transparent}
+.hero p{font-size:18px;line-height:1.7;color:var(--muted);max-width:650px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:35px}
+.meta strong{display:block;font-size:22px;color:var(--ink)}
+.meta span{font-size:12px;color:var(--muted)}
+
+/* --- Visual del hero (blob + tarjeta destacada) --- */
+.visual{
+  position:relative;
+  min-height:520px;
+  display:grid;place-items:center;
+}
+.blob{
+  position:absolute;width:430px;height:430px;border-radius:40% 60% 55% 45%;
+  background:var(--grad);
+  filter:saturate(1.08);
+  opacity:.94;
+  transform:rotate(-8deg);
+  box-shadow:var(--shadow);
+}
+.glass-card{
+  position:relative;
+  width:min(390px,90%);
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:30px;
+  padding:22px;
+  box-shadow:0 24px 60px rgba(0,1,32,.18);
+  backdrop-filter:blur(14px);
+  transform:rotate(2.5deg);
+}
+.course-cover{
+  min-height:190px;border-radius:22px;
+  background:
+   radial-gradient(circle at 85% 22%, rgba(255,255,255,.65) 0 7%, transparent 8%),
+   radial-gradient(circle at 32% 25%, rgba(255,255,255,.30) 0 10%, transparent 11%),
+   linear-gradient(130deg,#000120 0 30%,#5930a8 65%,#10badd 100%);
+  padding:24px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;
+}
+.course-cover span{font-size:12px;opacity:.8}
+.course-cover h3{font-size:24px;line-height:1.1;margin:8px 0 0}
+.course-info{display:flex;justify-content:space-between;align-items:center;padding-top:18px}
+.chip{background:#f4effa;color:#68359b;font-size:11px;font-weight:700;padding:7px 10px;border-radius:999px}
+.price{font-size:22px;font-weight:800;color:var(--ink)}
+.float-card{
+  position:absolute;background:#fff;border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);
+  font-size:12px;font-weight:700;color:var(--ink);
+}
+.float-1{left:0;top:75px}
+.float-2{right:0;bottom:70px}
+.float-card b{display:block;font-size:21px;background:var(--grad);-webkit-background-clip:text;color:transparent}

@@ -1,0 +1,14 @@
+/* =========================================================
+   Contacto
+   ========================================================= */
+.contact{
+  display:grid;grid-template-columns:.85fr 1.15fr;gap:24px;align-items:stretch
+}
+.contact-copy{
+  border-radius:28px;padding:36px;background:var(--grad);color:#fff;position:relative;overflow:hidden
+}
+.contact-copy:after{
+  content:"+";position:absolute;right:-18px;bottom:-84px;font-size:260px;font-weight:800;color:rgba(255,255,255,.14)
+}
+.contact-copy h2{font-size:42px;line-height:1.04;margin:10px 0}
+.contact-copy p{line-height:1.7;opacity:.9}

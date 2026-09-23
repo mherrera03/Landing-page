@@ -1,0 +1,27 @@
+/* =========================================================
+   Responsive (siempre se carga al final)
+   ========================================================= */
+@media (max-width: 900px){
+  .links{display:none;position:absolute;left:18px;right:18px;top:78px;background:#fff;padding:18px;border-radius:18px;box-shadow:var(--shadow);flex-direction:column;align-items:flex-start}
+  .links.open{display:flex}
+  .menu{display:block}
+  .nav>.btn{display:none}
+  .hero{grid-template-columns:1fr;padding-top:48px}
+  .visual{min-height:430px}
+  .about-grid,.contact{grid-template-columns:1fr}
+  .courses,.events{grid-template-columns:1fr 1fr}
+  .feature-list{grid-template-columns:1fr}
+}
+@media (max-width: 620px){
+  .topbar{display:none}
+  .hero{padding-top:38px}
+  h1{letter-spacing:-2.5px}
+  .visual{min-height:370px}
+  .blob{width:300px;height:300px}
+  .float-card{display:none}
+  .courses,.events{grid-template-columns:1fr}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .events-wrap{padding:28px 20px}
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+}

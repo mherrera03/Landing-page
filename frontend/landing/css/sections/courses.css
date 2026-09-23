@@ -1,0 +1,51 @@
+/* =========================================================
+   Programas y cursos (filtros + tarjetas)
+   ========================================================= */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:25px}
+.filter{
+  border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:700;font-size:12px;cursor:pointer
+}
+.filter.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.courses{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px}
+.course{
+  background:#fff;border:1.5px solid var(--ink);border-radius:22px;overflow:hidden;
+  transition:transform .25s, box-shadow .25s;display:flex;flex-direction:column;
+  box-shadow:5px 5px 0 rgba(0,1,32,.9);
+}
+.course:nth-child(2){transform:rotate(-1.1deg)}
+.course:nth-child(3){transform:rotate(1deg)}
+.course:nth-child(4){transform:rotate(-.6deg)}
+.course:hover{transform:translateY(-5px) rotate(0deg);box-shadow:7px 7px 0 rgba(211, 91, 151, 0.9)}
+.thumb{height:170px;padding:20px;color:#fff;display:flex;flex-direction:column;justify-content:space-between}
+
+/* --- Imágenes de las tarjetas de cursos --- */
+.thumb.one{
+  background:
+    linear-gradient(to top, rgba(0,0,32,.65), transparent),
+    url("../../assets/img/cursos/curso1.webp") center/cover no-repeat;
+}
+.thumb.two{
+  background:
+    linear-gradient(to top, rgba(0,0,32,.65), transparent),
+    url("../../assets/img/cursos/curso2.jpg") center/cover no-repeat;
+}
+.thumb.three{
+  background:
+    linear-gradient(to top, rgba(0,0,32,.65), transparent),
+    url("../../assets/img/cursos/curso3.webp") center/cover no-repeat;
+}
+.thumb.four{
+  background:
+    linear-gradient(to top, rgba(0,0,32,.65), transparent),
+    url("../../assets/img/cursos/curso4.webp") center/cover no-repeat;
+}
+
+.thumb .tag{align-self:flex-start;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);padding:6px 9px;border-radius:999px;font-size:10px;font-weight:700}
+.thumb strong{font-size:22px;line-height:1.1}
+.course-body{padding:20px;display:flex;flex-direction:column;gap:12px;flex:1}
+.course-body p{font-size:13px;line-height:1.6;color:var(--muted);margin:0}
+.course-meta{display:flex;gap:14px;padding-top:4px;border-top:1px solid var(--line)}
+.course-meta span{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600}
+.course-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px}
+.course-bottom small{color:var(--muted)}
+.link-btn{border:0;background:none;cursor:pointer;font-weight:800;color:#7c3daf}
