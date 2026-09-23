@@ -9,6 +9,9 @@ backend/data/.jwt-secret
 # Variables de entorno
 .env
 
+# Configuración local de Claude Code
+.claude/
+
 # Sistema
 .DS_Store
 Thumbs.db
