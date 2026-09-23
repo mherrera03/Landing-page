@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import './src/db.js';
 import cursosRoutes from './src/routes/cursos.js';
 import eventosRoutes from './src/routes/eventos.js';
+import authRoutes from './src/routes/auth.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND = path.join(__dirname, '..', 'frontend');
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 
 // --- API ---
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.use('/api/auth', authRoutes);
 app.use('/api/cursos', cursosRoutes);
 app.use('/api/eventos', eventosRoutes);
 app.use('/api', (req, res) => res.status(404).json({ error: 'Ruta no encontrada' }));

@@ -1,6 +1,7 @@
 // Base de datos SQLite (better-sqlite3)
 // El archivo vive en backend/data/ugbplus.db y se crea solo la primera vez.
 import Database from 'better-sqlite3';
+import bcrypt from 'bcryptjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -80,6 +81,12 @@ export function addColumnIfMissing(tabla, columna, definicion) {
 
 // ---------- Datos iniciales (solo si la tabla está vacía) ----------
 function seed() {
+  // Usuario administrador de PRUEBA. Cambiar antes de pasar a producción.
+  if (db.prepare('SELECT COUNT(*) AS n FROM usuarios').get().n === 0) {
+    db.prepare('INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES (?, ?, ?, ?)')
+      .run('Administrador', 'admin@ugb.edu.sv', bcrypt.hashSync('admin123', 10), 'admin');
+  }
+
   if (db.prepare('SELECT COUNT(*) AS n FROM cursos').get().n === 0) {
     const insert = db.prepare(`
       INSERT INTO cursos (clave, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas, modalidad, imagen, estado, orden)

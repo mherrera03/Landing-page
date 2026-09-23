@@ -43,7 +43,16 @@ input:focus,textarea:focus,select:focus{border-color:#b76ce3;box-shadow:0 0 0 3p
 .side-nav a{padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;opacity:.75}
 .side-nav a:hover{background:rgba(255,255,255,.06);opacity:1}
 .side-nav a.active{background:rgba(255,255,255,.1);opacity:1}
-.side-link{margin-top:auto;font-size:13px;opacity:.7}
+.side-footer{margin-top:auto;display:flex;flex-direction:column;gap:14px}
+.side-link{font-size:13px;opacity:.7}
+.user-box{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.user-box b{display:block;font-size:14px}
+.user-box small{font-size:11px;opacity:.6;text-transform:capitalize}
+.logout{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;text-align:left}
+.logout:hover{background:rgba(255,255,255,.14)}
+
+/* Oculta el dashboard hasta confirmar la sesión (evita un parpadeo) */
+.auth-pending{visibility:hidden}
 .content{padding:32px}
 .content-head h1{margin:0 0 20px;color:var(--ink);font-size:26px}
 .panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px}
@@ -52,6 +61,7 @@ input:focus,textarea:focus,select:focus{border-color:#b76ce3;box-shadow:0 0 0 3p
   .admin-layout{grid-template-columns:1fr}
   .sidebar{flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px;padding:14px 16px}
   .side-nav{flex-direction:row;flex-wrap:wrap}
-  .side-link{margin-top:0}
+  .side-footer{margin-top:0;flex-direction:row;align-items:center;margin-left:auto}
+  .user-box{flex-direction:row;align-items:center;padding-top:0;border-top:0}
   .content{padding:20px 16px}
 }

@@ -1,5 +1,10 @@
-// Dashboard del panel admin: navegación entre secciones
-// PENDIENTE: proteger con JWT y agregar formularios de crear/editar/ocultar.
+// Dashboard del panel admin: verificación de sesión + navegación entre secciones
+// PENDIENTE: formularios de crear/editar/ocultar cursos y eventos.
+import { api, getToken, logout } from './api.js';
+
+// Sin token no se entra: de vuelta al login
+if (!getToken()) location.replace('/admin/');
+
 const titles = { cursos:'Cursos', eventos:'Eventos', solicitudes:'Solicitudes', configuracion:'Configuración' };
 const title = document.getElementById('sectionTitle');
 const body = document.getElementById('sectionBody');
@@ -8,13 +13,13 @@ const body = document.getElementById('sectionBody');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
 
 async function renderCursos(){
-  const cursos = await fetch('/api/cursos').then(r => r.json());
+  const cursos = await api('/api/cursos');
   body.innerHTML = `<p class="muted">${cursos.length} cursos en la base de datos:</p>
     <ul>${cursos.map(c => `<li><b>${esc(c.titulo)}</b> · ${esc(c.categoria)} · ${esc(c.estado)}</li>`).join('')}</ul>`;
 }
 
 async function renderEventos(){
-  const eventos = await fetch('/api/eventos').then(r => r.json());
+  const eventos = await api('/api/eventos');
   body.innerHTML = `<p class="muted">${eventos.length} eventos en la base de datos:</p>
     <ul>${eventos.map(e => `<li><b>${esc(e.titulo)}</b> · ${esc(e.etiqueta)}</li>`).join('')}</ul>`;
 }
@@ -30,5 +35,18 @@ function show(){
   else body.innerHTML = '<p class="muted">Sección en construcción.</p>';
 }
 
-window.addEventListener('hashchange', show);
-show();
+async function init(){
+  try {
+    const usuario = await api('/api/auth/me');
+    document.getElementById('userName').textContent = usuario.nombre;
+    document.getElementById('userRole').textContent = usuario.rol;
+  } catch {
+    return logout();
+  }
+  document.body.classList.remove('auth-pending');
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+  window.addEventListener('hashchange', show);
+  show();
+}
+
+init();
