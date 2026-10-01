@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { useCallback, useEffect, useId, useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -39,34 +38,116 @@ export function Header() {
     <header
       className={cn(
         "sticky top-0 z-50 border-b bg-paper/85 backdrop-blur-lg transition-[border-color,box-shadow] duration-300",
-        scrolled || menuOpen ? "border-ink/10 shadow-[0_8px_30px_rgb(0_1_32/0.06)]" : "border-transparent",
+        scrolled || menuOpen
+          ? "border-ink/10 shadow-[0_8px_30px_rgb(0_1_32/0.06)]"
+          : "border-transparent",
       )}
     >
       <div className="container-page flex h-(--header-h) items-center justify-between gap-6">
-        <Link href="/" aria-label="UGB Plus, ir al inicio" className="rounded-lg">
-          <Logo withTagline />
+
+        {/* Logo */}
+        <Link
+          href="/"
+          aria-label="UGB Plus, ir al inicio"
+          className="rounded-lg"
+        >
+          <Logo />
         </Link>
 
+        {/* Navegación */}
         <Navbar activeId={activeId} />
 
         <div className="flex items-center gap-2">
-          <Button href="/#contacto" variant="gradient" className="max-lg:hidden">
-            Inscribirme
-          </Button>
+
+          {/* BOTÓN INSCRIBIRME */}
+          <div className="group relative hidden lg:inline-block">
+
+            {/* 🌈 HALO MULTICOLOR */}
+            <span
+              aria-hidden="true"
+              className="
+                pointer-events-none
+                absolute
+                -inset-3
+                z-0
+                rounded-full
+                bg-[linear-gradient(110deg,#18c5e5_0%,#8b5cf6_48%,#ff5c73_100%)]
+                opacity-0
+                blur-[24px]
+                transition-all
+                duration-300
+                group-hover:opacity-90
+                group-hover:blur-[30px]
+              "
+            />
+
+            {/* BOTÓN */}
+            <Button
+              href="/#contacto"
+              className="
+                relative
+                z-10
+                bg-white
+                text-ink
+                border
+                border-ink
+                shadow-sm
+                transition-all
+                duration-300
+                hover:bg-white
+                hover:text-ink
+              "
+            >
+              <span className="relative z-20 text-ink">
+                Inscribirme
+              </span>
+            </Button>
+          </div>
+
+          {/* Menú móvil */}
           <button
             type="button"
-            className="grid size-11 place-items-center rounded-xl text-ink transition-colors duration-200 hover:bg-ink/5 lg:hidden"
+            className="
+              grid
+              size-11
+              place-items-center
+              rounded-xl
+              text-ink
+              transition-colors
+              duration-200
+              hover:bg-ink/5
+              lg:hidden
+            "
             aria-expanded={menuOpen}
             aria-controls={menuId}
-            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-label={
+              menuOpen ? "Cerrar menú" : "Abrir menú"
+            }
             onClick={() => setMenuOpen((o) => !o)}
           >
-            {menuOpen ? <X className="size-6" aria-hidden="true" /> : <Menu className="size-6" aria-hidden="true" />}
+            {menuOpen ? (
+              <X
+                className="size-6"
+                aria-hidden="true"
+              />
+            ) : (
+              <Menu
+                className="size-6"
+                aria-hidden="true"
+              />
+            )}
           </button>
+
         </div>
       </div>
 
-      <MobileMenu id={menuId} open={menuOpen} activeId={activeId} onClose={closeMenu} />
+      {/* Menú móvil */}
+      <MobileMenu
+        id={menuId}
+        open={menuOpen}
+        activeId={activeId}
+        onClose={closeMenu}
+      />
     </header>
   );
 }
