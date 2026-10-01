@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { decryptSession, SESSION_COOKIE } from "@/server/auth/session";
+// Se importa session-token (sin server-only ni next/headers): este archivo
+// corre en el runtime Edge, donde esos módulos no están disponibles.
+import { decryptSession, SESSION_COOKIE } from "@/server/auth/session-token";
 
 /**
  * Primera barrera del admin: revisa la cookie antes de renderizar.
