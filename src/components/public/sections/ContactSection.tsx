@@ -1,6 +1,8 @@
 import { Mail } from "lucide-react";
 import { SITE } from "@/constants/site";
+import { SPECIALISTS } from "@/constants/team";
 import { ContactForm } from "../contact/ContactForm";
+import { SpecialistCard } from "../contact/SpecialistCard";
 import { Reveal } from "../motion/Reveal";
 
 export function ContactSection() {
@@ -32,6 +34,25 @@ export function ContactSection() {
         <Reveal delay={0.08}>
           <ContactForm />
         </Reveal>
+      </div>
+
+      <div className="container-page mt-14 lg:mt-20">
+        <Reveal className="mb-8 text-center">
+          <h3 id="especialistas-titulo" className="text-[clamp(1.5rem,3vw,2rem)] leading-tight font-extrabold tracking-[-0.03em] text-ink">
+            Habla con uno de nuestros especialistas
+          </h3>
+          <p className="mx-auto mt-3 max-w-xl leading-relaxed text-muted">
+            Escríbeles directamente por WhatsApp o correo y resuelve tus dudas sobre cualquier programa.
+          </p>
+        </Reveal>
+
+        <ul aria-labelledby="especialistas-titulo" className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {SPECIALISTS.map((specialist, i) => (
+            <Reveal as="li" key={specialist.email} delay={0.07 * i} className="h-full">
+              <SpecialistCard specialist={specialist} />
+            </Reveal>
+          ))}
+        </ul>
       </div>
     </section>
   );
