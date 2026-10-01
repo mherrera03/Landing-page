@@ -10,11 +10,18 @@ type SectionHeadingProps = {
   children?: ReactNode;
   /** Para secciones con fondo oscuro. */
   onDark?: boolean;
+  /** Título centrado con el texto debajo, en lugar de título a la izquierda y texto a la derecha. */
+  centered?: boolean;
 };
 
-export function SectionHeading({ id, kicker, title, children, onDark = false }: SectionHeadingProps) {
+export function SectionHeading({ id, kicker, title, children, onDark = false, centered = false }: SectionHeadingProps) {
   return (
-    <Reveal className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
+    <Reveal
+      className={cn(
+        "mb-10",
+        centered ? "flex flex-col items-center text-center" : "flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10",
+      )}
+    >
       <div>
         {kicker && (
           <p className={cn("text-xs font-bold tracking-[0.18em] uppercase", onDark ? "text-violet" : "text-violet-deep")}>{kicker}</p>
@@ -30,7 +37,11 @@ export function SectionHeading({ id, kicker, title, children, onDark = false }: 
           {title}
         </h2>
       </div>
-      {children && <p className={cn("max-w-xl leading-relaxed", onDark ? "text-white/75" : "text-muted")}>{children}</p>}
+      {children && (
+        <p className={cn("max-w-xl leading-relaxed", centered && "mt-4 text-balance", onDark ? "text-white/75" : "text-muted")}>
+          {children}
+        </p>
+      )}
     </Reveal>
   );
 }

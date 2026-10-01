@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
 import { NAV_LINKS } from "@/constants/routes";
-import { SITE } from "@/constants/site";
+import { SITE, WHATSAPP_LINES } from "@/constants/site";
 import { Logo } from "../Logo";
 
 export function Footer() {
@@ -36,9 +36,31 @@ export function Footer() {
             href={`mailto:${SITE.email}`}
             className="mt-3 inline-flex min-h-10 items-center gap-2 text-sm text-muted transition-colors duration-200 hover:text-ink"
           >
-            <Mail className="size-4" aria-hidden="true" />
+            <Mail className="size-4 shrink-0" aria-hidden="true" />
             {SITE.email}
           </a>
+
+          <p className="mt-5 text-sm font-bold text-ink">WhatsApp</p>
+          <ul className="mt-1">
+            {WHATSAPP_LINES.map((line) => (
+              <li key={line.number}>
+                <a
+                  href={`https://wa.me/${line.number}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex min-h-10 items-center gap-2 text-sm text-muted transition-colors duration-200 hover:text-ink"
+                >
+                  <MessageCircle className="size-4 shrink-0 text-violet-deep" aria-hidden="true" />
+                  {line.label}
+                  <ArrowUpRight
+                    className="size-3.5 shrink-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden="true"
+                  />
+                  <span className="sr-only">— escribir por WhatsApp (se abre en una pestaña nueva)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
