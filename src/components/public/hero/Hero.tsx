@@ -73,7 +73,7 @@ export function Hero({ course }: { course: Course }) {
             className="inline-flex items-center gap-2 rounded-full border border-violet/30 bg-surface px-3.5 py-1.5 text-xs font-semibold text-violet-deep"
           >
             <span aria-hidden="true" className="size-2 rounded-full bg-brand" />
-            Formación que impulsa tu siguiente nivel
+            ¡Únete a quienes nunca dejan de aprender! 
           </motion.p>
 
           <h1 className="mt-5 text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">

@@ -22,16 +22,14 @@ export function AboutSection() {
           <Reveal className="rounded-3xl border border-line bg-surface p-7 sm:p-8">
             <h3 className="text-xl font-bold text-ink">¿Quiénes somos?</h3>
             <p className="mt-3 leading-relaxed text-muted">
-              {SITE.name} es el espacio de formación continua de la {SITE.university}. Acercamos oportunidades de actualización
-              profesional mediante programas, cursos, talleres y experiencias de aprendizaje pertinentes.
-            </p>
+              Desde 2016, en UGB Plus Formación Continua trabajamos en el diseño y desarrollo de oportunidades de formación que responden a las necesidades de las personas, empresas y organizaciones. A través de una propuesta educativa flexible y actual, articulamos conocimiento, tecnología y experiencia docente para facilitar el aprendizaje y fortalecer competencias que contribuyan al desarrollo profesional y personal.</p>
+            <p className="mt-3 leading-relaxed text-muted">Creamos experiencias de aprendizaje apoyadas en docentes y tutores altamente calificados, plataformas digitales, recursos educativos y metodologías que se adaptan a los nuevos retos de la educación y del mundo laboral. </p>
           </Reveal>
           <Reveal delay={0.08} className="relative overflow-hidden rounded-3xl bg-ink p-7 text-white sm:p-8">
             <div aria-hidden="true" className="absolute -top-16 -right-16 size-48 rounded-full bg-brand opacity-40 blur-3xl" />
-            <h3 className="relative text-xl font-bold">¿Para quién es?</h3>
+            <h3 className="relative text-xl font-bold">Nuestro propósito</h3>
             <p className="relative mt-3 leading-relaxed text-white/80">
-              Para profesionales que quieren crecer, estudiantes que buscan complementar su carrera y organizaciones que
-              necesitan capacitar a sus equipos.
+              Brindar oportunidades de formación continua que permitan a las personas mantenerse actualizadas, desarrollar nuevas competencias y responder a los desafíos de un entorno profesional y social en constante transformación. A través de experiencias de aprendizaje pertinentes, flexibles y de calidad, impulsamos el crecimiento personal y profesional, conectando el conocimiento con las necesidades reales de las personas, las organizaciones y la sociedad.
             </p>
           </Reveal>
         </div>
