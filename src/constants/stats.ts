@@ -12,12 +12,12 @@ export type Stat = {
 };
 
 /**
- * ⚠️ CIFRAS DE EJEMPLO: pedirle al cliente los datos reales antes de publicar.
- * La primera se calcula sola a partir del año de fundación (2016).
+ * Los años se calculan solos a partir del año de fundación (2016).
+ * ⚠️ El % de satisfacción sigue siendo un dato de ejemplo: confirmarlo antes de publicar.
  */
 export const STATS: Stat[] = [
   { icon: CalendarRange, value: 0, prefix: "+", label: "años de trayectoria", since: 2016 },
-  { icon: Users, value: 1500, prefix: "+", label: "estudiantes formados" },
-  { icon: GraduationCap, value: 60, prefix: "+", label: "programas impartidos" },
+  { icon: Users, value: 4999, prefix: "+", label: "personas formadas" },
+  { icon: GraduationCap, value: 99, prefix: "+", label: "programas impartidos" },
   { icon: Award, value: 98, suffix: "%", label: "de satisfacción" },
 ];
