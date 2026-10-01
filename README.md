@@ -1,144 +1,167 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.2.0-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.3.0-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
-![Node](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)
-![Express](https://img.shields.io/badge/Express-4-000000?logo=express)
-![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?logo=sqlite)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 
 Landing page de **UGB Plus · Formación Continua** (Universidad Gerardo Barrios), administrable desde un panel propio.
 
-> ⚠️ Proyecto en etapa de **prueba**: no está en producción. Los textos, cursos y eventos son de ejemplo.
+> ⚠️ Proyecto en etapa de **prueba**: no está en producción. Los cursos, cifras y fechas son de ejemplo.
 
 ## Índice
-- [Estructura del proyecto](#estructura-del-proyecto)
+- [Tecnologías](#tecnologías)
 - [Cómo correrlo](#cómo-correrlo)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Sistema de diseño](#sistema-de-diseño)
+- [Accesibilidad](#accesibilidad)
 - [Rutas](#rutas)
-- [Base de datos](#base-de-datos)
 - [Hoja de ruta](#hoja-de-ruta)
 - [Historial de versiones](#historial-de-versiones)
 
-## Estructura del proyecto
+## Tecnologías
 
-```
-Landing-page/
-├── backend/                     ← Servidor Node + Express + SQLite
-│   ├── server.js                ← Arranque: sirve la API, la landing y el admin
-│   ├── package.json
-│   ├── data/                    ← ugbplus.db (se crea solo, no se sube a git)
-│   └── src/
-│       ├── db.js                ← Esquema, migraciones y datos iniciales
-│       ├── auth.js              ← Firma/verificación JWT + middleware requireAuth
-│       └── routes/
-│           ├── auth.js          ← /api/auth (login, me)
-│           ├── cursos.js        ← /api/cursos
-│           └── eventos.js       ← /api/eventos
-│
-├── frontend/
-│   ├── shared/                  ← Lo que usan landing y admin
-│   │   └── css/variables.css    ← Colores y degradado de marca
-│   │
-│   ├── landing/                 ← Sitio público  →  http://localhost:3000/
-│   │   ├── index.html
-│   │   ├── css/
-│   │   │   ├── main.css         ← Importa todo en orden (cascada)
-│   │   │   ├── base.css         ← Reset y tipografía
-│   │   │   ├── layout.css       ← Secciones y encabezados
-│   │   │   ├── responsive.css   ← Media queries (siempre al final)
-│   │   │   ├── components/      ← buttons, forms, glow-button, modal
-│   │   │   └── sections/        ← header, hero, about, courses, events, contact, footer
-│   │   ├── js/
-│   │   │   ├── main.js          ← Punto de entrada
-│   │   │   ├── data/cursos.js   ← Datos temporales del modal
-│   │   │   └── modules/         ← menu, filters, modal, contact-form
-│   │   └── assets/img/cursos/   ← Imágenes de las tarjetas
-│   │
-│   └── admin/                   ← Panel administrativo  →  http://localhost:3000/admin/
-│       ├── index.html           ← Login
-│       ├── dashboard.html       ← Panel (cursos, eventos, solicitudes, configuración)
-│       ├── css/admin.css
-│       └── js/                  ← api.js (sesión), login.js, dashboard.js
-│
-└── docs/                        ← Documentación del proyecto
-```
+| Tecnología | Uso |
+|---|---|
+| **Next.js 16** | Framework principal (App Router + Turbopack) |
+| **React 19** | Componentes de la interfaz |
+| **TypeScript** | Código más seguro y mantenible |
+| **Tailwind CSS 4** | Diseño responsive con tokens en CSS |
+| **Motion for React** | Animaciones de componentes |
+| **GSAP + ScrollTrigger** | Animaciones avanzadas y de scroll |
+| **Lucide React** | Iconos (SVG, sin emojis) |
+| **Lenis** | Scroll suave |
+| **Zod** | Validación compartida entre formulario y API |
 
 ## Cómo correrlo
 
 ```bash
-cd backend
 npm install
-npm start
+```
+```bash
+npm run dev
 ```
 
-Luego abrir:
-- Landing: http://localhost:3000/
-- Admin: http://localhost:3000/admin/
+Luego abrir http://localhost:3000
 
-### Usuario de prueba del admin
-
-| Correo | Contraseña |
+| Comando | Qué hace |
 |---|---|
-| `admin@ugb.edu.sv` | `admin123` |
+| `npm run dev` | Servidor de desarrollo con recarga automática |
+| `npm run build` | Compila para producción |
+| `npm start` | Sirve la versión compilada |
+| `npm run lint` | Revisa el código con ESLint |
+| `npm run typecheck` | Verifica los tipos de TypeScript |
 
-> ⚠️ Es solo para pruebas. Cambiarlo antes de pasar a producción.
+## Estructura del proyecto
 
-> 💡 La landing usa módulos JS (`type="module"`), por eso **debe abrirse desde el servidor** y no con doble clic en el `index.html`.
+```
+ugb-plus/
+├── public/
+│   ├── images/
+│   │   ├── branding/{logo,isotipo,variants}/   ← Pendiente: logo oficial
+│   │   ├── courses/                            ← Imágenes de los cursos
+│   │   └── news, events, banners, team, placeholders/
+│   ├── icons/  y  fonts/
+│
+├── src/
+│   ├── app/
+│   │   ├── (public)/              ← Sitio público
+│   │   │   ├── layout.tsx         ← Header + Footer + scroll suave
+│   │   │   ├── page.tsx           ← Landing (todas las secciones)
+│   │   │   └── gracias/           ← Confirmación tras enviar el formulario
+│   │   ├── api/leads/route.ts     ← Recibe las solicitudes de contacto
+│   │   ├── layout.tsx             ← Fuente, metadatos y <html>
+│   │   ├── not-found.tsx          ← Página 404
+│   │   └── globals.css
+│   │
+│   ├── components/
+│   │   ├── public/
+│   │   │   ├── layout/            ← Header, Navbar, MobileMenu, Footer, Logo
+│   │   │   ├── hero/              ← Hero, HeroFeaturedCourse
+│   │   │   ├── courses/           ← CourseCard, CourseGrid, CourseFilters, CourseDetail
+│   │   │   ├── events/            ← EventCard, EventGrid
+│   │   │   ├── announcements/     ← AnnouncementBanner
+│   │   │   ├── contact/           ← ContactForm
+│   │   │   ├── sections/          ← About, Courses, Events, Contact, SectionHeading
+│   │   │   └── motion/            ← SmoothScroll (Lenis + GSAP), Reveal
+│   │   └── ui/                    ← Button, Input, Textarea, Select, Field, Badge, Modal
+│   │
+│   ├── services/                  ← courses.service, events.service (datos de ejemplo)
+│   ├── schemas/                   ← lead.schema (Zod: formulario + API)
+│   ├── types/                     ← course.types, event.types
+│   ├── constants/                 ← site, routes, course-categories
+│   ├── hooks/                     ← useActiveSection, useScrollToSection
+│   ├── lib/                       ← utils
+│   └── styles/                    ← variables, animations, public, admin
+│
+└── legacy/                        ← Proyecto anterior (Express + HTML/CSS/JS), solo referencia
+```
+
+## Sistema de diseño
+
+Los tokens viven en [`src/styles/variables.css`](src/styles/variables.css) y Tailwind genera sus utilidades (`bg-ink`, `text-muted`, `shadow-hard`…).
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--color-cyan` / `--color-violet` / `--color-coral` | `#12c2e9` `#c471ed` `#f64f59` | Degradado de marca |
+| `--color-ink` | `#000120` | Texto principal y fondos oscuros |
+| `--color-paper` / `--color-surface` | `#f9f9f9` / `#ffffff` | Fondos |
+| `--color-muted` | `#5b6070` | Texto secundario (6:1 de contraste) |
+| `--color-violet-deep` | `#7c3daf` | Acento para textos y enlaces |
+
+Dos utilidades propias: `bg-brand` (degradado de fondo) y `text-gradient` (degradado para títulos grandes, con una variante más oscura para que contraste sobre blanco).
+
+## Accesibilidad
+
+- Contraste verificado: todos los pares de color cumplen WCAG AA (4.5:1); el degradado de texto solo se usa en títulos grandes.
+- Áreas táctiles de 44px o más en botones, enlaces y campos.
+- Formulario con etiquetas visibles, errores junto al campo, `aria-invalid` y foco automático en el primer campo con problema.
+- Modal con `role="dialog"`, cierre con Escape, foco atrapado dentro y devuelto al botón que lo abrió.
+- Enlace "Saltar al contenido" y anillo de foco visible en toda la página.
+- Respeta `prefers-reduced-motion`: desactiva el scroll suave y las animaciones.
 
 ## Rutas
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/health` | Verifica que el servidor responde |
-| POST | `/api/auth/login` | Recibe `{ correo, password }` y devuelve un token JWT (8 h) |
-| GET | `/api/auth/me` | 🔒 Datos del usuario de la sesión |
-| GET | `/api/cursos` | Cursos visibles, ordenados |
-| GET | `/api/eventos` | Eventos visibles, ordenados |
-
-## Base de datos
-
-SQLite en `backend/data/ugbplus.db`. Se crea sola al arrancar con datos de ejemplo.
-
-| Tabla | Para qué |
-|---|---|
-| `usuarios` | Cuentas del panel admin (rol admin / editor) |
-| `cursos` | Tarjetas de la sección Programas |
-| `eventos` | Tarjetas de Noticias y eventos |
-| `solicitudes` | Mensajes del formulario de contacto |
-| `configuracion` | Textos y datos generales (correo, títulos del hero…) |
+| GET | `/` | Landing |
+| GET | `/gracias` | Confirmación tras enviar el formulario |
+| POST | `/api/leads` | Recibe y valida una solicitud de contacto |
 
 ## Hoja de ruta
 
-- [x] Separar la landing en HTML / CSS / JS por secciones
-- [x] Backend con Express + SQLite y API de lectura
-- [x] Esqueleto del panel admin
-- [x] Autenticación del admin (JWT + bcrypt)
-- [ ] CRUD de cursos, eventos y configuración desde el admin
-- [ ] Landing leyendo cursos y eventos desde la API
-- [ ] Formulario de contacto guardando en `solicitudes`
-- [ ] Corregir bugs visuales pendientes (modal duplicado, CTA en móvil)
+- [x] Landing en Next.js 16 con la arquitectura definida
+- [x] Sistema de diseño en tokens + componentes de UI reutilizables
+- [x] Animaciones con Motion, GSAP y scroll suave con Lenis
+- [x] Formulario validado con Zod (cliente y servidor) + página de gracias
+- [ ] Base de datos y repositorios (`src/server/database/`)
+- [ ] Panel admin en `/admin`: login, CRUD de cursos, eventos y solicitudes
+- [ ] Landing leyendo los datos reales desde la base de datos
+- [ ] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
+- [ ] Logo oficial, SEO (sitemap, robots, Open Graph) y textos definitivos
 
 <details>
 <summary><b>Troubleshooting</b></summary>
 
-**La página se ve sin estilos o los botones no hacen nada**
-Abriste el `index.html` con doble clic. Arranca el servidor (`npm start`) y entra por `http://localhost:3000/`.
+**El puerto 3000 ya está en uso (`EADDRINUSE`)**
+Hay otro servidor corriendo. Ciérralo con `Ctrl + C` en su terminal, o usa otro puerto: `npm run dev -- -p 3001`.
 
-**`npm install` falla con better-sqlite3**
-Verifica que usas Node 20 o 22 (`node -v`).
+**`npm run typecheck` dice que no encuentra `LayoutProps`**
+Ese tipo lo genera Next al compilar. Corre `npm run build` una vez y vuelve a intentarlo.
 
-**El login dice "Ruta no encontrada" o no deja entrar**
-El servidor sigue con el código viejo. Detenlo con `Ctrl + C`, corre `npm install` y vuelve a arrancar con `npm start`.
-
-**Quiero reiniciar la base de datos con los datos de ejemplo**
-Detén el servidor, borra `backend/data/ugbplus.db` y vuelve a arrancar.
+**Las animaciones no se ven**
+Si tu sistema tiene activado "reducir movimiento", la página las desactiva a propósito.
 </details>
 
 ## Historial de versiones
 
 | Versión | Fecha | Cambios |
 |---|---|---|
-| 0.2.0 | 2026-09-23 | Login del admin con JWT + bcrypt, usuario de prueba, dashboard protegido y cierre de sesión |
-| 0.1.0 | 2026-09-23 | Reestructuración: landing separada en módulos, backend Express + SQLite, esqueleto del admin |
+| 0.3.0 | 2026-10-01 | Migración a Next.js 16 + TypeScript + Tailwind 4; landing rediseñada con Motion, GSAP y Lenis; formulario validado con Zod |
+| 0.2.0 | 2026-09-23 | Login del admin con JWT + bcrypt (proyecto anterior) |
+| 0.1.0 | 2026-09-23 | Reestructuración en backend Express + frontend modular (proyecto anterior) |
 
 ---
 © 2026 UGB Plus · Universidad Gerardo Barrios

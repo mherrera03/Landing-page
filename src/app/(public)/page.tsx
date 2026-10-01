@@ -1,0 +1,20 @@
+import { getFeaturedCourse } from "@/services/courses.service";
+import { Hero } from "@/components/public/hero/Hero";
+import { AboutSection } from "@/components/public/sections/AboutSection";
+import { CoursesSection } from "@/components/public/sections/CoursesSection";
+import { EventsSection } from "@/components/public/sections/EventsSection";
+import { ContactSection } from "@/components/public/sections/ContactSection";
+
+export default async function HomePage() {
+  const featured = await getFeaturedCourse();
+
+  return (
+    <>
+      <Hero course={featured} />
+      <AboutSection />
+      <CoursesSection />
+      <EventsSection />
+      <ContactSection />
+    </>
+  );
+}

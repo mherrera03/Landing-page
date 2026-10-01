@@ -1,0 +1,27 @@
+/* =========================================================
+   Animaciones CSS (las de scroll y entrada viven en GSAP / Motion)
+   ========================================================= */
+@keyframes blob-morph {
+  0%,
+  100% {
+    border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+  }
+  33% {
+    border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%;
+  }
+  66% {
+    border-radius: 45% 55% 60% 40% / 55% 45% 50% 50%;
+  }
+}
+
+/* Respeta la preferencia del sistema: sin movimiento decorativo */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

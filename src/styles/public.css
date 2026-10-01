@@ -1,0 +1,39 @@
+/* =========================================================
+   Estilos base del sitio público
+   ========================================================= */
+@layer base {
+  html {
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  /* Foco visible y consistente para teclado */
+  :focus-visible {
+    outline: 2px solid var(--color-violet-deep);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--color-violet);
+    color: var(--color-ink);
+  }
+
+  button,
+  [role="button"],
+  a {
+    touch-action: manipulation;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}

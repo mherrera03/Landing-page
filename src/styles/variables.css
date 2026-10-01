@@ -1,0 +1,67 @@
+/* =========================================================
+   Tokens de diseño UGB Plus (Tailwind v4)
+   Cada token genera sus utilidades: bg-ink, text-muted, shadow-hard…
+   ========================================================= */
+@theme {
+  /* Marca */
+  --color-cyan: #12c2e9;
+  --color-violet: #c471ed;
+  --color-coral: #f64f59;
+
+  /* Superficies y texto */
+  --color-ink: #000120;
+  --color-ink-soft: #14163a;
+  --color-paper: #f9f9f9;
+  --color-surface: #ffffff;
+  --color-line: #e9e9f2;
+  --color-muted: #5b6070; /* 6:1 sobre paper */
+
+  /* Acentos accesibles para texto (≥ 4.5:1 sobre blanco) */
+  --color-violet-deep: #7c3daf;
+  --color-violet-soft: #f4effa;
+
+  /* Estados */
+  --color-danger: #c2183a;
+  --color-success: #0f7b53;
+
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --shadow-soft: 0 18px 55px rgb(7 7 40 / 0.1);
+  --shadow-lift: 0 24px 60px rgb(0 1 32 / 0.18);
+  --shadow-hard: 5px 5px 0 rgb(0 1 32 / 0.9);
+  --shadow-hard-accent: 7px 7px 0 rgb(196 113 237 / 0.95);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-blob: blob-morph 14s ease-in-out infinite;
+  --animate-spin-slow: spin 1.1s linear infinite;
+}
+
+:root {
+  /* Degradado de marca para superficies */
+  --grad: linear-gradient(110deg, #12c2e9 0%, #c471ed 48%, #f64f59 100%);
+  /* Variante más profunda para TEXTO (el cian de marca no contrasta sobre blanco) */
+  --grad-text: linear-gradient(110deg, #0794b8 0%, #a240dc 48%, #e8323f 100%);
+  --header-h: 4.5rem;
+}
+
+@utility bg-brand {
+  background-image: var(--grad);
+}
+
+@utility text-gradient {
+  background-image: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+}
