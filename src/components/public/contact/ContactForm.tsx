@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
 
 import { z } from "zod";
-<<<<<<< Updated upstream
 
 import {
   LEAD_INTERESTS,
@@ -16,10 +15,8 @@ import {
   type LeadInput,
 } from "@/schemas/lead.schema";
 
-=======
-import { LEAD_INTERESTS, leadSchema, type LeadField, type LeadInput } from "@/schemas/lead.schema";
 import { COUNTRIES } from "@/constants/countries";
->>>>>>> Stashed changes
+
 import { ROUTES } from "@/constants/routes";
 
 import { LEAD_INTEREST_EVENT } from "../courses/CourseGrid";
@@ -36,16 +33,8 @@ type Errors = Partial<Record<LeadField, string>> & {
   form?: string;
 };
 
-<<<<<<< Updated upstream
-const EMPTY: LeadInput = {
-  name: "",
-  email: "",
-  phone: "",
-  interest: "Cursos",
-  message: "",
-};
-=======
-// Los dos select arrancan vacíos para obligar a elegir una opción
+// Los dos select arrancan vacíos para obligar a elegir una opción.
+// El orden de las claves marca el orden del formulario (se usa al enviar).
 const EMPTY = {
   name: "",
   email: "",
@@ -54,27 +43,20 @@ const EMPTY = {
   interest: "" as LeadInput["interest"],
   message: "",
 } satisfies LeadInput;
->>>>>>> Stashed changes
 
 export function ContactForm() {
   const router = useRouter();
 
   const formRef = useRef<HTMLFormElement>(null);
-<<<<<<< Updated upstream
 
   const [values, setValues] = useState<LeadInput>({
     ...EMPTY,
-    interest: "" as LeadInput["interest"],
   });
 
   const [touched, setTouched] = useState<
     Partial<Record<LeadField, boolean>>
   >({});
 
-=======
-  const [values, setValues] = useState<LeadInput>({ ...EMPTY });
-  const [touched, setTouched] = useState<Partial<Record<LeadField, boolean>>>({});
->>>>>>> Stashed changes
   const [errors, setErrors] = useState<Errors>({});
 
   const [submitting, setSubmitting] = useState(false);
@@ -152,20 +134,22 @@ export function ContactForm() {
       }
 
       setErrors(next);
-<<<<<<< Updated upstream
 
-      setTouched({
-        name: true,
-        email: true,
-        phone: true,
-        interest: true,
-        message: true,
-      });
+      // Se marcan todos los campos del esquema:
+      // así no se olvida ninguno al agregar uno nuevo
+      setTouched(
+        Object.fromEntries(
+          (Object.keys(EMPTY) as LeadField[]).map(
+            (k) => [k, true],
+          ),
+        ),
+      );
 
-      // Lleva el foco al primer campo con problema
+      // Lleva el foco al primer campo con problema,
+      // en el orden en que aparecen en el formulario
       const first = (
-        Object.keys(next) as LeadField[]
-      )[0];
+        Object.keys(EMPTY) as LeadField[]
+      ).find((k) => next[k]);
 
       formRef.current
         ?.querySelector<HTMLElement>(
@@ -173,13 +157,6 @@ export function ContactForm() {
         )
         ?.focus();
 
-=======
-      // Se marcan todos los campos del esquema: así no se olvida ninguno al agregar uno nuevo
-      setTouched(Object.fromEntries((Object.keys(EMPTY) as LeadField[]).map((k) => [k, true])));
-      // Lleva el foco al primer campo con problema, en el orden en que aparecen en el formulario
-      const first = (Object.keys(EMPTY) as LeadField[]).find((k) => next[k]);
-      formRef.current?.querySelector<HTMLElement>(`#lead-${first}`)?.focus();
->>>>>>> Stashed changes
       return;
     }
 
@@ -256,9 +233,7 @@ export function ContactForm() {
           }
           onBlur={blur("email")}
         />
-<<<<<<< Updated upstream
 
-=======
         <Select
           id="lead-country"
           label="País"
@@ -268,10 +243,15 @@ export function ContactForm() {
           autoComplete="country-name"
           value={values.country}
           error={showError("country")}
-          onChange={(e) => set("country", e.target.value as LeadInput["country"])}
+          onChange={(e) =>
+            set(
+              "country",
+              e.target.value as LeadInput["country"],
+            )
+          }
           onBlur={blur("country")}
         />
->>>>>>> Stashed changes
+
         <Input
           id="lead-phone"
           label="Teléfono (con clave de país)"
