@@ -17,7 +17,7 @@ export function ContactSection() {
               Tu próxima formación puede empezar aquí.
             </h2>
             <p className="mt-4 leading-relaxed text-ink/80">
-              Déjanos tus datos y el equipo de {SITE.name} te contactará con la información del programa que te interesa.
+              Déjanos tus datos y el equipo de {SITE.name} te contactará para brindarte más información sobre el programa que te interesa.
             </p>
             <a
               href={`mailto:${SITE.email}`}
