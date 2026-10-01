@@ -44,10 +44,18 @@ npm install
 npm run dev
 ```
 
-Luego abrir http://localhost:3000
+Luego abrir http://localhost:3000 (la landing) o http://localhost:3000/admin (el panel).
+
+> ⚠️ **Ejecuta `npm install` cada vez que bajes cambios** (`git pull`). Si alguien agregó una
+> librería y tú no la instalas, verás un error del tipo *"Module not found: Can't resolve ..."*.
+
+No hace falta crear la base de datos ni el archivo `.env`: ambos se generan solos la primera vez
+que arranca el servidor. El panel se crea con un usuario de prueba definido en
+[`seed.ts`](src/server/database/migrations/seed.ts).
 
 | Comando | Qué hace |
 |---|---|
+| `npm install` | Instala o actualiza las dependencias |
 | `npm run dev` | Servidor de desarrollo con recarga automática |
 | `npm run build` | Compila para producción |
 | `npm start` | Sirve la versión compilada |
@@ -144,6 +152,16 @@ Dos utilidades propias: `bg-brand` (degradado de fondo) y `text-gradient` (degra
 
 <details>
 <summary><b>Troubleshooting</b></summary>
+
+**Module not found: Can't resolve 'bcryptjs' (o jose, better-sqlite3...)**
+Bajaste código nuevo pero no instalaste las dependencias. Ejecuta `npm install` y vuelve a arrancar.
+
+**`npm install` falla al compilar better-sqlite3**
+Esa librería se compila al instalarse. En Windows necesitas las herramientas de compilación de Visual Studio;
+normalmente se instalan solas con Node. Verifica que usas Node 20 o 22 (`node -v`) y reintenta.
+
+**No puedo entrar al panel / se me cierra la sesión sola**
+Borra la carpeta `database/data` y reinicia el servidor: se vuelve a crear con el usuario de prueba.
 
 **El puerto 3000 ya está en uso (`EADDRINUSE`)**
 Hay otro servidor corriendo. Ciérralo con `Ctrl + C` en su terminal, o usa otro puerto: `npm run dev -- -p 3001`.
