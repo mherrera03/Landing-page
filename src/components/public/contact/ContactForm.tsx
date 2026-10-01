@@ -23,6 +23,8 @@ import { LEAD_INTEREST_EVENT } from "../courses/CourseGrid";
 
 import { Button } from "@/components/ui/Button";
 
+import { Combobox } from "@/components/ui/Combobox";
+
 import { Input } from "@/components/ui/Input";
 
 import { Select } from "@/components/ui/Select";
@@ -234,19 +236,18 @@ export function ContactForm() {
           onBlur={blur("email")}
         />
 
-        <Select
+        <Combobox
           id="lead-country"
           label="País"
           required
-          placeholder="Selecciona tu país"
+          placeholder="Escribe o elige tu país"
           options={COUNTRIES}
-          autoComplete="country-name"
           value={values.country}
           error={showError("country")}
-          onChange={(e) =>
+          onChange={(v) =>
             set(
               "country",
-              e.target.value as LeadInput["country"],
+              v as LeadInput["country"],
             )
           }
           onBlur={blur("country")}
