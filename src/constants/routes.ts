@@ -10,7 +10,7 @@ export const ROUTES = {
 export const NAV_LINKS = [
   { id: "nosotros", label: "Nosotros", href: "/#nosotros" },
   { id: "servicios", label: "Servicios", href: "/#servicios" },
-  { id: "programas", label: "Cursos", href: "/#programas" },
+  { id: "programas", label: "Programas", href: "/#programas" },
   { id: "eventos", label: "Eventos", href: "/#eventos" },
   { id: "contacto", label: "Contáctanos", href: "/#contacto" },
   

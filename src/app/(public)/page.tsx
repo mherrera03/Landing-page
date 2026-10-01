@@ -1,6 +1,7 @@
 import { getFeaturedCourse } from "@/services/courses.service";
 import { Hero } from "@/components/public/hero/Hero";
 import { AboutSection } from "@/components/public/sections/AboutSection";
+import { ServicesSection } from "@/components/public/sections/ServicesSection";
 import { CoursesSection } from "@/components/public/sections/CoursesSection";
 import { EventsSection } from "@/components/public/sections/EventsSection";
 import { ContactSection } from "@/components/public/sections/ContactSection";
@@ -12,6 +13,7 @@ export default async function HomePage() {
     <>
       <Hero course={featured} />
       <AboutSection />
+      <ServicesSection />
       <CoursesSection />
       <EventsSection />
       <ContactSection />
