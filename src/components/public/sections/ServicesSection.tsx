@@ -12,7 +12,7 @@ export function ServicesSection() {
           <div aria-hidden="true" className="pointer-events-none absolute -right-24 -bottom-32 size-96 rounded-full bg-violet opacity-20 blur-3xl" />
 
           <div className="relative">
-            <SectionHeading id="servicios-titulo" kicker="Qué ofrecemos" title="Nuestros servicios" onDark>
+            <SectionHeading id="servicios-titulo" title="Nuestros servicios" onDark>
               Formatos, áreas de conocimiento y modalidades disponibles en UGB Plus.
             </SectionHeading>
 
