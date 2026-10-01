@@ -5,19 +5,19 @@ export type Specialist = {
   photoAlt: string;
   /** Número en formato internacional sin signos, como lo pide wa.me (ej. 50326456572). */
   whatsapp: string;
-  /** Cómo se muestra el número en pantalla. */
-  phoneLabel: string;
   email: string;
 };
 
-/** Equipo que atiende las consultas de la landing. */
+/**
+ * Equipo que atiende las consultas de la landing.
+ * Nota: Michelle y Juan comparten el mismo número (línea de oficina). No es un error.
+ */
 export const SPECIALISTS: Specialist[] = [
   {
     name: "Pedro Canizales",
     photo: "/images/team/pedro-canizales.png",
     photoAlt: "Pedro Canizales",
     whatsapp: "50326456572",
-    phoneLabel: "+503 2645-6572",
     email: "pcanizales@ugb.edu.sv",
   },
   {
@@ -25,7 +25,6 @@ export const SPECIALISTS: Specialist[] = [
     photo: "/images/team/michelle-portillo.png",
     photoAlt: "Michelle Portillo",
     whatsapp: "50326456571",
-    phoneLabel: "+503 2645-6571",
     email: "gportillo@ugb.edu.sv",
   },
   {
@@ -33,7 +32,6 @@ export const SPECIALISTS: Specialist[] = [
     photo: "/images/team/juan-villalta.png",
     photoAlt: "Juan Villalta",
     whatsapp: "50326456571",
-    phoneLabel: "+503 2645-6571",
     email: "jvillalta@ugb.edu.sv",
   },
 ];
