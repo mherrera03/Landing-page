@@ -1,5 +1,4 @@
 import { CalendarClock, HeartHandshake, Target, type LucideIcon } from "lucide-react";
-import { SITE } from "@/constants/site";
 import { Reveal } from "../motion/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
