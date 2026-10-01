@@ -1,12 +1,13 @@
 import "server-only";
 import bcrypt from "bcryptjs";
-import type { Database } from "better-sqlite3";
+import type { DatabaseSync } from "node:sqlite";
+import { transaction } from "../connection";
 
 /**
  * Datos iniciales. Solo se insertan si la tabla está vacía,
  * así nunca pisa lo que el admin haya creado.
  */
-export function seed(db: Database) {
+export function seed(db: DatabaseSync) {
   const hayUsuarios = db.prepare("SELECT COUNT(*) AS n FROM usuarios").get() as { n: number };
   if (hayUsuarios.n === 0) {
     // ⚠️ Usuario de PRUEBA. Cambiar la contraseña antes de pasar a producción.
@@ -92,6 +93,6 @@ export function seed(db: Database) {
     },
   ];
 
-  db.transaction(() => cursos.forEach((c) => insert.run(c)))();
+  transaction(db, () => cursos.forEach((c) => insert.run(c)));
   console.log("[db] cursos iniciales creados");
 }

@@ -1,6 +1,6 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.4.0-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.4.1-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -34,8 +34,12 @@ Landing page de **UGB Plus · Formación Continua** (Universidad Gerardo Barrios
 | **Lucide React** | Iconos (SVG, sin emojis) |
 | **Lenis** | Scroll suave |
 | **Zod** | Validación compartida entre formulario y API |
+| **node:sqlite** | Base de datos (viene incluido en Node, no se instala) |
+| **bcryptjs + jose** | Contraseñas cifradas y sesiones firmadas |
 
 ## Cómo correrlo
+
+**Requisito: Node 22.5 o superior** (`node -v`). Si tienes una versión menor, descárgala de [nodejs.org](https://nodejs.org).
 
 ```bash
 npm install
@@ -156,9 +160,15 @@ Dos utilidades propias: `bg-brand` (degradado de fondo) y `text-gradient` (degra
 **Module not found: Can't resolve 'bcryptjs' (o jose, better-sqlite3...)**
 Bajaste código nuevo pero no instalaste las dependencias. Ejecuta `npm install` y vuelve a arrancar.
 
-**`npm install` falla al compilar better-sqlite3**
-Esa librería se compila al instalarse. En Windows necesitas las herramientas de compilación de Visual Studio;
-normalmente se instalan solas con Node. Verifica que usas Node 20 o 22 (`node -v`) y reintenta.
+**`npm install` falla con `gyp ERR!` o pide Visual Studio**
+Ya no debería pasar: el proyecto usa el SQLite incluido en Node y no compila nada.
+Si lo ves, tu `node_modules` es viejo. Borra esa carpeta, haz `git pull` y vuelve a instalar.
+
+**Dice que falta Node 22.5 o aparece `Cannot find module node:sqlite`**
+Tu versión de Node es muy antigua. Comprueba con `node -v` e instala Node 22 LTS o superior.
+
+**Aparece "SQLite is an experimental feature"**
+Es normal y no afecta nada: así marca Node su módulo de SQLite en la versión 22.
 
 **No puedo entrar al panel / se me cierra la sesión sola**
 Borra la carpeta `database/data` y reinicia el servidor: se vuelve a crear con el usuario de prueba.
@@ -177,6 +187,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.4.1 | 2026-10-01 | Se cambia better-sqlite3 por el SQLite incluido en Node: ya no hace falta compilar nada al instalar |
 | 0.4.0 | 2026-10-01 | Panel admin: login con sesión segura, base de datos SQLite con migraciones y CRUD de cursos con subida de imágenes; la landing lee los cursos de la base |
 | 0.3.0 | 2026-10-01 | Migración a Next.js 16 + TypeScript + Tailwind 4; landing rediseñada con Motion, GSAP y Lenis; formulario validado con Zod |
 | 0.2.0 | 2026-09-23 | Login del admin con JWT + bcrypt (proyecto anterior) |

@@ -1,5 +1,6 @@
 import "server-only";
-import type { Database } from "better-sqlite3";
+import type { DatabaseSync } from "node:sqlite";
+import { transaction } from "../connection";
 import { seed } from "./seed";
 
 /**
@@ -7,7 +8,7 @@ import { seed } from "./seed";
  * en la tabla `migraciones`, así agregar una nueva nunca rompe los datos existentes.
  * Para cambiar algo, AGREGA una migración nueva al final; no edites las anteriores.
  */
-const MIGRATIONS: { name: string; up: (db: Database) => void }[] = [
+const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
   {
     name: "001_esquema_inicial",
     up: (db) => {
@@ -60,10 +61,10 @@ const MIGRATIONS: { name: string; up: (db: Database) => void }[] = [
   },
 ];
 
-export function runMigrations(db: Database) {
+export function runMigrations(db: DatabaseSync) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS migraciones (
-      name       TEXT PRIMARY KEY,
+      name        TEXT PRIMARY KEY,
       aplicada_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
     );
   `);
@@ -74,10 +75,10 @@ export function runMigrations(db: Database) {
   for (const migration of MIGRATIONS) {
     if (yaAplicada.get(migration.name)) continue;
     // Cada migración es atómica: si falla a medias, no deja la base inconsistente
-    db.transaction(() => {
+    transaction(db, () => {
       migration.up(db);
       registrar.run(migration.name);
-    })();
+    });
     console.log(`[db] migración aplicada: ${migration.name}`);
   }
 
