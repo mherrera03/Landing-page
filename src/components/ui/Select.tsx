@@ -8,21 +8,38 @@ type SelectProps = Omit<ComponentProps<"select">, "id"> & {
   label: string;
   error?: string;
   placeholder: string;
+  /** Lo que ve el usuario. */
   options: readonly string[];
+  /** Lo que se envía, si difiere de la etiqueta. Mismo orden que `options`. */
+  values?: readonly string[];
+  /** Permite dejarlo sin elegir (el marcador de posición vale como respuesta vacía). */
+  allowEmpty?: boolean;
   wrapperClassName?: string;
 };
 
-export function Select({ id, label, error, required, placeholder, options, wrapperClassName, className, ...rest }: SelectProps) {
+export function Select({
+  id,
+  label,
+  error,
+  required,
+  placeholder,
+  options,
+  values,
+  allowEmpty = false,
+  wrapperClassName,
+  className,
+  ...rest
+}: SelectProps) {
   return (
     <Field id={id} label={label} required={required} error={error} className={wrapperClassName}>
       <div className="relative">
         <select {...controlA11y(id, error)} required={required} className={cn(fieldControl, "appearance-none pr-11", className)} {...rest}>
-          <option value="" disabled>
+          <option value="" disabled={!allowEmpty}>
             {placeholder}
           </option>
-          {options.map((o) => (
-            <option key={o} value={o}>
-              {o}
+          {options.map((label, i) => (
+            <option key={label} value={values?.[i] ?? label}>
+              {label}
             </option>
           ))}
         </select>

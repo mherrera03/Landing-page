@@ -1,6 +1,6 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.3.0-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.4.0-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -159,6 +159,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.4.0 | 2026-10-01 | Panel admin: login con sesión segura, base de datos SQLite con migraciones y CRUD de cursos con subida de imágenes; la landing lee los cursos de la base |
 | 0.3.0 | 2026-10-01 | Migración a Next.js 16 + TypeScript + Tailwind 4; landing rediseñada con Motion, GSAP y Lenis; formulario validado con Zod |
 | 0.2.0 | 2026-09-23 | Login del admin con JWT + bcrypt (proyecto anterior) |
 | 0.1.0 | 2026-09-23 | Reestructuración en backend Express + frontend modular (proyecto anterior) |

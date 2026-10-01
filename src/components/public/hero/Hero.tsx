@@ -32,7 +32,8 @@ const STATS = [
   { prefix: "", value: 100, suffix: "%", label: "enfoque práctico" },
 ] as const;
 
-export function Hero({ course }: { course: Course }) {
+// course puede ser null si en el admin no hay ningún curso visible
+export function Hero({ course }: { course: Course | null }) {
   const root = useRef<HTMLElement>(null);
 
   // GSAP: contadores de las cifras + parallax de la mancha de color al hacer scroll
@@ -122,13 +123,15 @@ export function Hero({ course }: { course: Course }) {
           </motion.dl>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.25, ease: EASE }}
-        >
-          <HeroFeaturedCourse course={course} />
-        </motion.div>
+        {course && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.25, ease: EASE }}
+          >
+            <HeroFeaturedCourse course={course} />
+          </motion.div>
+        )}
       </div>
     </section>
   );

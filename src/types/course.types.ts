@@ -3,6 +3,10 @@ export type CourseStatus = "activo" | "proximamente";
 export type CourseLevel = "Básico" | "Intermedio" | "Avanzado";
 export type CourseModality = "Híbrida" | "Virtual" | "Presencial";
 
+export const COURSE_LEVELS: CourseLevel[] = ["Básico", "Intermedio", "Avanzado"];
+export const COURSE_MODALITIES: CourseModality[] = ["Híbrida", "Virtual", "Presencial"];
+export const COURSE_STATUSES: CourseStatus[] = ["activo", "proximamente"];
+
 export interface Course {
   id: number;
   slug: string;
@@ -17,5 +21,10 @@ export interface Course {
   image: string;
   imageAlt: string;
   status: CourseStatus;
-  featured?: boolean;
+  /** Se muestra en la portada. Solo un curso puede estarlo. */
+  featured: boolean;
+  /** Si es false, no aparece en la landing. */
+  visible: boolean;
+  order: number;
+  updatedAt: string;
 }

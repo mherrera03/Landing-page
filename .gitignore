@@ -13,12 +13,23 @@ legacy/backend/data/*.db
 legacy/backend/data/*.db-*
 legacy/backend/data/.jwt-secret
 
-# Variables de entorno
+# Variables de entorno (el secreto de sesión vive aquí)
 .env
 .env*.local
+!.env.example
 
 # Configuración local de Claude Code
 .claude/
+
+# Base de datos local (se crea sola al arrancar)
+database/data/
+
+# Imágenes subidas desde el admin
+public/images/courses/*
+!public/images/courses/fundamentos-ia.webp
+!public/images/courses/marketing-digital.jpg
+!public/images/courses/liderazgo-equipos.webp
+!public/images/courses/ciberseguridad.webp
 
 # Sistema
 .DS_Store
