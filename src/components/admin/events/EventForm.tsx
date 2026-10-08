@@ -12,6 +12,7 @@ import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Switch } from "../ui/Switch";
+import { ImageUpload } from "../ui/ImageUpload";
 
 type EventFormProps = {
   action: (prev: EventFormState, formData: FormData) => Promise<EventFormState>;
@@ -98,6 +99,16 @@ export function EventForm({ action, event }: EventFormProps) {
         />
 
         <Input
+          id="time"
+          name="time"
+          label="Hora"
+          type="time"
+          optional
+          defaultValue={v.time ?? event?.time ?? ""}
+          error={state.fields?.time}
+        />
+
+        <Input
           id="place"
           name="place"
           label="Lugar o modalidad"
@@ -139,6 +150,24 @@ export function EventForm({ action, event }: EventFormProps) {
           defaultValue={v.linkText ?? event?.linkText}
           error={state.fields?.linkText}
         />
+
+        <ImageUpload
+          label="Banner del evento"
+          required={false}
+          folderHint="Se recomienda horizontal (16:9), como una miniatura de video."
+          defaultValue={v.image ?? event?.image}
+          error={state.fields?.image}
+        />
+
+        <Input
+          id="imageAlt"
+          name="imageAlt"
+          label="Descripción del banner"
+          placeholder="Masterclass gratis sobre interiorismo, 8 de octubre a las 7 p. m."
+          defaultValue={v.imageAlt ?? event?.imageAlt}
+          error={state.fields?.imageAlt}
+          wrapperClassName="sm:col-span-2"
+        />
       </div>
 
       <p className="-mt-2 mb-4 text-xs text-muted">
@@ -146,7 +175,13 @@ export function EventForm({ action, event }: EventFormProps) {
         formulario de la propia landing.
       </p>
 
-      <div className="border-t border-line pt-5">
+      <div className="flex flex-col gap-3 border-t border-line pt-5">
+        <Switch
+          name="featured"
+          label="Evento destacado"
+          description="Se muestra en grande arriba del resto, con su banner. Solo uno a la vez."
+          defaultChecked={event?.featured ?? false}
+        />
         <Switch
           name="visible"
           label="Visible en la landing"

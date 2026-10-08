@@ -85,6 +85,19 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
       `);
     },
   },
+  {
+    name: "003_eventos_destacados",
+    up: (db) => {
+      db.exec(`
+        ALTER TABLE eventos ADD COLUMN imagen     TEXT NOT NULL DEFAULT '';
+        ALTER TABLE eventos ADD COLUMN imagen_alt TEXT NOT NULL DEFAULT '';
+        -- Hora en formato HH:MM (24 h). Vacía si el evento no tiene hora concreta.
+        ALTER TABLE eventos ADD COLUMN hora       TEXT;
+        -- El evento destacado se muestra en grande, arriba del resto.
+        ALTER TABLE eventos ADD COLUMN destacado  INTEGER NOT NULL DEFAULT 0;
+      `);
+    },
+  },
 ];
 
 export function runMigrations(db: DatabaseSync) {

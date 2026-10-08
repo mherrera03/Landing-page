@@ -31,6 +31,10 @@ public/images/courses/*
 !public/images/courses/liderazgo-equipos.webp
 !public/images/courses/ciberseguridad.webp
 
+# Imágenes de eventos subidas desde el admin
+public/images/events/*
+!public/images/events/masterclass-interiorismo-2027.jpg
+
 # Sistema
 .DS_Store
 Thumbs.db

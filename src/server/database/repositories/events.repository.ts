@@ -11,9 +11,13 @@ type EventRow = {
   etiqueta: string;
   descripcion: string;
   fecha: string | null;
+  hora: string | null;
   lugar: string;
   enlace: string;
   enlace_texto: string;
+  imagen: string;
+  imagen_alt: string;
+  destacado: number;
   visible: number;
   orden: number;
   creado_en: string;
@@ -29,9 +33,13 @@ function toEvent(row: EventRow): EventItem {
     title: row.titulo,
     description: row.descripcion,
     date: row.fecha,
+    time: row.hora,
     place: row.lugar,
     link: row.enlace,
     linkText: row.enlace_texto,
+    image: row.imagen,
+    imageAlt: row.imagen_alt,
+    featured: row.destacado === 1,
     visible: row.visible === 1,
     order: row.orden,
     updatedAt: row.actualizado_en,
@@ -45,9 +53,13 @@ export type EventInput = {
   tag: string;
   description: string;
   date: string | null;
+  time: string | null;
   place: string;
   link: string;
   linkText: string;
+  image: string;
+  imageAlt: string;
+  featured: boolean;
   visible: boolean;
   order: number;
 };
@@ -60,9 +72,13 @@ function toRow(input: EventInput) {
     etiqueta: input.tag,
     descripcion: input.description,
     fecha: input.date,
+    hora: input.time,
     lugar: input.place,
     enlace: input.link,
     enlace_texto: input.linkText,
+    imagen: input.image,
+    imagen_alt: input.imageAlt,
+    destacado: input.featured ? 1 : 0,
     visible: input.visible ? 1 : 0,
     orden: input.order,
   };
@@ -90,29 +106,49 @@ export function slugTaken(slug: string, exceptId?: number): boolean {
   return db.prepare("SELECT id FROM eventos WHERE slug = ? AND id != ?").get(slug, exceptId ?? -1) !== undefined;
 }
 
+/** El evento destacado, para mostrarlo en grande. */
+export function findFeatured(): EventItem | null {
+  const row = db.prepare("SELECT * FROM eventos WHERE visible = 1 AND destacado = 1 ORDER BY orden, id LIMIT 1").get() as
+    | EventRow
+    | undefined;
+  return row ? toEvent(row) : null;
+}
+
+/** Solo un evento puede estar destacado a la vez. */
+function clearOtherFeatured(exceptId: number) {
+  db.prepare("UPDATE eventos SET destacado = 0 WHERE id != ?").run(exceptId);
+}
+
 export function create(input: EventInput): number {
   const siguienteOrden =
     input.order || (db.prepare("SELECT COALESCE(MAX(orden), 0) + 1 AS n FROM eventos").get() as { n: number }).n;
 
   const result = db
     .prepare(
-      `INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, lugar, enlace, enlace_texto, visible, orden)
-       VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @lugar, @enlace, @enlace_texto, @visible, @orden)`,
+      `INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, enlace, enlace_texto,
+                            imagen, imagen_alt, destacado, visible, orden)
+       VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @enlace, @enlace_texto,
+               @imagen, @imagen_alt, @destacado, @visible, @orden)`,
     )
     .run({ ...toRow(input), orden: siguienteOrden });
 
-  return Number(result.lastInsertRowid);
+  const id = Number(result.lastInsertRowid);
+  if (input.featured) clearOtherFeatured(id);
+  return id;
 }
 
 export function update(id: number, input: EventInput): void {
   db.prepare(
     `UPDATE eventos SET
        slug = @slug, titulo = @titulo, tipo = @tipo, etiqueta = @etiqueta, descripcion = @descripcion,
-       fecha = @fecha, lugar = @lugar, enlace = @enlace, enlace_texto = @enlace_texto,
+       fecha = @fecha, hora = @hora, lugar = @lugar, enlace = @enlace, enlace_texto = @enlace_texto,
+       imagen = @imagen, imagen_alt = @imagen_alt, destacado = @destacado,
        visible = @visible, orden = @orden,
        actualizado_en = datetime('now','localtime')
      WHERE id = @id`,
   ).run({ ...toRow(input), id });
+
+  if (input.featured) clearOtherFeatured(id);
 }
 
 export function toggleVisible(id: number): void {

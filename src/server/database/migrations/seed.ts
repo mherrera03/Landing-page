@@ -113,11 +113,31 @@ function seedEventos(db: DatabaseSync) {
   if (!estaVacia(db, "eventos")) return;
 
   const insert = db.prepare(`
-    INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, lugar, enlace, enlace_texto, orden)
-    VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @lugar, @enlace, @enlace_texto, @orden)
+    INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, enlace, enlace_texto,
+                         imagen, imagen_alt, destacado, orden)
+    VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @enlace, @enlace_texto,
+            @imagen, @imagen_alt, @destacado, @orden)
   `);
 
   const eventos = [
+    {
+      slug: "masterclass-interiorismo-2027",
+      titulo: "Adiós al minimalismo frío: así será el interiorismo en 2027",
+      tipo: "masterclass",
+      etiqueta: "Masterclass gratis",
+      descripcion:
+        "Una sesión gratuita para conocer hacia dónde van las tendencias de interiorismo y cómo aplicarlas en tus propios proyectos.",
+      fecha: "2026-10-08",
+      hora: "19:00",
+      lugar: "En línea",
+      enlace: "https://forms.cloud.microsoft/r/uLt18RQCVQ",
+      enlace_texto: "Inscribirme gratis",
+      imagen: "/images/events/masterclass-interiorismo-2027.jpg",
+      imagen_alt:
+        "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
+      destacado: 1,
+      orden: 1,
+    },
     {
       slug: "masterclass-abierta",
       titulo: "Masterclass abierta",
@@ -125,10 +145,14 @@ function seedEventos(db: DatabaseSync) {
       etiqueta: "Próximamente",
       descripcion: "Sesiones gratuitas con especialistas para conocer de cerca nuestros programas antes de inscribirte.",
       fecha: null,
+      hora: null,
       lugar: "Virtual",
       enlace: "",
       enlace_texto: "",
-      orden: 1,
+      imagen: "",
+      imagen_alt: "",
+      destacado: 0,
+      orden: 2,
     },
     {
       slug: "nuevos-programas-2026",
@@ -137,10 +161,14 @@ function seedEventos(db: DatabaseSync) {
       etiqueta: "Nueva edición",
       descripcion: "Conoce las próximas aperturas de cohortes y las novedades de nuestra oferta académica.",
       fecha: null,
+      hora: null,
       lugar: "",
       enlace: "",
       enlace_texto: "",
-      orden: 2,
+      imagen: "",
+      imagen_alt: "",
+      destacado: 0,
+      orden: 3,
     },
     {
       slug: "capacitacion-a-medida",
@@ -149,10 +177,14 @@ function seedEventos(db: DatabaseSync) {
       etiqueta: "Para empresas",
       descripcion: "Diseñamos programas corporativos según las necesidades de formación de tu organización.",
       fecha: null,
+      hora: null,
       lugar: "",
       enlace: "/#contacto",
       enlace_texto: "Solicitar información",
-      orden: 3,
+      imagen: "",
+      imagen_alt: "",
+      destacado: 0,
+      orden: 4,
     },
   ];
 

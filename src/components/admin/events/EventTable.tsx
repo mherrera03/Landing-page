@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Building2, CalendarDays, Eye, EyeOff, Megaphone, Pencil, type LucideIcon } from "lucide-react";
+import Image from "next/image";
+import { Building2, CalendarDays, Eye, EyeOff, Megaphone, Pencil, Star, type LucideIcon } from "lucide-react";
 import { formatLongDate } from "@/lib/dates";
 import { toggleEventVisibilityAction } from "@/server/actions/events.actions";
 import type { EventItem, EventKind } from "@/types/event.types";
@@ -36,14 +37,26 @@ export function EventTable({ events }: { events: EventItem[] }) {
               !evento.visible && "opacity-70",
             )}
           >
-            <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-violet-soft text-violet-deep">
-              <Icon className="size-5" aria-hidden="true" />
-            </span>
+            {evento.image ? (
+              <div className="relative h-20 w-full shrink-0 overflow-hidden rounded-xl bg-paper sm:h-14 sm:w-24">
+                <Image src={evento.image} alt="" fill sizes="96px" className="object-cover" />
+              </div>
+            ) : (
+              <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-violet-soft text-violet-deep">
+                <Icon className="size-5" aria-hidden="true" />
+              </span>
+            )}
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="font-bold text-ink">{evento.title}</h2>
-                <span className="rounded-full bg-violet-soft px-2 py-0.5 text-xs font-semibold text-violet-deep">{evento.tag}</span>
+                {evento.featured && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-violet-soft px-2 py-0.5 text-xs font-semibold text-violet-deep">
+                    <Star className="size-3" aria-hidden="true" />
+                    Destacado
+                  </span>
+                )}
+                <span className="rounded-full bg-paper px-2 py-0.5 text-xs font-semibold text-muted">{evento.tag}</span>
                 {!evento.visible && <span className="rounded-full bg-paper px-2 py-0.5 text-xs font-semibold text-muted">Oculto</span>}
               </div>
               <p className="mt-0.5 text-sm text-muted">

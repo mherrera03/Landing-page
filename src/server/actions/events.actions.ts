@@ -6,6 +6,7 @@ import { z } from "zod";
 import { eventSchema, type EventFormField } from "@/schemas/event.schema";
 import { requireSession } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/events.repository";
+import { saveImage } from "@/server/storage/uploads";
 
 export type EventFormState = {
   error?: string;
@@ -30,24 +31,42 @@ function toFormValues(data: ReturnType<typeof eventSchema.parse>): Record<string
     tag: data.tag,
     description: data.description,
     date: data.date ?? "",
+    time: data.time ?? "",
     place: data.place,
     link: data.link,
     linkText: data.linkText,
+    image: data.image,
+    imageAlt: data.imageAlt,
   };
 }
 
-function parseForm(formData: FormData) {
+async function parseForm(formData: FormData) {
   const values = Object.fromEntries(
     [...formData.entries()].filter(([, v]) => typeof v === "string").map(([k, v]) => [k, String(v)]),
   );
 
-  const result = eventSchema.safeParse({ ...values, visible: formData.get("visible") === "on" });
+  // Si subieron un banner nuevo, reemplaza al anterior
+  const file = formData.get("imagenArchivo");
+  let image = String(formData.get("image") ?? "");
+
+  if (file instanceof Blob && file.size > 0) {
+    const saved = await saveImage(file, "events");
+    if (!saved.ok) return { ok: false as const, state: { values, fields: { image: saved.error } } };
+    image = saved.path;
+  }
+
+  const result = eventSchema.safeParse({
+    ...values,
+    image,
+    featured: formData.get("featured") === "on",
+    visible: formData.get("visible") === "on",
+  });
 
   if (!result.success) {
     const fieldErrors = z.flattenError(result.error).fieldErrors;
     const fields: EventFormState["fields"] = {};
     for (const key of Object.keys(fieldErrors) as EventFormField[]) fields[key] = fieldErrors[key]?.[0];
-    return { ok: false as const, state: { values, fields } };
+    return { ok: false as const, state: { values: { ...values, image }, fields } };
   }
 
   return { ok: true as const, data: result.data };
@@ -56,7 +75,7 @@ function parseForm(formData: FormData) {
 export async function createEventAction(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
   await requireSession();
 
-  const parsed = parseForm(formData);
+  const parsed = await parseForm(formData);
   if (!parsed.ok) return parsed.state;
 
   if (repo.slugTaken(parsed.data.slug)) {
@@ -74,7 +93,7 @@ export async function updateEventAction(id: number, _prev: EventFormState, formD
   const actual = repo.findById(id);
   if (!actual) return { error: "Este evento ya no existe." };
 
-  const parsed = parseForm(formData);
+  const parsed = await parseForm(formData);
   if (!parsed.ok) return parsed.state;
 
   if (repo.slugTaken(parsed.data.slug, id)) {

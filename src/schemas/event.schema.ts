@@ -22,6 +22,10 @@ export const eventSchema = z.object({
   date: z
     .union([z.literal(""), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Usa el selector de fecha.")])
     .transform((v) => (v === "" ? null : v)),
+  // Vacío = sin hora concreta
+  time: z
+    .union([z.literal(""), z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Usa el selector de hora.")])
+    .transform((v) => (v === "" ? null : v)),
   place: z.string().trim().max(80, "El lugar es demasiado largo."),
   // Admite enlaces externos (https://…) y secciones de la propia landing (/#contacto)
   link: z
@@ -31,8 +35,21 @@ export const eventSchema = z.object({
     ])
     .transform((v) => v.trim()),
   linkText: z.string().trim().max(40, "El texto del botón debe ser corto."),
+  // Banner promocional. Opcional: los eventos sin imagen salen como tarjeta de texto.
+  image: z.string().trim(),
+  imageAlt: z.string().trim().max(250, "La descripción de la imagen es demasiado larga."),
+  featured: z.coerce.boolean<boolean>(),
   visible: z.coerce.boolean<boolean>(),
-});
+})
+  .refine((d) => !d.image || d.imageAlt.length >= 10, {
+    path: ["imageAlt"],
+    message: "Describe la imagen en pocas palabras: lo leen quienes no pueden verla.",
+  })
+  // Un banner sin enlace no sirve de nada: el usuario no puede inscribirse
+  .refine((d) => !d.featured || d.link !== "", {
+    path: ["link"],
+    message: "Un evento destacado necesita un enlace para que la gente pueda inscribirse.",
+  });
 
 export type EventFormInput = z.infer<typeof eventSchema>;
 export type EventFormField = keyof EventFormInput;

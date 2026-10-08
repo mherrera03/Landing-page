@@ -11,8 +11,8 @@ import crypto from "node:crypto";
  * despliegue, basta con reescribir `saveImage` para que suba a un servicio en la
  * nube: el resto de la aplicación no cambia porque todo pasa por aquí.
  */
-const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "courses");
-const PUBLIC_PREFIX = "/images/courses";
+/** Carpetas donde el admin puede guardar imágenes. */
+export type UploadFolder = "courses" | "events";
 
 export const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // 4 MB
 export const ALLOWED_IMAGE_TYPES = ["image/webp", "image/jpeg", "image/png", "image/avif"] as const;
@@ -26,7 +26,7 @@ const EXTENSION: Record<string, string> = {
 
 export type SaveImageResult = { ok: true; path: string } | { ok: false; error: string };
 
-export async function saveImage(file: Blob): Promise<SaveImageResult> {
+export async function saveImage(file: Blob, folder: UploadFolder = "courses"): Promise<SaveImageResult> {
   if (file.size === 0) return { ok: false, error: "El archivo está vacío." };
   if (file.size > MAX_IMAGE_BYTES) {
     return { ok: false, error: `La imagen pesa ${(file.size / 1024 / 1024).toFixed(1)} MB. El máximo son 4 MB.` };
@@ -38,9 +38,11 @@ export async function saveImage(file: Blob): Promise<SaveImageResult> {
   // Nombre generado por el servidor: el del archivo original podría traer
   // rutas (../) o caracteres raros que escaparan de la carpeta.
   const name = `${crypto.randomUUID()}.${EXTENSION[file.type]}`;
+  // `folder` viene de un tipo cerrado, no del usuario: no puede escapar de public/images
+  const dir = path.join(process.cwd(), "public", "images", folder);
 
-  await fs.mkdir(UPLOAD_DIR, { recursive: true });
-  await fs.writeFile(path.join(UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
 
-  return { ok: true, path: `${PUBLIC_PREFIX}/${name}` };
+  return { ok: true, path: `/images/${folder}/${name}` };
 }
