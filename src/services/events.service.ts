@@ -3,6 +3,18 @@ import type { EventItem } from "@/types/event.types";
 // TEMPORAL: datos de ejemplo hasta conectar la base de datos y el panel admin.
 const EVENTS: EventItem[] = [
   {
+    id: 4,
+    slug: "masterclass-adios-minimalismo-frio",
+    kind: "masterclass",
+    tag: "Masterclass gratis",
+    title: "Adiós al minimalismo frío",
+    description: "Así será el interiorismo en 2027.",
+    startsAt: "2026-10-08T19:00:00-06:00",
+    image: "/images/evento1.jpeg",
+    registrationUrl: "https://forms.cloud.microsoft/r/uLt18RQCVQ",
+    price: "Gratis",
+  },
+  {
     id: 1,
     slug: "masterclass-abierta",
     kind: "masterclass",
