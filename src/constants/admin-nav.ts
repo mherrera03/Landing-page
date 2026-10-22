@@ -6,6 +6,8 @@ export type AdminNavItem = {
   icon: LucideIcon;
   /** Las secciones pendientes se muestran atenuadas y no se puede entrar. */
   disponible: boolean;
+  /** Solo para el rol admin: a los editores ni siquiera se les muestra. */
+  soloAdmin?: boolean;
 };
 
 export const ADMIN_NAV: AdminNavItem[] = [
@@ -16,6 +18,6 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin/anuncios", label: "Anuncios", icon: Megaphone, disponible: false },
   { href: "/admin/banners", label: "Banners", icon: Image, disponible: true },
   { href: "/admin/solicitudes", label: "Solicitudes", icon: Inbox, disponible: false },
-  { href: "/admin/usuarios", label: "Usuarios", icon: Users, disponible: false },
+  { href: "/admin/usuarios", label: "Usuarios", icon: Users, disponible: true, soloAdmin: true },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings, disponible: false },
 ];

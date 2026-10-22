@@ -229,9 +229,25 @@ Todas piden sesión iniciada, menos el login.
 | `/admin/cursos` · `/nuevo` · `/[id]/editar` | Administrar cursos |
 | `/admin/eventos` · `/nuevo` · `/[id]/editar` | Administrar eventos |
 | `/admin/banners` · `/nuevo` · `/[id]/editar` | Administrar banners |
+| `/admin/usuarios` · `/nuevo` · `/[id]/editar` | Administrar usuarios (**solo rol admin**) |
 
-Las secciones de Noticias, Anuncios, Solicitudes, Usuarios y Configuración aparecen en el menú
-marcadas como *Pronto*: todavía no existen.
+Las secciones de Noticias, Anuncios, Solicitudes y Configuración aparecen en el menú marcadas
+como *Pronto*: todavía no existen.
+
+### Roles
+
+| Rol | Cursos, eventos y banners | Usuarios |
+|---|---|---|
+| **Administrador** | ✅ | ✅ |
+| **Editor** | ✅ | ❌ no ve la sección |
+
+A un editor se le oculta Usuarios del menú y, si escribe la dirección a mano, se le devuelve al
+resumen. Hay tres candados pensados para que nadie se quede fuera del panel sin querer: no puedes
+quitarte el rol de admin a ti mismo, no puedes desactivar ni eliminar tu propia cuenta, y siempre
+tiene que quedar al menos un administrador activo.
+
+Desactivar una cuenta la conserva pero le cierra el paso: no puede iniciar sesión y, si la tenía
+abierta, se le cierra en la siguiente página que abra.
 
 ## Hoja de ruta
 
@@ -242,9 +258,10 @@ marcadas como *Pronto*: todavía no existen.
 - [x] Base de datos, migraciones y repositorios (`src/server/database/`)
 - [x] Panel admin: login, CRUD de cursos, eventos y banners
 - [x] La landing lee cursos y eventos desde la base de datos
+- [x] Usuarios del panel, con roles y control de acceso por rol
 - [ ] Mostrar los banners en la landing (el panel ya los administra, pero no se ven en la página)
 - [ ] Guardar las solicitudes de contacto en la base de datos y verlas en el panel
-- [ ] Secciones pendientes del panel: Noticias, Anuncios, Usuarios y Configuración
+- [ ] Secciones pendientes del panel: Noticias, Anuncios y Configuración
 - [ ] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
 - [ ] Logo oficial, SEO (sitemap, robots, Open Graph) y textos definitivos
@@ -296,7 +313,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
-| 0.7.0 | 2026-10-22 | Administración de banners; se unifica el módulo de eventos, que había quedado partido en dos tras un merge |
+| 0.7.0 | 2026-10-22 | Administración de banners y de usuarios del panel, con roles (admin / editor) y acceso restringido por rol; se unifica el módulo de eventos, que había quedado partido en dos tras un merge |
 | 0.6.0 | 2026-10-08 | Evento destacado con banner, hora y botón de inscripción; primer evento real publicado |
 | 0.5.0 | 2026-10-08 | Eventos administrables desde el panel, ahora con fecha, lugar y enlace de inscripción |
 | 0.4.1 | 2026-10-01 | Se cambia better-sqlite3 por el SQLite incluido en Node: ya no hace falta compilar nada al instalar |

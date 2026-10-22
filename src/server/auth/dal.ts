@@ -22,3 +22,16 @@ export const requireSession = cache(async (): Promise<SessionPayload> => {
 
   return { userId: user.id, name: user.nombre, role: user.rol };
 });
+
+/**
+ * Como requireSession(), pero además exige rol de administrador.
+ * La usan las páginas y acciones de /admin/usuarios.
+ *
+ * Se manda al resumen y no al login: la persona sí tiene sesión, lo que no
+ * tiene es permiso, y devolverla al login solo la dejaría dando vueltas.
+ */
+export const requireAdmin = cache(async (): Promise<SessionPayload> => {
+  const session = await requireSession();
+  if (session.role !== "admin") redirect("/admin");
+  return session;
+});

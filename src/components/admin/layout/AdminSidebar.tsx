@@ -25,7 +25,7 @@ export function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
 
       <nav aria-label="Secciones del panel" className="flex-1">
         <ul className="flex flex-col gap-0.5">
-          {ADMIN_NAV.map(({ href, label, icon: Icon, disponible }) => {
+          {ADMIN_NAV.filter(({ soloAdmin }) => !soloAdmin || user.role === "admin").map(({ href, label, icon: Icon, disponible }) => {
             // "/admin" solo se marca activo en su propia página, no en las hijas
             const activo = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
