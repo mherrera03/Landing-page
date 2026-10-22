@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Eye, EyeOff, MapPin, Pencil, Star } from "lucide-react";
+import {
+  CalendarDays,
+  Eye,
+  EyeOff,
+  MapPin,
+  Pencil,
+  Star,
+} from "lucide-react";
 
 import { toggleEventVisibilityAction } from "@/server/actions/events.actions";
 import type { UgbEvent } from "@/types/event.types";
@@ -10,9 +17,7 @@ export function EventTable({ events }: { events: UgbEvent[] }) {
   if (events.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-ink/20 bg-surface px-6 py-14 text-center">
-        <p className="font-semibold text-ink">
-          Todavía no hay eventos
-        </p>
+        <p className="font-semibold text-ink">Todavía no hay eventos</p>
 
         <p className="mt-1 text-sm text-muted">
           Crea el primero y aparecerá en la landing.
@@ -35,7 +40,7 @@ export function EventTable({ events }: { events: UgbEvent[] }) {
           key={evento.id}
           className={cn(
             "flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 sm:flex-row sm:items-center",
-            !evento.visible && "opacity-70",
+            !evento.visible && "opacity-70"
           )}
         >
           <div className="relative h-20 w-full shrink-0 overflow-hidden rounded-xl bg-paper sm:h-16 sm:w-24">
@@ -52,9 +57,7 @@ export function EventTable({ events }: { events: UgbEvent[] }) {
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-bold text-ink">
-                {evento.title}
-              </h2>
+              <h2 className="font-bold text-ink">{evento.title}</h2>
 
               {evento.featured && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-violet-soft px-2 py-0.5 text-xs font-semibold text-violet-deep">
@@ -85,6 +88,14 @@ export function EventTable({ events }: { events: UgbEvent[] }) {
 
               <span>{evento.modality}</span>
             </div>
+
+            <p className="mt-1 text-sm text-muted">
+              {evento.type}
+              {typeof evento.price === "number" &&
+                ` · ${evento.price === 0 ? "Gratis" : `$${evento.price.toFixed(2)}`}`}
+              {typeof evento.capacity === "number" &&
+                ` · ${evento.capacity} cupos`}
+            </p>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -101,6 +112,11 @@ export function EventTable({ events }: { events: UgbEvent[] }) {
                   evento.visible
                     ? "Ocultar de la landing"
                     : "Mostrar en la landing"
+                }
+                aria-label={
+                  evento.visible
+                    ? `Ocultar ${evento.title}`
+                    : `Mostrar ${evento.title}`
                 }
                 className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line px-3.5 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper"
               >

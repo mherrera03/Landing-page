@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
-import { ImageUpload } from "./ImageUpload";
+import { ImageUpload } from "../ui/ImageUpload";
 import { Switch } from "../ui/Switch";
 
 type CourseFormProps = {

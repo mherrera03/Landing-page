@@ -59,6 +59,52 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
       `);
     },
   },
+  {
+    name: "002_eventos",
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE eventos (
+          id             INTEGER PRIMARY KEY AUTOINCREMENT,
+          slug           TEXT NOT NULL UNIQUE,
+          titulo         TEXT NOT NULL,
+          tipo           TEXT NOT NULL CHECK (tipo IN ('masterclass','novedad','empresas')),
+          etiqueta       TEXT NOT NULL DEFAULT '',
+          descripcion    TEXT NOT NULL DEFAULT '',
+          -- Fecha en formato AAAA-MM-DD. Vacía en las noticias, que no tienen día concreto.
+          fecha          TEXT,
+          lugar          TEXT NOT NULL DEFAULT '',
+          enlace         TEXT NOT NULL DEFAULT '',
+          enlace_texto   TEXT NOT NULL DEFAULT '',
+          visible        INTEGER NOT NULL DEFAULT 1,
+          orden          INTEGER NOT NULL DEFAULT 0,
+          creado_en      TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+          actualizado_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+        );
+
+        CREATE INDEX idx_eventos_visible ON eventos (visible, orden);
+      `);
+    },
+  },
+  {
+    name: "003_eventos_destacados",
+    up: (db) => {
+      db.exec(`
+        ALTER TABLE eventos ADD COLUMN imagen     TEXT NOT NULL DEFAULT '';
+        ALTER TABLE eventos ADD COLUMN imagen_alt TEXT NOT NULL DEFAULT '';
+        -- Hora en formato HH:MM (24 h). Vacía si el evento no tiene hora concreta.
+        ALTER TABLE eventos ADD COLUMN hora       TEXT;
+        -- El evento destacado se muestra en grande, arriba del resto.
+        ALTER TABLE eventos ADD COLUMN destacado  INTEGER NOT NULL DEFAULT 0;
+      `);
+    },
+  },
+  {
+    name: "004_eventos_costo",
+    up: (db) => {
+      // Costo del evento: "Gratis", "$25"… Vacío si no aplica.
+      db.exec(`ALTER TABLE eventos ADD COLUMN costo TEXT NOT NULL DEFAULT '';`);
+    },
+  },
 ];
 
 export function runMigrations(db: DatabaseSync) {

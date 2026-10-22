@@ -8,6 +8,17 @@ import { transaction } from "../connection";
  * así nunca pisa lo que el admin haya creado.
  */
 export function seed(db: DatabaseSync) {
+  seedUsuarios(db);
+  seedCursos(db);
+  seedEventos(db);
+}
+
+/** ¿La tabla está vacía? Solo entonces se insertan los datos de ejemplo. */
+function estaVacia(db: DatabaseSync, tabla: string): boolean {
+  return (db.prepare(`SELECT COUNT(*) AS n FROM ${tabla}`).get() as { n: number }).n === 0;
+}
+
+function seedUsuarios(db: DatabaseSync) {
   const hayUsuarios = db.prepare("SELECT COUNT(*) AS n FROM usuarios").get() as { n: number };
   if (hayUsuarios.n === 0) {
     // ⚠️ Usuario de PRUEBA. Cambiar la contraseña antes de pasar a producción.
@@ -19,9 +30,10 @@ export function seed(db: DatabaseSync) {
     );
     console.log("[db] usuario inicial creado: admin@ugb.edu.sv");
   }
+}
 
-  const hayCursos = db.prepare("SELECT COUNT(*) AS n FROM cursos").get() as { n: number };
-  if (hayCursos.n > 0) return;
+function seedCursos(db: DatabaseSync) {
+  if (!estaVacia(db, "cursos")) return;
 
   const insert = db.prepare(`
     INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
@@ -95,4 +107,91 @@ export function seed(db: DatabaseSync) {
 
   transaction(db, () => cursos.forEach((c) => insert.run(c)));
   console.log("[db] cursos iniciales creados");
+}
+
+function seedEventos(db: DatabaseSync) {
+  if (!estaVacia(db, "eventos")) return;
+
+  const insert = db.prepare(`
+    INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, costo, enlace, enlace_texto,
+                         imagen, imagen_alt, destacado, orden)
+    VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @costo, @enlace, @enlace_texto,
+            @imagen, @imagen_alt, @destacado, @orden)
+  `);
+
+  const eventos = [
+    {
+      slug: "masterclass-interiorismo-2027",
+      titulo: "Adiós al minimalismo frío: así será el interiorismo en 2027",
+      tipo: "masterclass",
+      etiqueta: "Masterclass gratis",
+      descripcion:
+        "Una sesión gratuita para conocer hacia dónde van las tendencias de interiorismo y cómo aplicarlas en tus propios proyectos.",
+      fecha: "2026-10-08",
+      hora: "19:00",
+      lugar: "En línea",
+      costo: "Gratis",
+      enlace: "https://forms.cloud.microsoft/r/uLt18RQCVQ",
+      enlace_texto: "Inscribirme gratis",
+      imagen: "/images/events/masterclass-interiorismo-2027.jpg",
+      imagen_alt:
+        "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
+      destacado: 1,
+      orden: 1,
+    },
+    {
+      slug: "masterclass-abierta",
+      titulo: "Masterclass abierta",
+      tipo: "masterclass",
+      etiqueta: "Próximamente",
+      descripcion: "Sesiones gratuitas con especialistas para conocer de cerca nuestros programas antes de inscribirte.",
+      fecha: null,
+      hora: null,
+      lugar: "Virtual",
+      costo: "",
+      enlace: "",
+      enlace_texto: "",
+      imagen: "",
+      imagen_alt: "",
+      destacado: 0,
+      orden: 2,
+    },
+    {
+      slug: "nuevos-programas-2026",
+      titulo: "Nuevos programas 2026",
+      tipo: "novedad",
+      etiqueta: "Nueva edición",
+      descripcion: "Conoce las próximas aperturas de cohortes y las novedades de nuestra oferta académica.",
+      fecha: null,
+      hora: null,
+      lugar: "",
+      costo: "",
+      enlace: "",
+      enlace_texto: "",
+      imagen: "",
+      imagen_alt: "",
+      destacado: 0,
+      orden: 3,
+    },
+    {
+      slug: "capacitacion-a-medida",
+      titulo: "Capacitación a medida",
+      tipo: "empresas",
+      etiqueta: "Para empresas",
+      descripcion: "Diseñamos programas corporativos según las necesidades de formación de tu organización.",
+      fecha: null,
+      hora: null,
+      lugar: "",
+      costo: "",
+      enlace: "/#contacto",
+      enlace_texto: "Solicitar información",
+      imagen: "",
+      imagen_alt: "",
+      destacado: 0,
+      orden: 4,
+    },
+  ];
+
+  transaction(db, () => eventos.forEach((e) => insert.run(e)));
+  console.log("[db] eventos iniciales creados");
 }

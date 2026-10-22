@@ -1,12 +1,9 @@
 import { getEvents } from "@/services/events.service";
 import { EventGrid } from "../events/EventGrid";
-import { FeaturedEvent } from "../events/FeaturedEvent";
 import { SectionHeading } from "./SectionHeading";
 
 export async function EventsSection() {
   const events = await getEvents();
-  const featured = events.find((e) => e.startsAt && e.image);
-  const others = events.filter((e) => e !== featured);
 
   return (
     <section id="eventos" aria-labelledby="eventos-titulo" className="py-16 lg:py-24">
@@ -18,13 +15,8 @@ export async function EventsSection() {
               Masterclasses, aperturas de cohortes y programas para empresas.
             </SectionHeading>
 
-            {featured && (
-              <div className="mb-14 lg:mb-16">
-                <FeaturedEvent event={featured} />
-              </div>
-            )}
-
-            {others.length > 0 && <EventGrid events={others} />}
+            {/* EventGrid separa el destacado del resto */}
+            <EventGrid events={events} />
           </div>
         </div>
       </div>

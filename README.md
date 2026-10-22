@@ -1,6 +1,6 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.4.1-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.6.0-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -149,7 +149,7 @@ Dos utilidades propias: `bg-brand` (degradado de fondo) y `text-gradient` (degra
 - [x] Animaciones con Motion, GSAP y scroll suave con Lenis
 - [x] Formulario validado con Zod (cliente y servidor) + página de gracias
 - [ ] Base de datos y repositorios (`src/server/database/`)
-- [ ] Panel admin en `/admin`: login, CRUD de cursos, eventos y solicitudes
+- [x] Panel admin: login, CRUD de cursos y eventos
 - [ ] Landing leyendo los datos reales desde la base de datos
 - [ ] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
 - [ ] Logo oficial, SEO (sitemap, robots, Open Graph) y textos definitivos
@@ -187,6 +187,8 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.6.0 | 2026-10-08 | Evento destacado con banner, hora y botón de inscripción; primer evento real publicado |
+| 0.5.0 | 2026-10-08 | Eventos administrables desde el panel, ahora con fecha, lugar y enlace de inscripción |
 | 0.4.1 | 2026-10-01 | Se cambia better-sqlite3 por el SQLite incluido en Node: ya no hace falta compilar nada al instalar |
 | 0.4.0 | 2026-10-01 | Panel admin: login con sesión segura, base de datos SQLite con migraciones y CRUD de cursos con subida de imágenes; la landing lee los cursos de la base |
 | 0.3.0 | 2026-10-01 | Migración a Next.js 16 + TypeScript + Tailwind 4; landing rediseñada con Motion, GSAP y Lenis; formulario validado con Zod |

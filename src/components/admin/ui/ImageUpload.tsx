@@ -10,16 +10,26 @@ const MAX_MB = 4;
 const ACEPTADOS = "image/webp,image/jpeg,image/png,image/avif";
 
 type ImageUploadProps = {
-  /** Ruta de la imagen ya guardada (al editar un curso). */
+  /** Ruta de la imagen ya guardada (al editar). */
   defaultValue?: string;
   error?: string;
+  label?: string;
+  required?: boolean;
+  /** Pista sobre el formato recomendado. */
+  folderHint?: string;
 };
 
 /**
  * Sube una imagen o arrástrala. El archivo viaja en `imagenArchivo`;
  * `image` lleva la ruta actual por si no se cambia la imagen.
  */
-export function ImageUpload({ defaultValue = "", error }: ImageUploadProps) {
+export function ImageUpload({
+  defaultValue = "",
+  error,
+  label = "Imagen del curso",
+  required = true,
+  folderHint = "Se recomienda horizontal (16:11).",
+}: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState(defaultValue);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -51,7 +61,7 @@ export function ImageUpload({ defaultValue = "", error }: ImageUploadProps) {
   }
 
   return (
-    <Field id="imagenArchivo" label="Imagen del curso" required error={localError ?? error} className="sm:col-span-2">
+    <Field id="imagenArchivo" label={label} required={required} optional={!required} error={localError ?? error} className="sm:col-span-2">
       {/* Conserva la imagen guardada si no se sube una nueva */}
       <input type="hidden" name="image" value={defaultValue} />
 
@@ -115,7 +125,7 @@ export function ImageUpload({ defaultValue = "", error }: ImageUploadProps) {
           <p className="mt-2 text-xs text-muted">
             {fileName ?? "Arrastra una imagen aquí o elige una desde tu computadora."}
             <br />
-            WebP, JPG, PNG o AVIF · máximo {MAX_MB} MB · se recomienda horizontal (16:11).
+            WebP, JPG, PNG o AVIF · máximo {MAX_MB} MB · {folderHint}
           </p>
         </div>
       </div>
