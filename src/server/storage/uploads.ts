@@ -12,7 +12,7 @@ import crypto from "node:crypto";
  * nube: el resto de la aplicación no cambia porque todo pasa por aquí.
  */
 /** Carpetas donde el admin puede guardar imágenes. */
-export type UploadFolder = "courses" | "events";
+export type UploadFolder = "courses" | "events" | "banners";
 
 export const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // 4 MB
 export const ALLOWED_IMAGE_TYPES = ["image/webp", "image/jpeg", "image/png", "image/avif"] as const;

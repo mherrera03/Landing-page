@@ -35,6 +35,9 @@ public/images/courses/*
 public/images/events/*
 !public/images/events/masterclass-interiorismo-2027.jpg
 
+# Imágenes de banners subidas desde el admin
+public/images/banners/
+
 # Sistema
 .DS_Store
 Thumbs.db

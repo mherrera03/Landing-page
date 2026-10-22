@@ -14,7 +14,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin/eventos", label: "Eventos", icon: CalendarDays, disponible: true },
   { href: "/admin/noticias", label: "Noticias", icon: Newspaper, disponible: false },
   { href: "/admin/anuncios", label: "Anuncios", icon: Megaphone, disponible: false },
-  { href: "/admin/banners", label: "Banners", icon: Image, disponible: false },
+  { href: "/admin/banners", label: "Banners", icon: Image, disponible: true },
   { href: "/admin/solicitudes", label: "Solicitudes", icon: Inbox, disponible: false },
   { href: "/admin/usuarios", label: "Usuarios", icon: Users, disponible: false },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings, disponible: false },
