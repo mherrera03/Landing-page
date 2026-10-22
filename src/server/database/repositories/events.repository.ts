@@ -57,10 +57,57 @@ function db() {
       );
     `);
 
+    sembrarEjemplo(conn);
+
     initialized = true;
   }
 
   return conn;
+}
+
+/**
+ * Evento de ejemplo, solo si la tabla está vacía: así una copia recién clonada
+ * del proyecto no muestra la sección de eventos en blanco. Nunca pisa lo que
+ * el admin haya creado.
+ */
+function sembrarEjemplo(conn: typeof conexion) {
+  const { n } = conn.prepare("SELECT COUNT(*) AS n FROM events").get() as { n: number };
+  if (n > 0) return;
+
+  const ahora = new Date().toISOString();
+
+  conn
+    .prepare(`
+      INSERT INTO events (
+        slug, title, type, modality, event_date, event_time,
+        location, price, capacity, registration_url, status,
+        description, image, image_alt, visible, featured,
+        created_at, updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `)
+    .run(
+      "masterclass-interiorismo-2027",
+      "Adiós al minimalismo frío: así será el interiorismo en 2027",
+      "Masterclass",
+      "Virtual",
+      "2026-10-08",
+      "19:00",
+      "En línea",
+      0,
+      null,
+      "https://forms.cloud.microsoft/r/uLt18RQCVQ",
+      "finalizado",
+      "Una sesión gratuita para conocer hacia dónde van las tendencias de interiorismo y cómo aplicarlas en tus propios proyectos.",
+      "/images/events/masterclass-interiorismo-2027.jpg",
+      "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
+      1,
+      1,
+      ahora,
+      ahora,
+    );
+
+  console.log("[db] evento de ejemplo creado");
 }
 
 function toEvent(row: EventRow): UgbEvent {

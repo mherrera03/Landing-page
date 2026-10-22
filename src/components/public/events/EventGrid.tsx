@@ -1,9 +1,9 @@
-import type { EventItem } from "@/types/event.types";
+import type { UgbEvent } from "@/types/event.types";
 import { Reveal } from "../motion/Reveal";
 import { EventCard } from "./EventCard";
 import { FeaturedEvent } from "./FeaturedEvent";
 
-export function EventGrid({ events }: { events: EventItem[] }) {
+export function EventGrid({ events }: { events: UgbEvent[] }) {
   // El destacado va arriba en grande; el resto, en tarjetas
   const featured = events.find((e) => e.featured) ?? null;
   const resto = featured ? events.filter((e) => e.id !== featured.id) : events;

@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Editar evento" };
 
 export default async function EditarEventoPage({ params }: PageProps<"/admin/eventos/[id]/editar">) {
   const { id } = await params;
-  const evento = repo.findById(Number(id));
+  const evento = repo.getEventById(Number(id));
   if (!evento) notFound();
 
   // El id va fijo aquí: no viaja en el formulario, así nadie puede cambiarlo
