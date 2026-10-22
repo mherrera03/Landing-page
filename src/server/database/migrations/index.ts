@@ -98,6 +98,13 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
       `);
     },
   },
+  {
+    name: "004_eventos_costo",
+    up: (db) => {
+      // Costo del evento: "Gratis", "$25"… Vacío si no aplica.
+      db.exec(`ALTER TABLE eventos ADD COLUMN costo TEXT NOT NULL DEFAULT '';`);
+    },
+  },
 ];
 
 export function runMigrations(db: DatabaseSync) {

@@ -113,9 +113,9 @@ function seedEventos(db: DatabaseSync) {
   if (!estaVacia(db, "eventos")) return;
 
   const insert = db.prepare(`
-    INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, enlace, enlace_texto,
+    INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, costo, enlace, enlace_texto,
                          imagen, imagen_alt, destacado, orden)
-    VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @enlace, @enlace_texto,
+    VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @costo, @enlace, @enlace_texto,
             @imagen, @imagen_alt, @destacado, @orden)
   `);
 
@@ -130,6 +130,7 @@ function seedEventos(db: DatabaseSync) {
       fecha: "2026-10-08",
       hora: "19:00",
       lugar: "En línea",
+      costo: "Gratis",
       enlace: "https://forms.cloud.microsoft/r/uLt18RQCVQ",
       enlace_texto: "Inscribirme gratis",
       imagen: "/images/events/masterclass-interiorismo-2027.jpg",
@@ -147,6 +148,7 @@ function seedEventos(db: DatabaseSync) {
       fecha: null,
       hora: null,
       lugar: "Virtual",
+      costo: "",
       enlace: "",
       enlace_texto: "",
       imagen: "",
@@ -163,6 +165,7 @@ function seedEventos(db: DatabaseSync) {
       fecha: null,
       hora: null,
       lugar: "",
+      costo: "",
       enlace: "",
       enlace_texto: "",
       imagen: "",
@@ -179,6 +182,7 @@ function seedEventos(db: DatabaseSync) {
       fecha: null,
       hora: null,
       lugar: "",
+      costo: "",
       enlace: "/#contacto",
       enlace_texto: "Solicitar información",
       imagen: "",

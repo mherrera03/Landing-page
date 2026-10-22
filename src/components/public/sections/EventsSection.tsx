@@ -14,6 +14,8 @@ export async function EventsSection() {
             <SectionHeading id="eventos-titulo" kicker="Agenda UGB Plus" title="Noticias y próximos eventos" onDark>
               Masterclasses, aperturas de cohortes y programas para empresas.
             </SectionHeading>
+
+            {/* EventGrid separa el destacado del resto */}
             <EventGrid events={events} />
           </div>
         </div>

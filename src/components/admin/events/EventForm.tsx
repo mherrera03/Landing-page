@@ -118,6 +118,17 @@ export function EventForm({ action, event }: EventFormProps) {
           error={state.fields?.place}
         />
 
+        <Input
+          id="price"
+          name="price"
+          label="Costo"
+          optional
+          placeholder="Gratis, $25…"
+          maxLength={40}
+          defaultValue={v.price ?? event?.price}
+          error={state.fields?.price}
+        />
+
         <Textarea
           id="description"
           name="description"

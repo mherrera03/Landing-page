@@ -33,6 +33,7 @@ function toFormValues(data: ReturnType<typeof eventSchema.parse>): Record<string
     date: data.date ?? "",
     time: data.time ?? "",
     place: data.place,
+    price: data.price,
     link: data.link,
     linkText: data.linkText,
     image: data.image,

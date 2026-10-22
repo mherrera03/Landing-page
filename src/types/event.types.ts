@@ -22,6 +22,8 @@ export interface EventItem {
   time: string | null;
   /** Lugar o modalidad: "Virtual", "Campus San Miguel"… */
   place: string;
+  /** Costo: "Gratis", "$25"… Vacío si no aplica. */
+  price: string;
   /** Enlace de inscripción o más información. Vacío si no hay. */
   link: string;
   /** Texto del botón del enlace. */

@@ -27,6 +27,7 @@ export const eventSchema = z.object({
     .union([z.literal(""), z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Usa el selector de hora.")])
     .transform((v) => (v === "" ? null : v)),
   place: z.string().trim().max(80, "El lugar es demasiado largo."),
+  price: z.string().trim().max(40, "El costo debe ser corto, por ejemplo: Gratis o $25."),
   // Admite enlaces externos (https://…) y secciones de la propia landing (/#contacto)
   link: z
     .union([

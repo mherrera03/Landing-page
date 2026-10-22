@@ -13,6 +13,7 @@ type EventRow = {
   fecha: string | null;
   hora: string | null;
   lugar: string;
+  costo: string;
   enlace: string;
   enlace_texto: string;
   imagen: string;
@@ -35,6 +36,7 @@ function toEvent(row: EventRow): EventItem {
     date: row.fecha,
     time: row.hora,
     place: row.lugar,
+    price: row.costo,
     link: row.enlace,
     linkText: row.enlace_texto,
     image: row.imagen,
@@ -55,6 +57,7 @@ export type EventInput = {
   date: string | null;
   time: string | null;
   place: string;
+  price: string;
   link: string;
   linkText: string;
   image: string;
@@ -74,6 +77,7 @@ function toRow(input: EventInput) {
     fecha: input.date,
     hora: input.time,
     lugar: input.place,
+    costo: input.price,
     enlace: input.link,
     enlace_texto: input.linkText,
     imagen: input.image,
@@ -125,9 +129,9 @@ export function create(input: EventInput): number {
 
   const result = db
     .prepare(
-      `INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, enlace, enlace_texto,
+      `INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, costo, enlace, enlace_texto,
                             imagen, imagen_alt, destacado, visible, orden)
-       VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @enlace, @enlace_texto,
+       VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @costo, @enlace, @enlace_texto,
                @imagen, @imagen_alt, @destacado, @visible, @orden)`,
     )
     .run({ ...toRow(input), orden: siguienteOrden });
@@ -141,7 +145,7 @@ export function update(id: number, input: EventInput): void {
   db.prepare(
     `UPDATE eventos SET
        slug = @slug, titulo = @titulo, tipo = @tipo, etiqueta = @etiqueta, descripcion = @descripcion,
-       fecha = @fecha, hora = @hora, lugar = @lugar, enlace = @enlace, enlace_texto = @enlace_texto,
+       fecha = @fecha, hora = @hora, lugar = @lugar, costo = @costo, enlace = @enlace, enlace_texto = @enlace_texto,
        imagen = @imagen, imagen_alt = @imagen_alt, destacado = @destacado,
        visible = @visible, orden = @orden,
        actualizado_en = datetime('now','localtime')
