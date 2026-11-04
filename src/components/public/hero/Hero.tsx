@@ -69,13 +69,7 @@ export function Hero({ course }: { course: Course | null }) {
 
       <div className="container-page grid items-center gap-10 pt-10 pb-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:pt-16 lg:pb-24">
         <motion.div variants={container} initial="hidden" animate="show">
-          <motion.p
-            variants={fade}
-            className="inline-flex items-center gap-2 rounded-full border border-violet/30 bg-surface px-3.5 py-1.5 text-xs font-semibold text-violet-deep"
-          >
-            <span aria-hidden="true" className="size-2 rounded-full bg-brand" />
-            ¡Únete a quienes nunca dejan de aprender! 
-          </motion.p>
+          
 
           <h1 className="mt-5 text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
             <span className="-mb-[0.14em] block overflow-hidden pb-[0.14em]">

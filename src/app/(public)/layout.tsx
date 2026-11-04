@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { AnnouncementBanner } from "@/components/public/announcements/AnnouncementBanner";
 import { Header } from "@/components/public/layout/Header";
 import { Footer } from "@/components/public/layout/Footer";
 import { SmoothScroll } from "@/components/public/motion/SmoothScroll";
@@ -13,7 +12,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       >
         Saltar al contenido
       </a>
-      <AnnouncementBanner />
       <Header />
       <main id="contenido" className="flex-1">
         {children}
