@@ -1,6 +1,6 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.7.0-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.8.0-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -230,9 +230,10 @@ Todas piden sesión iniciada, menos el login.
 | `/admin/eventos` · `/nuevo` · `/[id]/editar` | Administrar eventos |
 | `/admin/banners` · `/nuevo` · `/[id]/editar` | Administrar banners |
 | `/admin/usuarios` · `/nuevo` · `/[id]/editar` | Administrar usuarios (**solo rol admin**) |
+| `/admin/solicitudes` | Bandeja de mensajes del formulario de contacto |
 
-Las secciones de Noticias, Anuncios, Solicitudes y Configuración aparecen en el menú marcadas
-como *Pronto*: todavía no existen.
+Las secciones de Noticias, Anuncios y Configuración aparecen en el menú marcadas como *Pronto*:
+todavía no existen.
 
 ### Roles
 
@@ -260,7 +261,7 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] La landing lee cursos y eventos desde la base de datos
 - [x] Usuarios del panel, con roles y control de acceso por rol
 - [ ] Mostrar los banners en la landing (el panel ya los administra, pero no se ven en la página)
-- [ ] Guardar las solicitudes de contacto en la base de datos y verlas en el panel
+- [x] Guardar las solicitudes de contacto en la base de datos y verlas en el panel
 - [ ] Secciones pendientes del panel: Noticias, Anuncios y Configuración
 - [ ] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
@@ -313,6 +314,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.8.0 | 2026-11-04 | El formulario de contacto guarda las solicitudes en la base de datos (antes se perdían) y el panel estrena su bandeja para atenderlas |
 | 0.7.0 | 2026-10-22 | Administración de banners y de usuarios del panel, con roles (admin / editor) y acceso restringido por rol; se unifica el módulo de eventos, que había quedado partido en dos tras un merge |
 | 0.6.0 | 2026-10-08 | Evento destacado con banner, hora y botón de inscripción; primer evento real publicado |
 | 0.5.0 | 2026-10-08 | Eventos administrables desde el panel, ahora con fecha, lugar y enlace de inscripción |

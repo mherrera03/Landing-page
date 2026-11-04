@@ -26,6 +26,22 @@ export function formatLongDate(isoDate: string): string {
   return `${day} de ${MESES[month - 1]} de ${year}`;
 }
 
+/**
+ * "2026-11-15 14:30:00" -> "15 de noviembre de 2026, 2:30 p. m."
+ *
+ * Es el formato con el que SQLite guarda las fechas (datetime local).
+ */
+export function formatDateTime(value: string): string {
+  const [fecha, hora = ""] = value.split(" ");
+  const texto = formatLongDate(fecha);
+  const [h, m] = hora.split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return texto;
+
+  const sufijo = h < 12 ? "a. m." : "p. m.";
+  const hora12 = h % 12 === 0 ? 12 : h % 12;
+  return `${texto}, ${hora12}:${String(m).padStart(2, "0")} ${sufijo}`;
+}
+
 /** "2026-11-15" -> "15 nov", para espacios reducidos. */
 export function formatShortDate(isoDate: string): string {
   const [, month, day] = isoDate.split("-").map(Number);
