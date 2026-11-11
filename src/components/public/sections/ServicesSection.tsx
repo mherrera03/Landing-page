@@ -4,7 +4,7 @@ import { SectionHeading } from "./SectionHeading";
 
 export function ServicesSection() {
   return (
-    <section id="servicios" aria-labelledby="servicios-titulo" className="py-10 lg:py-14">
+    <section id="servicios" aria-labelledby="servicios-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
       <div className="container-page">
         <div className="relative overflow-hidden rounded-[2.25rem] bg-ink px-6 py-10 sm:px-10 lg:px-14 lg:py-12">
           {/* Resplandores de marca sobre el fondo oscuro */}

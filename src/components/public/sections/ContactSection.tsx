@@ -9,7 +9,7 @@ import { Reveal } from "../motion/Reveal";
 export function ContactSection() {
   const { email } = getSettings();
   return (
-    <section id="contacto" aria-labelledby="contacto-titulo" className="py-10 lg:py-14">
+    <section id="contacto" aria-labelledby="contacto-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
       <div className="container-page grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal className="relative overflow-hidden rounded-3xl bg-brand p-8 sm:p-10">
           <span aria-hidden="true" className="absolute -right-6 -bottom-28 text-[16rem] leading-none font-extrabold text-white/20">
