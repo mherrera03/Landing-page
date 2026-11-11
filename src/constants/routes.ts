@@ -1,6 +1,7 @@
 export const ROUTES = {
   home: "/",
   thanks: "/gracias",
+  events: "/eventos",
   api: {
     leads: "/api/leads",
   },

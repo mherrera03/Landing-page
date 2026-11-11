@@ -1,18 +1,12 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-
-const TZ = "America/El_Salvador";
-
-/** Fecha de hoy en El Salvador, como "AAAA-MM-DD". */
-function todayInSV(): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date());
-}
+import { todayInElSalvador } from "@/lib/dates";
 
 /** Días entre hoy y la fecha del evento. Negativo si ya pasó. */
 function daysUntil(isoDate: string): number {
   const [y1, m1, d1] = isoDate.split("-").map(Number);
-  const [y2, m2, d2] = todayInSV().split("-").map(Number);
+  const [y2, m2, d2] = todayInElSalvador().split("-").map(Number);
   return Math.round((Date.UTC(y1, m1 - 1, d1) - Date.UTC(y2, m2 - 1, d2)) / 86_400_000);
 }
 
@@ -43,8 +37,8 @@ export function EventStatus({ date }: { date: string }) {
     <span
       className={
         finalizado
-          ? "inline-block rounded-full bg-white/15 px-3.5 py-1 text-sm font-bold text-white/70"
-          : "inline-block rounded-full bg-brand px-3.5 py-1 text-sm font-bold text-ink"
+          ? "inline-block rounded-full bg-white/15 px-3 py-0.5 text-sm font-semibold text-white/75"
+          : "inline-block rounded-full bg-success/60 px-3 py-0.5 text-sm font-semibold text-green-100"
       }
     >
       {label}

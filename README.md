@@ -97,7 +97,6 @@ ugb-plus/
 │   │   ├── branding/        ← Pendiente: logo oficial
 │   │   ├── courses/         ← Imágenes de cursos (subidas desde el admin)
 │   │   ├── events/          ← Imágenes de eventos
-│   │   ├── banners/         ← Imágenes de banners
 │   │   └── news, team, placeholders/
 │   └── icons/  y  fonts/
 │
@@ -108,14 +107,14 @@ ugb-plus/
 │   │   ├── (public)/              ← Sitio público
 │   │   │   ├── layout.tsx         ← Header + Footer + scroll suave
 │   │   │   ├── page.tsx           ← Landing (todas las secciones)
+│   │   │   ├── eventos/           ← Todos los eventos (próximos y pasados)
 │   │   │   └── gracias/           ← Confirmación tras enviar el formulario
 │   │   ├── admin/
 │   │   │   ├── login/             ← Inicio de sesión
 │   │   │   └── (panel)/           ← Panel, ya autenticado
 │   │   │       ├── page.tsx       ← Resumen
 │   │   │       ├── cursos/        ← Listado, nuevo, editar
-│   │   │       ├── eventos/       ← Listado, nuevo, editar
-│   │   │       └── banners/       ← Listado, nuevo, editar
+│   │   │       └── eventos/       ← Listado, nuevo, editar
 │   │   ├── api/leads/route.ts     ← Recibe las solicitudes de contacto
 │   │   ├── layout.tsx             ← Fuente, metadatos y <html>
 │   │   ├── not-found.tsx          ← Página 404
@@ -126,7 +125,7 @@ ugb-plus/
 │   │   │   ├── layout/            ← Header, Navbar, MobileMenu, Footer, Logo
 │   │   │   ├── hero/              ← Hero, HeroFeaturedCourse
 │   │   │   ├── courses/           ← CourseCard, CourseGrid, CourseFilters, CourseDetail
-│   │   │   ├── events/            ← EventCard, EventGrid, FeaturedEvent, EventStatus
+│   │   │   ├── events/            ← EventCarousel, EventSlide, EventsExplorer, EventListCard, EventStatus
 │   │   │   ├── contact/           ← ContactForm, SpecialistCard
 │   │   │   ├── announcements/     ← AnnouncementBanner
 │   │   │   ├── sections/          ← About, Stats, Services, Audience, Courses, Events, Contact
@@ -136,7 +135,6 @@ ugb-plus/
 │   │   │   ├── auth/              ← LoginForm
 │   │   │   ├── courses/           ← CourseForm, CourseTable, DeleteCourseButton
 │   │   │   ├── events/            ← EventForm, EventTable, DeleteEventButton
-│   │   │   ├── banners/           ← BannerForm, BannerTable, DeleteBannerButton
 │   │   │   ├── dashboard/         ← StatCard
 │   │   │   └── ui/                ← ImageUpload, Switch, FlashMessage
 │   │   └── ui/                    ← Button, Input, Textarea, Select, Combobox, Field, Badge, Modal
@@ -146,13 +144,13 @@ ugb-plus/
 │   │   ├── database/
 │   │   │   ├── connection.ts      ← Conexión SQLite
 │   │   │   ├── migrations/        ← Migraciones + datos iniciales
-│   │   │   └── repositories/      ← Consultas de cursos, eventos, banners y usuarios
+│   │   │   └── repositories/      ← Consultas de cursos, eventos, solicitudes y usuarios
 │   │   ├── actions/               ← Server Actions del admin (crear, editar, borrar)
 │   │   └── storage/uploads.ts     ← Subida de imágenes
 │   │
 │   ├── services/                  ← courses.service, events.service (lo que lee la landing)
-│   ├── schemas/                   ← Zod: auth, course, event, banner, lead
-│   ├── types/                     ← course.types, event.types, banner.types
+│   ├── schemas/                   ← Zod: auth, course, event, lead, user
+│   ├── types/                     ← course.types, event.types, lead.types, user.types
 │   ├── constants/                 ← site, routes, admin-nav, course-categories,
 │   │                                services, audiences, stats, team, countries
 │   ├── hooks/                     ← useActiveSection, useScrollToSection
@@ -215,6 +213,7 @@ Dos utilidades propias: `bg-brand` (degradado de fondo) y `text-gradient` (degra
 | Método | Ruta | Descripción |
 |---|---|---|
 | GET | `/` | Landing |
+| GET | `/eventos` | Todos los eventos, con pestañas Próximos / Pasados y filtro por tipo |
 | GET | `/gracias` | Confirmación tras enviar el formulario |
 | POST | `/api/leads` | Recibe y valida una solicitud de contacto |
 
@@ -228,7 +227,6 @@ Todas piden sesión iniciada, menos el login.
 | `/admin` | Resumen con las cifras del panel |
 | `/admin/cursos` · `/nuevo` · `/[id]/editar` | Administrar cursos |
 | `/admin/eventos` · `/nuevo` · `/[id]/editar` | Administrar eventos |
-| `/admin/banners` · `/nuevo` · `/[id]/editar` | Administrar banners |
 | `/admin/usuarios` · `/nuevo` · `/[id]/editar` | Administrar usuarios (**solo rol admin**) |
 | `/admin/solicitudes` | Bandeja de mensajes del formulario de contacto |
 
@@ -237,7 +235,7 @@ todavía no existen.
 
 ### Roles
 
-| Rol | Cursos, eventos y banners | Usuarios |
+| Rol | Cursos y eventos | Usuarios |
 |---|---|---|
 | **Administrador** | ✅ | ✅ |
 | **Editor** | ✅ | ❌ no ve la sección |
@@ -257,10 +255,9 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] Animaciones con Motion, GSAP y scroll suave con Lenis
 - [x] Formulario validado con Zod (cliente y servidor) + página de gracias
 - [x] Base de datos, migraciones y repositorios (`src/server/database/`)
-- [x] Panel admin: login, CRUD de cursos, eventos y banners
+- [x] Panel admin: login, CRUD de cursos, eventos y banners (los banners se retiraron después)
 - [x] La landing lee cursos y eventos desde la base de datos
 - [x] Usuarios del panel, con roles y control de acceso por rol
-- [ ] Mostrar los banners en la landing (el panel ya los administra, pero no se ven en la página)
 - [x] Guardar las solicitudes de contacto en la base de datos y verlas en el panel
 - [ ] Secciones pendientes del panel: Noticias, Anuncios y Configuración
 - [ ] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
@@ -289,13 +286,13 @@ Tu versión de Node es muy antigua. Comprueba con `node -v` e instala Node 22 LT
 **Aparece "SQLite is an experimental feature"**
 Es normal y no afecta nada: así marca Node su módulo de SQLite en la versión 22.
 
-**`no such table: eventos` (o banners, o cursos)**
+**`no such table: eventos` (o cursos)**
 El servidor tenía la base de datos abierta desde antes de que existiera esa tabla. Páralo con
 `Ctrl + C` y arráncalo otra vez.
 
 **No puedo entrar al panel / se me cierra la sesión sola**
 Borra la carpeta `database/data` y reinicia el servidor: se vuelve a crear con el usuario de prueba.
-Ojo, esto borra también los cursos, eventos y banners que hayas creado.
+Ojo, esto borra también los cursos y eventos que hayas creado.
 
 **El puerto 3000 ya está en uso (`EADDRINUSE`)**
 Hay otro servidor corriendo. Ciérralo con `Ctrl + C` en su terminal, o usa otro puerto:

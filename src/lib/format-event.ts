@@ -8,13 +8,18 @@ export function formatEventDate(date: string): string {
   });
 }
 
-/** "19:00" → "7:00 p. m." */
+/**
+ * "19:00" → "7:00 p. m."
+ *
+ * Se arma a mano (sin toLocaleTimeString) para que servidor y navegador den el
+ * mismo texto y React no avise de diferencias al hidratar.
+ */
 export function formatEventTime(time: string): string {
-  return new Date(`1970-01-01T${time}:00`).toLocaleTimeString("es-SV", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const [h, m] = time.split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return time;
+  const sufijo = h < 12 ? "a. m." : "p. m.";
+  const hora12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hora12}:${String(m).padStart(2, "0")} ${sufijo}`;
 }
 
 export function formatEventPrice(price?: number): string {

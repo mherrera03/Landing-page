@@ -10,7 +10,7 @@ export const USER_ROLE_LABELS: Record<UserRole, string> = {
 /** Qué puede hacer cada rol, para explicarlo en el formulario. */
 export const USER_ROLE_HINTS: Record<UserRole, string> = {
   admin: "Administra todo el panel, incluidos los usuarios.",
-  editor: "Administra cursos, eventos y banners, pero no los usuarios.",
+  editor: "Administra cursos y eventos, pero no los usuarios.",
 };
 
 export type AdminUser = {

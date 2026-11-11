@@ -48,3 +48,8 @@ export function formatShortDate(isoDate: string): string {
   if (!month || !day) return isoDate;
   return `${day} ${MESES[month - 1].slice(0, 3)}`;
 }
+
+/** Fecha de hoy en El Salvador, como "AAAA-MM-DD" (comparable como texto con las fechas de la base). */
+export function todayInElSalvador(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/El_Salvador" }).format(new Date());
+}

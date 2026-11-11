@@ -15,6 +15,16 @@ const eslintConfig = defineConfig([
     // Proyecto anterior (Express + vanilla), solo como referencia:
     "legacy/**",
   ]),
+  {
+    rules: {
+      // Un nombre que empieza con "_" se descarta a propósito, por ejemplo al
+      // separar una propiedad con `const { password: _password, ...resto } = values`.
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_", destructuredArrayIgnorePattern: "^_" },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
