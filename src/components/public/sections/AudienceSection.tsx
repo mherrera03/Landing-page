@@ -5,7 +5,7 @@ import { SectionHeading } from "./SectionHeading";
 
 export function AudienceSection() {
   return (
-    <section id="publico" aria-labelledby="publico-titulo" className="py-16 lg:py-24">
+    <section id="publico" aria-labelledby="publico-titulo" className="py-10 lg:py-14">
       <div className="container-page">
         <SectionHeading id="publico-titulo" title="¿Quiénes se forman con nosotros?">
           Nuestra oferta está pensada para perfiles distintos, cada uno con sus propias metas.

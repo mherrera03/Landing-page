@@ -9,7 +9,7 @@ import { Reveal } from "../motion/Reveal";
 export function ContactSection() {
   const { email } = getSettings();
   return (
-    <section id="contacto" aria-labelledby="contacto-titulo" className="py-16 lg:py-24">
+    <section id="contacto" aria-labelledby="contacto-titulo" className="py-10 lg:py-14">
       <div className="container-page grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal className="relative overflow-hidden rounded-3xl bg-brand p-8 sm:p-10">
           <span aria-hidden="true" className="absolute -right-6 -bottom-28 text-[16rem] leading-none font-extrabold text-white/20">
@@ -38,7 +38,7 @@ export function ContactSection() {
         </Reveal>
       </div>
 
-      <div className="container-page mt-14 lg:mt-20">
+      <div className="container-page mt-10 lg:mt-12">
         <Reveal className="mb-8 text-center">
           <h3 id="especialistas-titulo" className="text-[clamp(1.5rem,3vw,2rem)] leading-tight font-extrabold tracking-[-0.03em] text-ink">
             Habla con uno de nuestros especialistas

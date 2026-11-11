@@ -48,7 +48,7 @@ export function StatsSection() {
   );
 
   return (
-    <section ref={root} aria-label="UGB Plus en cifras" className="pb-4 lg:pb-8">
+    <section ref={root} aria-label="UGB Plus en cifras" className="pb-2 lg:pb-4">
       <div className="container-page">
         <dl className="grid divide-y divide-line overflow-hidden rounded-3xl border border-line bg-surface sm:grid-cols-2 sm:divide-x lg:grid-cols-4 lg:divide-y-0">
           {STATS.map((stat) => {

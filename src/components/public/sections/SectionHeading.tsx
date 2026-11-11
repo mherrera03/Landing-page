@@ -18,7 +18,7 @@ export function SectionHeading({ id, kicker, title, children, onDark = false, ce
   return (
     <Reveal
       className={cn(
-        "mb-10",
+        "mb-8",
         centered ? "flex flex-col items-center text-center" : "flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10",
       )}
     >

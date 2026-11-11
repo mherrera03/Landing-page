@@ -6,7 +6,7 @@ export async function CoursesSection() {
   const courses = await getCourses();
 
   return (
-    <section id="programas" aria-labelledby="programas-titulo" className="py-16 lg:py-24">
+    <section id="programas" aria-labelledby="programas-titulo" className="py-10 lg:py-14">
       <div className="container-page">
         <SectionHeading id="programas-titulo" kicker="Explora" title="Programas y cursos">
           Filtra por área y abre cada curso para conocer su nivel, duración y modalidad.

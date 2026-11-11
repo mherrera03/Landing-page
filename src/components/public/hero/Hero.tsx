@@ -67,7 +67,7 @@ export function Hero({ course }: { course: Course | null }) {
         <div className="absolute top-1/3 -right-40 size-[34rem] rounded-full bg-violet/15 blur-3xl" />
       </div>
 
-      <div className="container-page grid items-center gap-10 pt-10 pb-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:pt-16 lg:pb-24">
+      <div className="container-page grid items-center gap-10 pt-10 pb-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:pt-16 lg:pb-14">
         <motion.div variants={container} initial="hidden" animate="show">
           
 

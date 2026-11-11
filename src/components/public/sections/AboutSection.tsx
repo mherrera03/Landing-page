@@ -10,7 +10,7 @@ const FEATURES: { icon: LucideIcon; title: string; text: string }[] = [
 
 export function AboutSection() {
   return (
-    <section id="nosotros" aria-labelledby="nosotros-titulo" className="py-16 lg:py-24">
+    <section id="nosotros" aria-labelledby="nosotros-titulo" className="py-10 lg:py-14">
       <div className="container-page">
         <SectionHeading id="nosotros-titulo" kicker="UGB Plus" title="Formación continua, simple y cercana.">
           Reunimos en un solo lugar la oferta de actualización profesional de la universidad, para que encuentres rápido el
