@@ -1,0 +1,60 @@
+RESUMEN DE CAMBIOS - UGB PLUS
+Fecha: 11 de noviembre de 2026
+
+1. CAMBIOS QUE YA VENÍAN EN EL GIT PULL DEL USUARIO
+
+- La sección de eventos de la portada se convirtió en un carrusel adaptable a celular y escritorio.
+- Se creó /eventos con pestañas de próximos y pasados, filtros por tipo y botón «Cargar más».
+- Se retiró Banners del menú y del código del panel. La tabla banners y una imagen local se conservaron.
+
+2. PRIMER GRUPO DE CAMBIOS - COMMIT bbb127c
+
+- Se añadieron «Cohortes» y «Empresas» a los tipos de eventos, junto con Masterclass, Taller, Webinar y Conferencia.
+- Se unificó la clasificación de eventos pasados: cuentan el estado «finalizado» y la fecha. El carrusel, el listado y la ficha usan el mismo criterio.
+- Se implementó la administración de Noticias y Anuncios: crear, editar, publicar, ocultar y eliminar.
+- Se crearon las páginas públicas /noticias y /anuncios, más las páginas de detalle de cursos, eventos y noticias.
+- Las páginas de detalle solo muestran contenido visible; una dirección inexistente u oculta devuelve 404.
+- Se habilitó Configuración para el correo y dos WhatsApp públicos, con acceso exclusivo para administradores.
+- Se agregó una migración para las tablas de publicaciones y configuración sin borrar los datos existentes.
+- Se corrigió la carga de imágenes al arrastrarlas al formulario.
+- Se actualizaron README.md y .gitignore.
+
+3. AMPLIACIÓN DE CONFIGURACIÓN - COMMIT d91d987
+
+Contacto:
+- Dirección, horario de atención, enlace al mapa y enlaces a Facebook, Instagram, LinkedIn y YouTube.
+- Estos datos se muestran en la sección de contacto y en el pie del sitio.
+
+Portada:
+- Títulos, descripción, textos y destinos de los botones editables desde el panel.
+- También se puede cambiar el botón de contacto del encabezado y del menú móvil.
+- Cifras editables: programas activos, enfoque práctico, año de fundación, personas formadas, programas impartidos y satisfacción.
+
+Identidad y difusión:
+- Carga de logo e imagen para compartir enlaces.
+- Descripción del sitio y URL pública editables.
+- La imagen social se publica como URL absoluta cuando se configura la URL pública.
+
+Anuncios:
+- Inicio y fin programables en horario de El Salvador.
+- Solo los anuncios publicados y dentro de su horario aparecen en el sitio público.
+- Se puede elegir un anuncio para la franja superior. Si no está activo, aparece el anuncio activo más reciente.
+
+- Se añadieron las migraciones necesarias y se actualizó README.md.
+- Se integraron dos commits remotos de ajustes de espaciado sin sobrescribir esos cambios.
+
+4. VERIFICACIÓN Y GIT
+
+- TypeScript, ESLint y la compilación de producción pasaron.
+- Se comprobaron las rutas públicas, el 404 de contenido inexistente y la redirección al login del panel.
+- Los commits bbb127c y d91d987 se subieron a origin/main.
+- Al terminar, main quedó sincronizada con origin/main y el árbol de trabajo estaba limpio.
+
+5. PENDIENTE ANTES DE PUBLICAR
+
+- Cargar el logo oficial y completar los textos y datos definitivos.
+- Confirmar con el cliente las cifras de la landing.
+- Completar la URL pública para que funcione la imagen social en los enlaces compartidos.
+- Preparar sitemap y robots para producción; el sitio sigue marcado como no indexable durante las pruebas.
+- Limpiar la tabla antigua eventos mediante una migración separada.
+- Sustituir las credenciales de prueba antes de poner el sitio en producción.
