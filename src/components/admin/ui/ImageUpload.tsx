@@ -17,6 +17,8 @@ type ImageUploadProps = {
   required?: boolean;
   /** Pista sobre el formato recomendado. */
   folderHint?: string;
+  inputName?: string;
+  pathName?: string;
 };
 
 /**
@@ -29,6 +31,8 @@ export function ImageUpload({
   label = "Imagen del curso",
   required = true,
   folderHint = "Se recomienda horizontal (16:11).",
+  inputName = "imagenArchivo",
+  pathName = "image",
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState(defaultValue);
@@ -61,9 +65,9 @@ export function ImageUpload({
   }
 
   return (
-    <Field id="imagenArchivo" label={label} required={required} optional={!required} error={localError ?? error} className="sm:col-span-2">
+    <Field id={inputName} label={label} required={required} optional={!required} error={localError ?? error} className="sm:col-span-2">
       {/* Conserva la imagen guardada si no se sube una nueva */}
-      <input type="hidden" name="image" value={defaultValue} />
+      <input type="hidden" name={pathName} value={defaultValue} />
 
       <div
         onDragOver={(e) => {
@@ -94,8 +98,8 @@ export function ImageUpload({
         <div className="min-w-0 flex-1">
           <input
             ref={inputRef}
-            id="imagenArchivo"
-            name="imagenArchivo"
+            id={inputName}
+            name={inputName}
             type="file"
             accept={ACEPTADOS}
             className="sr-only"

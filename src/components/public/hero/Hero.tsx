@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { ArrowRight } from "lucide-react";
 import type { Course } from "@/types/course.types";
+import type { LandingSettings } from "@/schemas/landing.schema";
 import { Button } from "@/components/ui/Button";
 import { HeroFeaturedCourse } from "./HeroFeaturedCourse";
 
@@ -27,13 +28,8 @@ const fade: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 };
 
-const STATS = [
-  { prefix: "+", value: 20, suffix: "", label: "programas activos" },
-  { prefix: "", value: 100, suffix: "%", label: "enfoque práctico" },
-] as const;
-
 // course puede ser null si en el admin no hay ningún curso visible
-export function Hero({ course }: { course: Course | null }) {
+export function Hero({ course, settings }: { course: Course | null; settings: LandingSettings }) {
   const root = useRef<HTMLElement>(null);
 
   // GSAP: contadores de las cifras + parallax de la mancha de color al hacer scroll
@@ -74,33 +70,35 @@ export function Hero({ course }: { course: Course | null }) {
           <h1 className="mt-5 text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
             <span className="-mb-[0.14em] block overflow-hidden pb-[0.14em]">
               <motion.span variants={line} className="block">
-                Actualiza tus habilidades.
+                {settings.heroTitle1}
               </motion.span>
             </span>
             <span className="-mb-[0.14em] block overflow-hidden pb-[0.14em]">
               <motion.span variants={line} className="block text-gradient">
-                Expande tu futuro.
+                {settings.heroTitle2}
               </motion.span>
             </span>
           </h1>
 
           <motion.p variants={fade} className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-            Programas, cursos y experiencias de formación continua pensadas para profesionales, estudiantes y organizaciones que
-            buscan mantenerse relevantes en un entorno que cambia.
+            {settings.heroDescription}
           </motion.p>
 
           <motion.div variants={fade} className="mt-8 flex flex-wrap gap-3">
-            <Button href="/#programas" size="lg">
-              Explorar programas
+            <Button href={settings.heroPrimaryHref} size="lg">
+              {settings.heroPrimaryLabel}
               <ArrowRight className="size-5 transition-transform duration-200 group-hover/btn:translate-x-1" aria-hidden="true" />
             </Button>
-            <Button href="/#nosotros" size="lg" variant="ghost">
-              Conocer UGB Plus
+            <Button href={settings.heroSecondaryHref} size="lg" variant="ghost">
+              {settings.heroSecondaryLabel}
             </Button>
           </motion.div>
 
           <motion.dl variants={fade} className="mt-10 flex flex-wrap gap-x-10 gap-y-5">
-            {STATS.map((stat) => (
+            {[
+              { prefix: "+", value: settings.heroActivePrograms, suffix: "", label: "programas activos" },
+              { prefix: "", value: settings.heroPracticePercent, suffix: "%", label: "enfoque práctico" },
+            ].map((stat) => (
               <div key={stat.label} className="flex flex-col-reverse">
                 <dt className="text-sm text-muted">{stat.label}</dt>
                 <dd className="text-2xl font-extrabold text-ink tabular-nums">

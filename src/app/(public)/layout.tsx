@@ -2,15 +2,20 @@ import type { ReactNode } from "react";
 import { Header } from "@/components/public/layout/Header";
 import { Footer } from "@/components/public/layout/Footer";
 import { SmoothScroll } from "@/components/public/motion/SmoothScroll";
-import { list } from "@/server/database/repositories/publications.repository";
-import { getSettings } from "@/server/database/repositories/settings.repository";
+import { listActiveAnnouncements } from "@/server/database/repositories/publications.repository";
+import { getBrandSettings, getFeaturedAnnouncementId, getLandingSettings, getSettings } from "@/server/database/repositories/settings.repository";
+import { nowInElSalvador } from "@/lib/dates";
 import Link from "next/link";
 import { connection } from "next/server";
 
 export default async function PublicLayout({ children }: { children: ReactNode }) {
   await connection();
-  const announcement = list("anuncio", true)[0];
+  const activeAnnouncements = listActiveAnnouncements(nowInElSalvador());
+  const featuredId = getFeaturedAnnouncementId();
+  const announcement = activeAnnouncements.find((item) => item.id === featuredId) ?? activeAnnouncements[0];
   const settings = getSettings();
+  const brand = getBrandSettings();
+  const landing = getLandingSettings();
   return (
     <SmoothScroll>
       <a
@@ -23,11 +28,11 @@ export default async function PublicLayout({ children }: { children: ReactNode }
         <span className="font-bold">{announcement.title}</span>{" · "}{announcement.summary}{" "}
         <Link href={announcement.link || "/anuncios"} {...(announcement.link ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="font-semibold underline underline-offset-4">Ver más</Link>
       </div>}
-      <Header />
+      <Header logoImage={brand.logoImage} logoAlt={brand.logoAlt} contactButtonLabel={landing.contactButtonLabel} contactButtonHref={landing.contactButtonHref} />
       <main id="contenido" className="flex-1">
         {children}
       </main>
-      <Footer settings={settings} />
+      <Footer settings={settings} brand={brand} />
     </SmoothScroll>
   );
 }

@@ -41,6 +41,7 @@ public/images/banners/
 # Imágenes subidas desde Noticias y Anuncios
 public/images/news/
 public/images/announcements/
+public/images/branding/
 
 # Sistema
 .DS_Store

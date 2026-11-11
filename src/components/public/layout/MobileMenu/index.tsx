@@ -13,10 +13,12 @@ type MobileMenuProps = {
   open: boolean;
   activeId: string | null;
   onClose: () => void;
+  contactButtonLabel: string;
+  contactButtonHref: string;
 };
 
 /** Menú desplegable para móvil y tablet. Incluye el botón de inscripción. */
-export function MobileMenu({ id, open, activeId, onClose }: MobileMenuProps) {
+export function MobileMenu({ id, open, activeId, onClose, contactButtonLabel, contactButtonHref }: MobileMenuProps) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -60,8 +62,8 @@ export function MobileMenu({ id, open, activeId, onClose }: MobileMenuProps) {
                 </motion.li>
               ))}
             </ul>
-            <Button href="/#contacto" variant="gradient" size="lg" className="mt-3 w-full" onClick={onClose}>
-              Inscribirme
+            <Button href={contactButtonHref} variant="gradient" size="lg" className="mt-3 w-full" onClick={onClose}>
+              {contactButtonLabel}
             </Button>
           </div>
         </motion.nav>

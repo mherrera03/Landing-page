@@ -54,6 +54,16 @@ export function todayInElSalvador(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/El_Salvador" }).format(new Date());
 }
 
+/** Fecha y hora local para comparar con los horarios de anuncios (AAAA-MM-DDTHH:mm). */
+export function nowInElSalvador(): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/El_Salvador", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  }).formatToParts(new Date());
+  const value = (type: string) => parts.find((part) => part.type === type)?.value ?? "00";
+  return `${value("year")}-${value("month")}-${value("day")}T${value("hour")}:${value("minute")}`;
+}
+
 /** Criterio compartido entre el inicio, el listado y la ficha del evento. */
 export function isPastEvent(event: { date: string; status: string }, today: string): boolean {
   return event.status === "finalizado" || (!!event.date && event.date < today);

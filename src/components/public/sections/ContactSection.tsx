@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Clock3, Mail, MapPin } from "lucide-react";
 import { SITE } from "@/constants/site";
 import { getSettings } from "@/server/database/repositories/settings.repository";
 import { SPECIALISTS } from "@/constants/team";
@@ -7,7 +7,7 @@ import { SpecialistCard } from "../contact/SpecialistCard";
 import { Reveal } from "../motion/Reveal";
 
 export function ContactSection() {
-  const { email } = getSettings();
+  const { email, address, hours, mapUrl } = getSettings();
   return (
     <section id="contacto" aria-labelledby="contacto-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
       <div className="container-page grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -30,6 +30,8 @@ export function ContactSection() {
               <Mail className="size-4" aria-hidden="true" />
               {email}
             </a>
+            {(address || mapUrl) && <p className="mt-4 flex items-start gap-2 text-sm text-ink/80"><MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" /><span>{address || "Ubicación"}{mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="ml-2 font-semibold underline underline-offset-2">Ver mapa</a>}</span></p>}
+            {hours && <p className="mt-2 flex items-start gap-2 text-sm text-ink/80"><Clock3 className="mt-0.5 size-4 shrink-0" aria-hidden="true" />{hours}</p>}
           </div>
         </Reveal>
 

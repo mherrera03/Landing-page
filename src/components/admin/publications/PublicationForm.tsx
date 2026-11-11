@@ -39,7 +39,12 @@ export function PublicationForm({ kind, item, action }: Props) {
       <ImageUpload key={v.image ?? item?.image ?? ""} defaultValue={v.image ?? item?.image ?? ""} label="Imagen" required={false} error={state.fields?.image} />
       <Input id="imageAlt" name="imageAlt" label="Descripción de la imagen" optional defaultValue={v.imageAlt ?? item?.imageAlt ?? ""} error={state.fields?.imageAlt} />
       {kind === "anuncio" && <Input id="link" name="link" label="Enlace del aviso" optional type="url" placeholder="https://..." defaultValue={v.link ?? item?.link ?? ""} error={state.fields?.link} />}
+      {kind === "anuncio" && <div className="grid gap-x-5 sm:grid-cols-2">
+        <Input id="startsAt" name="startsAt" label="Mostrar desde (hora de El Salvador)" optional type="datetime-local" defaultValue={v.startsAt ?? item?.startsAt ?? ""} error={state.fields?.startsAt} />
+        <Input id="endsAt" name="endsAt" label="Mostrar hasta (hora de El Salvador)" optional type="datetime-local" defaultValue={v.endsAt ?? item?.endsAt ?? ""} error={state.fields?.endsAt} />
+      </div>}
       {kind === "noticia" && <input type="hidden" name="link" value="" />}
+      {kind === "noticia" && <><input type="hidden" name="startsAt" value="" /><input type="hidden" name="endsAt" value="" /></>}
       <Switch name="visible" label="Publicado" description="Si lo desactivas, solo se verá en el panel." defaultChecked={item?.visible ?? false} />
       <div className="flex flex-wrap gap-3 border-t border-line pt-5">
         <Submit editing={!!item} />

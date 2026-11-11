@@ -5,15 +5,21 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { STATS } from "@/constants/stats";
+import type { LandingSettings } from "@/schemas/landing.schema";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /** 1500 -> "1,500". Mismo resultado en servidor y navegador (evita errores de hidratación). */
 const formatNumber = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-export function StatsSection() {
+export function StatsSection({ settings, currentYear }: { settings: LandingSettings; currentYear: number }) {
   const root = useRef<HTMLElement>(null);
-  const currentYear = new Date().getFullYear();
+  const configured = [
+    { ...STATS[0], value: Math.max(0, currentYear - settings.foundingYear) },
+    { ...STATS[1], value: settings.peopleTrained },
+    { ...STATS[2], value: settings.programsDelivered },
+    { ...STATS[3], value: settings.satisfactionPercent },
+  ];
 
   // Los números suben desde cero la primera vez que la franja entra en pantalla
   useGSAP(
@@ -51,8 +57,8 @@ export function StatsSection() {
     <section ref={root} aria-label="UGB Plus en cifras" className="pb-2 lg:pb-4">
       <div className="container-page">
         <dl className="grid divide-y divide-line overflow-hidden rounded-3xl border border-line bg-surface sm:grid-cols-2 sm:divide-x lg:grid-cols-4 lg:divide-y-0">
-          {STATS.map((stat) => {
-            const value = stat.since ? currentYear - stat.since : stat.value;
+          {configured.map((stat) => {
+            const value = stat.value;
             const Icon = stat.icon;
             return (
               <div key={stat.label} className="flex flex-col items-center gap-2 px-6 py-8 text-center">

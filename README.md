@@ -94,7 +94,7 @@ Varias personas tocan el proyecto a la vez, así que conviene seguir estas regla
 ugb-plus/
 ├── public/
 │   ├── images/
-│   │   ├── branding/        ← Pendiente: logo oficial
+│   │   ├── branding/        ← Logos e imágenes para compartir subidas desde el panel
 │   │   ├── courses/         ← Imágenes de cursos (subidas desde el admin)
 │   │   ├── events/          ← Imágenes de eventos
 │   │   └── news, announcements, team, placeholders/
@@ -141,7 +141,7 @@ ugb-plus/
 │   │   │   ├── courses/           ← CourseForm, CourseTable, DeleteCourseButton
 │   │   │   ├── events/            ← EventForm, EventTable, DeleteEventButton
 │   │   │   ├── publications/      ← Formularios y listados de noticias y anuncios
-│   │   │   ├── settings/          ← Configuración de contacto
+│   │   │   ├── settings/          ← Contacto, portada, identidad y aviso destacado
 │   │   │   ├── dashboard/         ← StatCard
 │   │   │   └── ui/                ← ImageUpload, Switch, FlashMessage
 │   │   └── ui/                    ← Button, Input, Textarea, Select, Combobox, Field, Badge, Modal
@@ -240,12 +240,17 @@ Todas piden sesión iniciada, menos el login.
 | `/admin/eventos` · `/nuevo` · `/[id]/editar` | Administrar eventos |
 | `/admin/noticias` · `/nuevo` · `/[id]/editar` | Administrar noticias |
 | `/admin/anuncios` · `/nuevo` · `/[id]/editar` | Administrar avisos públicos |
-| `/admin/configuracion` | Correo y WhatsApp públicos (**solo rol admin**) |
+| `/admin/configuracion` | Contacto, portada, identidad y aviso destacado (**solo rol admin**) |
 | `/admin/usuarios` · `/nuevo` · `/[id]/editar` | Administrar usuarios (**solo rol admin**) |
 | `/admin/solicitudes` | Bandeja de mensajes del formulario de contacto |
 
-Los anuncios publicados se muestran como aviso en la parte superior del sitio; si hay varios,
-se destaca el más reciente. La configuración pública guarda el correo y los números de WhatsApp.
+Los anuncios publicados pueden programarse con inicio y fin en horario de El Salvador. Solo los
+anuncios activos aparecen en `/anuncios`. En la franja superior se muestra el elegido en
+Configuración; si no está activo, aparece el activo más reciente. Configuración también permite
+editar correo, WhatsApp, dirección, horario, mapa, redes sociales, textos, botones y cifras de la
+portada, logo, descripción del sitio e imagen para compartir. Para emitir la imagen social como URL
+absoluta hay que completar la URL pública del sitio. El sitio sigue marcado como no indexable
+mientras está en pruebas.
 
 ### Roles
 
@@ -274,10 +279,11 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] Usuarios del panel, con roles y control de acceso por rol
 - [x] Guardar las solicitudes de contacto en la base de datos y verlas en el panel
 - [x] Tipos de eventos Cohortes y Empresas, además de Masterclass, Taller, Webinar y Conferencia
-- [x] Panel de Noticias, Anuncios y Configuración de contacto
+- [x] Panel de Noticias, Anuncios y Configuración de contacto, portada e identidad
+- [x] Programación y selección del anuncio de la franja superior
 - [x] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
-- [ ] Logo oficial, SEO (sitemap, robots, Open Graph) y textos definitivos
+- [ ] Cargar logo oficial y textos definitivos; completar URL pública y preparar sitemap/robots antes de publicar
 - [ ] Confirmar con el cliente las cifras de la landing antes de publicar
 
 <details>

@@ -10,6 +10,8 @@ export type Publication = {
   image: string;
   imageAlt: string;
   link: string;
+  startsAt: string;
+  endsAt: string;
   visible: boolean;
   createdAt: string;
   updatedAt: string;

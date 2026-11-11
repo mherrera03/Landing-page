@@ -137,6 +137,26 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
       `);
     },
   },
+  {
+    name: "006_configuracion_ampliada",
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE configuracion_extra (
+          clave TEXT PRIMARY KEY,
+          valor TEXT NOT NULL DEFAULT ''
+        );
+      `);
+    },
+  },
+  {
+    name: "007_programacion_anuncios",
+    up: (db) => {
+      db.exec(`
+        ALTER TABLE publicaciones ADD COLUMN inicio TEXT NOT NULL DEFAULT '';
+        ALTER TABLE publicaciones ADD COLUMN fin TEXT NOT NULL DEFAULT '';
+      `);
+    },
+  },
 ];
 
 export function runMigrations(db: DatabaseSync) {

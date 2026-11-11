@@ -3,14 +3,22 @@ import { db } from "../connection";
 import type { PublicationInput } from "@/schemas/publication.schema";
 import type { Publication, PublicationKind } from "@/types/publication.types";
 
-type Row = { id: number; tipo: PublicationKind; slug: string; titulo: string; resumen: string; contenido: string; imagen: string; imagen_alt: string; enlace: string; visible: number; creado_en: string; actualizado_en: string };
+type Row = { id: number; tipo: PublicationKind; slug: string; titulo: string; resumen: string; contenido: string; imagen: string; imagen_alt: string; enlace: string; inicio: string; fin: string; visible: number; creado_en: string; actualizado_en: string };
 
 function toPublication(row: Row): Publication {
-  return { id: row.id, kind: row.tipo, slug: row.slug, title: row.titulo, summary: row.resumen, content: row.contenido, image: row.imagen, imageAlt: row.imagen_alt, link: row.enlace, visible: row.visible === 1, createdAt: row.creado_en, updatedAt: row.actualizado_en };
+  return { id: row.id, kind: row.tipo, slug: row.slug, title: row.titulo, summary: row.resumen, content: row.contenido, image: row.imagen, imageAlt: row.imagen_alt, link: row.enlace, startsAt: row.inicio, endsAt: row.fin, visible: row.visible === 1, createdAt: row.creado_en, updatedAt: row.actualizado_en };
 }
 
 export function list(kind: PublicationKind, visibleOnly = false): Publication[] {
   const rows = db.prepare(`SELECT * FROM publicaciones WHERE tipo = ? ${visibleOnly ? "AND visible = 1" : ""} ORDER BY creado_en DESC, id DESC`).all(kind) as unknown as Row[];
+  return rows.map(toPublication);
+}
+
+/** Las fechas se guardan como hora local de El Salvador, en formato comparable. */
+export function listActiveAnnouncements(now: string): Publication[] {
+  const rows = db.prepare(`SELECT * FROM publicaciones WHERE tipo = 'anuncio' AND visible = 1
+    AND (inicio = '' OR inicio <= ?) AND (fin = '' OR fin >= ?)
+    ORDER BY creado_en DESC, id DESC`).all(now, now) as unknown as Row[];
   return rows.map(toPublication);
 }
 
@@ -29,14 +37,14 @@ export function slugTaken(kind: PublicationKind, slug: string, exceptId = -1): b
 }
 
 export function create(kind: PublicationKind, input: PublicationInput): number {
-  const result = db.prepare(`INSERT INTO publicaciones (tipo, slug, titulo, resumen, contenido, imagen, imagen_alt, enlace, visible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-    .run(kind, input.slug, input.title, input.summary, input.content, input.image, input.imageAlt, input.link, input.visible ? 1 : 0);
+  const result = db.prepare(`INSERT INTO publicaciones (tipo, slug, titulo, resumen, contenido, imagen, imagen_alt, enlace, inicio, fin, visible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run(kind, input.slug, input.title, input.summary, input.content, input.image, input.imageAlt, input.link, input.startsAt, input.endsAt, input.visible ? 1 : 0);
   return Number(result.lastInsertRowid);
 }
 
 export function update(kind: PublicationKind, id: number, input: PublicationInput): void {
-  db.prepare(`UPDATE publicaciones SET slug = ?, titulo = ?, resumen = ?, contenido = ?, imagen = ?, imagen_alt = ?, enlace = ?, visible = ?, actualizado_en = datetime('now') WHERE tipo = ? AND id = ?`)
-    .run(input.slug, input.title, input.summary, input.content, input.image, input.imageAlt, input.link, input.visible ? 1 : 0, kind, id);
+  db.prepare(`UPDATE publicaciones SET slug = ?, titulo = ?, resumen = ?, contenido = ?, imagen = ?, imagen_alt = ?, enlace = ?, inicio = ?, fin = ?, visible = ?, actualizado_en = datetime('now') WHERE tipo = ? AND id = ?`)
+    .run(input.slug, input.title, input.summary, input.content, input.image, input.imageAlt, input.link, input.startsAt, input.endsAt, input.visible ? 1 : 0, kind, id);
 }
 
 export function remove(kind: PublicationKind, id: number): void {

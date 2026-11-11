@@ -12,7 +12,7 @@ import { MobileMenu } from "../MobileMenu";
 
 const SECTION_IDS = NAV_LINKS.map((l) => l.id);
 
-export function Header() {
+export function Header({ logoImage, logoAlt, contactButtonLabel = "Inscribirme", contactButtonHref = "/#contacto" }: { logoImage?: string; logoAlt?: string; contactButtonLabel?: string; contactButtonHref?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const activeId = useActiveSection(SECTION_IDS);
@@ -51,7 +51,7 @@ export function Header() {
           aria-label="UGB Plus, ir al inicio"
           className="rounded-lg"
         >
-          <Logo />
+          <Logo src={logoImage} alt={logoAlt} />
         </Link>
 
         {/* Navegación */}
@@ -83,7 +83,7 @@ export function Header() {
 
             {/* BOTÓN */}
             <Button
-              href="/#contacto"
+              href={contactButtonHref}
               className="
                 relative
                 z-10
@@ -99,7 +99,7 @@ export function Header() {
               "
             >
               <span className="relative z-20 text-ink">
-                Inscribirme
+                {contactButtonLabel}
               </span>
             </Button>
           </div>
@@ -147,6 +147,8 @@ export function Header() {
         open={menuOpen}
         activeId={activeId}
         onClose={closeMenu}
+        contactButtonLabel={contactButtonLabel}
+        contactButtonHref={contactButtonHref}
       />
     </header>
   );
