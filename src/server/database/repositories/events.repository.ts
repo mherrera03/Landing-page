@@ -207,6 +207,11 @@ export function getEventBySlug(slug: string): UgbEvent | undefined {
   return row ? toEvent(row) : undefined;
 }
 
+export function getVisibleEventBySlug(slug: string): UgbEvent | undefined {
+  const row = db().prepare("SELECT * FROM events WHERE slug = ? AND visible = 1").get(slug) as EventRow | undefined;
+  return row ? toEvent(row) : undefined;
+}
+
 export function slugTaken(slug: string, excludeId?: number): boolean {
   const row = db()
     .prepare("SELECT id FROM events WHERE slug = ? AND id != ?")

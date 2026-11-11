@@ -74,6 +74,8 @@ export function ImageUpload({
         onDrop={(e) => {
           e.preventDefault();
           setDragging(false);
+          // El archivo soltado debe quedar en el input para viajar en FormData.
+          if (inputRef.current) inputRef.current.files = e.dataTransfer.files;
           tomarArchivo(e.dataTransfer.files[0]);
         }}
         className={cn(

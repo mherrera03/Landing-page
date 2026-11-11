@@ -97,7 +97,7 @@ ugb-plus/
 │   │   ├── branding/        ← Pendiente: logo oficial
 │   │   ├── courses/         ← Imágenes de cursos (subidas desde el admin)
 │   │   ├── events/          ← Imágenes de eventos
-│   │   └── news, team, placeholders/
+│   │   └── news, announcements, team, placeholders/
 │   └── icons/  y  fonts/
 │
 ├── src/
@@ -107,14 +107,20 @@ ugb-plus/
 │   │   ├── (public)/              ← Sitio público
 │   │   │   ├── layout.tsx         ← Header + Footer + scroll suave
 │   │   │   ├── page.tsx           ← Landing (todas las secciones)
-│   │   │   ├── eventos/           ← Todos los eventos (próximos y pasados)
+│   │   │   ├── eventos/           ← Todos los eventos y su detalle
+│   │   │   ├── cursos/            ← Detalle de cursos
+│   │   │   ├── noticias/          ← Noticias y su detalle
+│   │   │   ├── anuncios/          ← Avisos públicos
 │   │   │   └── gracias/           ← Confirmación tras enviar el formulario
 │   │   ├── admin/
 │   │   │   ├── login/             ← Inicio de sesión
 │   │   │   └── (panel)/           ← Panel, ya autenticado
 │   │   │       ├── page.tsx       ← Resumen
 │   │   │       ├── cursos/        ← Listado, nuevo, editar
-│   │   │       └── eventos/       ← Listado, nuevo, editar
+│   │   │       ├── eventos/       ← Listado, nuevo, editar
+│   │   │       ├── noticias/      ← Listado, nuevo, editar
+│   │   │       ├── anuncios/      ← Listado, nuevo, editar
+│   │   │       └── configuracion/ ← Contacto público
 │   │   ├── api/leads/route.ts     ← Recibe las solicitudes de contacto
 │   │   ├── layout.tsx             ← Fuente, metadatos y <html>
 │   │   ├── not-found.tsx          ← Página 404
@@ -127,7 +133,6 @@ ugb-plus/
 │   │   │   ├── courses/           ← CourseCard, CourseGrid, CourseFilters, CourseDetail
 │   │   │   ├── events/            ← EventCarousel, EventSlide, EventsExplorer, EventListCard, EventStatus
 │   │   │   ├── contact/           ← ContactForm, SpecialistCard
-│   │   │   ├── announcements/     ← AnnouncementBanner
 │   │   │   ├── sections/          ← About, Stats, Services, Audience, Courses, Events, Contact
 │   │   │   └── motion/            ← SmoothScroll (Lenis + GSAP), Reveal
 │   │   ├── admin/
@@ -135,6 +140,8 @@ ugb-plus/
 │   │   │   ├── auth/              ← LoginForm
 │   │   │   ├── courses/           ← CourseForm, CourseTable, DeleteCourseButton
 │   │   │   ├── events/            ← EventForm, EventTable, DeleteEventButton
+│   │   │   ├── publications/      ← Formularios y listados de noticias y anuncios
+│   │   │   ├── settings/          ← Configuración de contacto
 │   │   │   ├── dashboard/         ← StatCard
 │   │   │   └── ui/                ← ImageUpload, Switch, FlashMessage
 │   │   └── ui/                    ← Button, Input, Textarea, Select, Combobox, Field, Badge, Modal
@@ -144,13 +151,13 @@ ugb-plus/
 │   │   ├── database/
 │   │   │   ├── connection.ts      ← Conexión SQLite
 │   │   │   ├── migrations/        ← Migraciones + datos iniciales
-│   │   │   └── repositories/      ← Consultas de cursos, eventos, solicitudes y usuarios
+│   │   │   └── repositories/      ← Consultas de cursos, eventos, noticias, avisos y usuarios
 │   │   ├── actions/               ← Server Actions del admin (crear, editar, borrar)
 │   │   └── storage/uploads.ts     ← Subida de imágenes
 │   │
 │   ├── services/                  ← courses.service, events.service (lo que lee la landing)
-│   ├── schemas/                   ← Zod: auth, course, event, lead, user
-│   ├── types/                     ← course.types, event.types, lead.types, user.types
+│   ├── schemas/                   ← Zod: auth, course, event, lead, publication, settings, user
+│   ├── types/                     ← course, event, lead, publication, user
 │   ├── constants/                 ← site, routes, admin-nav, course-categories,
 │   │                                services, audiences, stats, team, countries
 │   ├── hooks/                     ← useActiveSection, useScrollToSection
@@ -162,8 +169,8 @@ ugb-plus/
 
 ## Cómo funciona por dentro
 
-**La landing lee de la base de datos.** Los cursos y los eventos que se ven en la página salen de
-lo que haya en el panel, no de archivos. El recorrido siempre es el mismo:
+**El sitio público lee de la base de datos.** Los cursos, eventos, noticias, anuncios y datos de
+contacto salen de lo que haya en el panel. El recorrido siempre es el mismo:
 
 ```
 página  →  services/  →  server/database/repositories/  →  SQLite
@@ -214,6 +221,10 @@ Dos utilidades propias: `bg-brand` (degradado de fondo) y `text-gradient` (degra
 |---|---|---|
 | GET | `/` | Landing |
 | GET | `/eventos` | Todos los eventos, con pestañas Próximos / Pasados y filtro por tipo |
+| GET | `/eventos/[slug]` | Detalle de un evento visible |
+| GET | `/cursos/[slug]` | Detalle de un curso visible |
+| GET | `/noticias` · `/noticias/[slug]` | Noticias publicadas y su detalle |
+| GET | `/anuncios` | Avisos publicados |
 | GET | `/gracias` | Confirmación tras enviar el formulario |
 | POST | `/api/leads` | Recibe y valida una solicitud de contacto |
 
@@ -227,15 +238,18 @@ Todas piden sesión iniciada, menos el login.
 | `/admin` | Resumen con las cifras del panel |
 | `/admin/cursos` · `/nuevo` · `/[id]/editar` | Administrar cursos |
 | `/admin/eventos` · `/nuevo` · `/[id]/editar` | Administrar eventos |
+| `/admin/noticias` · `/nuevo` · `/[id]/editar` | Administrar noticias |
+| `/admin/anuncios` · `/nuevo` · `/[id]/editar` | Administrar avisos públicos |
+| `/admin/configuracion` | Correo y WhatsApp públicos (**solo rol admin**) |
 | `/admin/usuarios` · `/nuevo` · `/[id]/editar` | Administrar usuarios (**solo rol admin**) |
 | `/admin/solicitudes` | Bandeja de mensajes del formulario de contacto |
 
-Las secciones de Noticias, Anuncios y Configuración aparecen en el menú marcadas como *Pronto*:
-todavía no existen.
+Los anuncios publicados se muestran como aviso en la parte superior del sitio; si hay varios,
+se destaca el más reciente. La configuración pública guarda el correo y los números de WhatsApp.
 
 ### Roles
 
-| Rol | Cursos y eventos | Usuarios |
+| Rol | Cursos, eventos, noticias y anuncios | Usuarios y configuración |
 |---|---|---|
 | **Administrador** | ✅ | ✅ |
 | **Editor** | ✅ | ❌ no ve la sección |
@@ -259,8 +273,9 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] La landing lee cursos y eventos desde la base de datos
 - [x] Usuarios del panel, con roles y control de acceso por rol
 - [x] Guardar las solicitudes de contacto en la base de datos y verlas en el panel
-- [ ] Secciones pendientes del panel: Noticias, Anuncios y Configuración
-- [ ] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
+- [x] Tipos de eventos Cohortes y Empresas, además de Masterclass, Taller, Webinar y Conferencia
+- [x] Panel de Noticias, Anuncios y Configuración de contacto
+- [x] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
 - [ ] Logo oficial, SEO (sitemap, robots, Open Graph) y textos definitivos
 - [ ] Confirmar con el cliente las cifras de la landing antes de publicar

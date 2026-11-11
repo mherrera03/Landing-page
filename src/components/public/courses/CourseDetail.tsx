@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Clock, Signal, Users } from "lucide-react";
 import { COURSE_CATEGORIES } from "@/constants/course-categories";
 import type { Course } from "@/types/course.types";
@@ -34,6 +35,7 @@ export function CourseDetail({ course, onRequestInfo }: CourseDetailProps) {
           {course.title}
         </p>
         <p className="mt-2 leading-relaxed text-muted">{course.description}</p>
+        <Link href={`/cursos/${course.slug}`} className="mt-3 inline-flex min-h-10 items-center text-sm font-bold text-violet-deep underline-offset-4 hover:underline">Ver página del curso</Link>
 
         <dl className="my-6 grid grid-cols-3 divide-x divide-line border-y border-line py-4">
           {stats.map(({ icon: Icon, label, value }) => (

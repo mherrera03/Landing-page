@@ -99,6 +99,12 @@ export function findById(id: number): Course | null {
   return row ? toCourse(row) : null;
 }
 
+/** Un curso oculto nunca debe poder abrirse desde una URL pública. */
+export function findVisibleBySlug(slug: string): Course | null {
+  const row = db.prepare("SELECT * FROM cursos WHERE slug = ? AND visible = 1").get(slug) as CourseRow | undefined;
+  return row ? toCourse(row) : null;
+}
+
 /** El curso que se muestra en la portada: el marcado como destacado, o el primero. */
 export function findFeatured(): Course | null {
   const row = (db.prepare("SELECT * FROM cursos WHERE visible = 1 AND destacado = 1 ORDER BY orden, id LIMIT 1").get() ??

@@ -53,3 +53,8 @@ export function formatShortDate(isoDate: string): string {
 export function todayInElSalvador(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/El_Salvador" }).format(new Date());
 }
+
+/** Criterio compartido entre el inicio, el listado y la ficha del evento. */
+export function isPastEvent(event: { date: string; status: string }, today: string): boolean {
+  return event.status === "finalizado" || (!!event.date && event.date < today);
+}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { getEvents } from "@/services/events.service";
-import { todayInElSalvador } from "@/lib/dates";
+import { isPastEvent, todayInElSalvador } from "@/lib/dates";
 import { EventsExplorer } from "@/components/public/events/EventsExplorer";
 import type { UgbEvent } from "@/types/event.types";
 
@@ -9,11 +9,6 @@ export const metadata: Metadata = {
   title: "Eventos",
   description: "Masterclasses, aperturas de cohortes y programas para empresas de UGB Plus.",
 };
-
-/** Ya pasó si lo marcaron como finalizado o si su fecha es anterior a hoy. */
-function yaPaso(event: UgbEvent, hoy: string): boolean {
-  return event.status === "finalizado" || (!!event.date && event.date < hoy);
-}
 
 export default async function EventsPage() {
   // Se genera en cada visita: qué evento es "próximo" depende del día de hoy,
@@ -24,8 +19,8 @@ export default async function EventsPage() {
   const events = await getEvents();
 
   const porFecha = (a: UgbEvent, b: UgbEvent) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`);
-  const upcoming = events.filter((e) => !yaPaso(e, hoy)).sort(porFecha);
-  const past = events.filter((e) => yaPaso(e, hoy)).sort((a, b) => porFecha(b, a)); // el más reciente primero
+  const upcoming = events.filter((e) => !isPastEvent(e, hoy)).sort(porFecha);
+  const past = events.filter((e) => isPastEvent(e, hoy)).sort((a, b) => porFecha(b, a)); // el más reciente primero
 
   return (
     <section aria-labelledby="eventos-titulo" className="py-10 lg:py-16">

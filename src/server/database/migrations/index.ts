@@ -105,6 +105,38 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
       db.exec(`ALTER TABLE eventos ADD COLUMN costo TEXT NOT NULL DEFAULT '';`);
     },
   },
+  {
+    name: "005_contenido_y_configuracion",
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE publicaciones (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          tipo TEXT NOT NULL CHECK (tipo IN ('noticia', 'anuncio')),
+          slug TEXT NOT NULL,
+          titulo TEXT NOT NULL,
+          resumen TEXT NOT NULL DEFAULT '',
+          contenido TEXT NOT NULL DEFAULT '',
+          imagen TEXT NOT NULL DEFAULT '',
+          imagen_alt TEXT NOT NULL DEFAULT '',
+          enlace TEXT NOT NULL DEFAULT '',
+          visible INTEGER NOT NULL DEFAULT 0,
+          creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+          actualizado_en TEXT NOT NULL DEFAULT (datetime('now')),
+          UNIQUE(tipo, slug)
+        );
+        CREATE INDEX idx_publicaciones_tipo_visible ON publicaciones (tipo, visible, creado_en DESC);
+
+        CREATE TABLE configuracion_publica (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          correo TEXT NOT NULL,
+          whatsapp_1 TEXT NOT NULL,
+          whatsapp_2 TEXT NOT NULL
+        );
+        INSERT INTO configuracion_publica (id, correo, whatsapp_1, whatsapp_2)
+        VALUES (1, 'ugbplus@ugb.edu.sv', '50326456571', '50326456572');
+      `);
+    },
+  },
 ];
 
 export function runMigrations(db: DatabaseSync) {

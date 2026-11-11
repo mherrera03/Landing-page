@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getEvents } from "@/services/events.service";
+import { isPastEvent, todayInElSalvador } from "@/lib/dates";
 import { ROUTES } from "@/constants/routes";
 import { EventCarousel } from "../events/EventCarousel";
 import { Reveal } from "../motion/Reveal";
@@ -10,13 +11,14 @@ const MAX_EN_CARRUSEL = 6;
 
 export async function EventsSection() {
   const todos = await getEvents();
+  const hoy = todayInElSalvador();
   // Los finalizados no son "próximos": se quedan fuera del carrusel
-  const proximos = todos.filter((e) => e.status !== "finalizado").slice(0, MAX_EN_CARRUSEL);
+  const proximos = todos.filter((e) => !isPastEvent(e, hoy)).slice(0, MAX_EN_CARRUSEL);
 
   // Si no hay ninguno próximo, se muestra el último que se realizó para que la
   // sección no quede vacía (siempre que exista alguno)
   const ultimo = todos
-    .filter((e) => e.status === "finalizado")
+    .filter((e) => isPastEvent(e, hoy))
     .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))[0];
 
   const mostrandoPasado = proximos.length === 0 && !!ultimo;

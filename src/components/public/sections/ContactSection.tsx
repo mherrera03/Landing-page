@@ -1,11 +1,13 @@
 import { Mail } from "lucide-react";
 import { SITE } from "@/constants/site";
+import { getSettings } from "@/server/database/repositories/settings.repository";
 import { SPECIALISTS } from "@/constants/team";
 import { ContactForm } from "../contact/ContactForm";
 import { SpecialistCard } from "../contact/SpecialistCard";
 import { Reveal } from "../motion/Reveal";
 
 export function ContactSection() {
+  const { email } = getSettings();
   return (
     <section id="contacto" aria-labelledby="contacto-titulo" className="py-16 lg:py-24">
       <div className="container-page grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -22,11 +24,11 @@ export function ContactSection() {
               Déjanos tus datos y el equipo de {SITE.name} te contactará para brindarte más información sobre el programa que te interesa.
             </p>
             <a
-              href={`mailto:${SITE.email}`}
+              href={`mailto:${email}`}
               className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5"
             >
               <Mail className="size-4" aria-hidden="true" />
-              {SITE.email}
+              {email}
             </a>
           </div>
         </Reveal>

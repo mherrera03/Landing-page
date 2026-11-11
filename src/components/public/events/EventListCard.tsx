@@ -38,6 +38,7 @@ export function EventListCard({ event, past = false }: { event: UgbEvent; past?:
       <div className="flex flex-1 flex-col px-1.5 pt-4 pb-1.5">
         <p className="text-sm font-semibold tracking-[0.12em] text-violet uppercase">{event.type}</p>
         <h3 className="mt-1 text-lg leading-snug font-bold text-white">{event.title}</h3>
+        <Link href={`/eventos/${event.slug}`} className="mt-2 inline-flex min-h-8 items-center text-sm font-semibold text-white underline-offset-4 hover:underline">Ver detalles</Link>
         <p className="mt-0.5 text-sm text-white/65">
           {event.date ? <time dateTime={event.date}>{datos.join(" · ")}</time> : datos.join(" · ")}
         </p>

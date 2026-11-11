@@ -38,6 +38,10 @@ public/images/events/*
 # Imágenes de banners subidas desde el admin
 public/images/banners/
 
+# Imágenes subidas desde Noticias y Anuncios
+public/images/news/
+public/images/announcements/
+
 # Sistema
 .DS_Store
 Thumbs.db

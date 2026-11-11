@@ -4,6 +4,8 @@ export const EVENT_TYPES = [
   "Taller",
   "Webinar",
   "Conferencia",
+  "Cohortes",
+  "Empresas",
 ] as const;
 
 export const EVENT_MODALITIES = [

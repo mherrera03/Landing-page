@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
 import { NAV_LINKS } from "@/constants/routes";
-import { SITE, WHATSAPP_LINES } from "@/constants/site";
+import { SITE } from "@/constants/site";
+import type { PublicSettings } from "@/schemas/settings.schema";
 import { Logo } from "../Logo";
 
 const linkStyle =
@@ -21,7 +22,8 @@ function ColumnTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="mb-2 text-sm font-bold text-ink">{children}</h2>;
 }
 
-export function Footer() {
+export function Footer({ settings }: { settings: PublicSettings }) {
+  const phones = [settings.whatsapp1, settings.whatsapp2].filter(Boolean);
   return (
     <footer className="border-t border-line bg-surface">
       <div className="container-page grid gap-x-8 gap-y-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1.2fr]">
@@ -54,16 +56,16 @@ export function Footer() {
           <ColumnTitle>Contacto</ColumnTitle>
           <ul>
             <li>
-              <a href={`mailto:${SITE.email}`} className={linkStyle}>
+              <a href={`mailto:${settings.email}`} className={linkStyle}>
                 <Mail className="size-4 shrink-0 text-violet-deep" aria-hidden="true" />
-                {SITE.email}
+                  {settings.email}
               </a>
             </li>
-            {WHATSAPP_LINES.map((line) => (
-              <li key={line.number}>
-                <a href={`https://wa.me/${line.number}`} target="_blank" rel="noopener noreferrer" className={linkStyle}>
+            {phones.map((number) => (
+              <li key={number}>
+                <a href={`https://wa.me/${number}`} target="_blank" rel="noopener noreferrer" className={linkStyle}>
                   <MessageCircle className="size-4 shrink-0 text-violet-deep" aria-hidden="true" />
-                  {line.label}
+                  +{number}
                   <ExternalArrow />
                   <span className="sr-only">— escribir por WhatsApp (se abre en una pestaña nueva)</span>
                 </a>

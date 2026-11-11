@@ -42,6 +42,7 @@ function toFormValues(data: EventInput): Record<string, string> {
 function refreshPages() {
   revalidatePath("/");
   revalidatePath("/admin/eventos");
+  revalidatePath("/eventos");
   revalidatePath("/admin");
 }
 

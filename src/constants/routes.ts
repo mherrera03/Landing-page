@@ -2,6 +2,7 @@ export const ROUTES = {
   home: "/",
   thanks: "/gracias",
   events: "/eventos",
+  news: "/noticias",
   api: {
     leads: "/api/leads",
   },
@@ -13,6 +14,7 @@ export const NAV_LINKS = [
   { id: "servicios", label: "Servicios", href: "/#servicios" },
   { id: "programas", label: "Programas", href: "/#programas" },
   { id: "eventos", label: "Eventos", href: "/#eventos" },
+  { id: "noticias", label: "Noticias", href: "/noticias" },
   { id: "contacto", label: "Contáctanos", href: "/#contacto" },
   
 ] as const;

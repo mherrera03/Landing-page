@@ -62,7 +62,9 @@ export function EventSlide({ event, priority = false, past = false }: EventSlide
       <div>
         <div className="flex flex-wrap items-center gap-2.5">
           {/* El estado manual manda; si sigue abierto, se muestra la cuenta atrás */}
-          {event.status === "abierto" ? (
+          {past ? (
+            <span className="inline-block rounded-full bg-white/15 px-3 py-0.5 text-sm font-semibold text-white/75">Finalizado</span>
+          ) : event.status === "abierto" ? (
             <EventStatus date={event.date} />
           ) : (
             <span className="inline-block rounded-full bg-white/15 px-3 py-0.5 text-sm font-semibold text-white/75">
@@ -73,6 +75,7 @@ export function EventSlide({ event, priority = false, past = false }: EventSlide
         </div>
 
         <h3 className="mt-3 text-[clamp(1.25rem,2.2vw,1.6rem)] leading-tight font-bold text-white">{event.title}</h3>
+        <Link href={`/eventos/${event.slug}`} className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-white underline-offset-4 hover:underline">Ver detalles del evento</Link>
         <p className="mt-2 line-clamp-2 leading-relaxed text-white/70">{event.description}</p>
 
         <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2">

@@ -1,4 +1,5 @@
 import { getFeaturedCourse } from "@/services/courses.service";
+import { connection } from "next/server";
 import { Hero } from "@/components/public/hero/Hero";
 import { AboutSection } from "@/components/public/sections/AboutSection";
 import { StatsSection } from "@/components/public/sections/StatsSection";
@@ -9,6 +10,7 @@ import { EventsSection } from "@/components/public/sections/EventsSection";
 import { ContactSection } from "@/components/public/sections/ContactSection";
 
 export default async function HomePage() {
+  await connection();
   const featured = await getFeaturedCourse();
 
   return (
