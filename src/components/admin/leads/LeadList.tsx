@@ -1,6 +1,7 @@
 import { Check, Globe, Mail, MessageCircle, Phone, RotateCcw, Tag } from "lucide-react";
 import { toggleLeadAttendedAction } from "@/server/actions/leads.actions";
 import { formatDateTime } from "@/lib/dates";
+import { leadMailto } from "@/lib/lead-email";
 import type { Lead } from "@/types/lead.types";
 import { cn } from "@/lib/utils";
 import { DeleteLeadButton } from "./DeleteLeadButton";
@@ -80,7 +81,7 @@ export function LeadList({ leads }: { leads: Lead[] }) {
           {/* Datos de contacto: correo y teléfono son enlaces para responder de una vez */}
           <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             <Dato icon={Mail} label="Correo">
-              <a href={`mailto:${lead.email}`} className="font-medium text-violet-deep underline-offset-4 hover:underline">
+              <a href={leadMailto(lead)} className="font-medium text-violet-deep underline-offset-4 hover:underline">
                 {lead.email}
               </a>
             </Dato>

@@ -17,6 +17,10 @@ import {
 
 import { COUNTRIES } from "@/constants/countries";
 
+import { DEFAULT_COUNTRY, type Country } from "@/constants/country-phone";
+
+import { dialCode, examplePhone, formatNational, readPhoneInput, toInternational } from "@/lib/phone";
+
 import { ROUTES } from "@/constants/routes";
 
 import { LEAD_INTEREST_EVENT } from "../courses/CourseGrid";
@@ -27,6 +31,8 @@ import { Combobox } from "@/components/ui/Combobox";
 
 import { Input } from "@/components/ui/Input";
 
+import { PhoneInput } from "@/components/ui/PhoneInput";
+
 import { Select } from "@/components/ui/Select";
 
 import { Textarea } from "@/components/ui/Textarea";
@@ -35,12 +41,13 @@ type Errors = Partial<Record<LeadField, string>> & {
   form?: string;
 };
 
-// Los dos select arrancan vacíos para obligar a elegir una opción.
+// "Me interesa" arranca vacío para obligar a elegir una opción; el país arranca
+// en El Salvador y de él sale la clave del teléfono.
 // El orden de las claves marca el orden del formulario (se usa al enviar).
 const EMPTY = {
   name: "",
   email: "",
-  country: "" as LeadInput["country"],
+  country: DEFAULT_COUNTRY,
   phone: "",
   interest: "" as LeadInput["interest"],
   message: "",
@@ -60,6 +67,12 @@ export function ContactForm() {
   >({});
 
   const [errors, setErrors] = useState<Errors>({});
+
+  // Solo los dígitos del número nacional; values.phone guarda el número
+  // completo con la clave del país ("+503 7777 7777").
+  const [phoneDigits, setPhoneDigits] = useState("");
+
+  const country: Country = values.country;
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -244,28 +257,28 @@ export function ContactForm() {
           options={COUNTRIES}
           value={values.country}
           error={showError("country")}
-          onChange={(v) =>
-            set(
-              "country",
-              v as LeadInput["country"],
-            )
-          }
+          onChange={(v) => {
+            set("country", v as LeadInput["country"]);
+            // La clave cambia con el país; el número escrito se conserva
+            set("phone", toInternational(v as Country, phoneDigits));
+          }}
           onBlur={blur("country")}
         />
 
-        <Input
+        <PhoneInput
           id="lead-phone"
-          label="Teléfono (con clave de país)"
-          type="tel"
+          label="Teléfono"
           required
-          inputMode="tel"
-          autoComplete="tel"
-          placeholder="+503 7777-7777"
-          value={values.phone}
+          autoComplete="tel-national"
+          prefix={dialCode(country)}
+          placeholder={examplePhone(country)}
+          value={formatNational(country, phoneDigits)}
           error={showError("phone")}
-          onChange={(e) =>
-            set("phone", e.target.value)
-          }
+          onChange={(e) => {
+            const digits = readPhoneInput(country, e.target.value, phoneDigits);
+            setPhoneDigits(digits);
+            set("phone", toInternational(country, digits));
+          }}
           onBlur={blur("phone")}
         />
 
