@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireSession } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/leads.repository";
+import { getSettings } from "@/server/database/repositories/settings.repository";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { LeadList } from "@/components/admin/leads/LeadList";
 import { FlashMessage } from "@/components/admin/ui/FlashMessage";
@@ -71,7 +72,7 @@ export default async function SolicitudesPage({ searchParams }: PageProps) {
         ))}
       </div>
 
-      <LeadList leads={leads} />
+      <LeadList leads={leads} contactEmail={getSettings().email} />
     </div>
   );
 }
