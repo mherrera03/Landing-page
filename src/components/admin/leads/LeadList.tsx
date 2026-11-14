@@ -11,7 +11,7 @@ function whatsappLink(phone: string): string {
   return `https://wa.me/${phone.replace(/\D/g, "")}`;
 }
 
-export function LeadList({ leads }: { leads: Lead[] }) {
+export function LeadList({ leads, contactEmail }: { leads: Lead[]; contactEmail: string }) {
   if (leads.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-ink/20 bg-surface px-6 py-14 text-center">
@@ -81,7 +81,7 @@ export function LeadList({ leads }: { leads: Lead[] }) {
           {/* Datos de contacto: correo y teléfono son enlaces para responder de una vez */}
           <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             <Dato icon={Mail} label="Correo">
-              <a href={leadMailto(lead)} className="font-medium text-violet-deep underline-offset-4 hover:underline">
+              <a href={leadMailto(lead, contactEmail)} className="font-medium text-violet-deep underline-offset-4 hover:underline">
                 {lead.email}
               </a>
             </Dato>
