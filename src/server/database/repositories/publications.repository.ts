@@ -1,56 +1,139 @@
 import "server-only";
-import { db } from "../connection";
+import { execute, queryAll, queryOne } from "../connection";
 import type { PublicationInput } from "@/schemas/publication.schema";
 import type { Publication, PublicationKind } from "@/types/publication.types";
 
-type Row = { id: number; tipo: PublicationKind; slug: string; titulo: string; resumen: string; contenido: string; imagen: string; imagen_alt: string; enlace: string; inicio: string; fin: string; visible: number; creado_en: string; actualizado_en: string };
+type PublicationRow = {
+  id: number;
+  tipo: PublicationKind;
+  slug: string;
+  titulo: string;
+  resumen: string;
+  contenido: string;
+  imagen: string;
+  imagen_alt: string;
+  enlace: string;
+  inicio: string;
+  fin: string;
+  visible: number;
+  creado_en: string;
+  actualizado_en: string;
+};
 
-function toPublication(row: Row): Publication {
-  return { id: row.id, kind: row.tipo, slug: row.slug, title: row.titulo, summary: row.resumen, content: row.contenido, image: row.imagen, imageAlt: row.imagen_alt, link: row.enlace, startsAt: row.inicio, endsAt: row.fin, visible: row.visible === 1, createdAt: row.creado_en, updatedAt: row.actualizado_en };
+function toPublication(row: PublicationRow): Publication {
+  return {
+    id: row.id,
+    kind: row.tipo,
+    slug: row.slug,
+    title: row.titulo,
+    summary: row.resumen,
+    content: row.contenido,
+    image: row.imagen,
+    imageAlt: row.imagen_alt,
+    link: row.enlace,
+    startsAt: row.inicio,
+    endsAt: row.fin,
+    visible: row.visible === 1,
+    createdAt: row.creado_en,
+    updatedAt: row.actualizado_en,
+  };
 }
 
-export function list(kind: PublicationKind, visibleOnly = false): Publication[] {
-  const rows = db.prepare(`SELECT * FROM publicaciones WHERE tipo = ? ${visibleOnly ? "AND visible = 1" : ""} ORDER BY creado_en DESC, id DESC`).all(kind) as unknown as Row[];
-  return rows.map(toPublication);
+function toRow(input: PublicationInput) {
+  return {
+    slug: input.slug,
+    titulo: input.title,
+    resumen: input.summary,
+    contenido: input.content,
+    imagen: input.image,
+    imagen_alt: input.imageAlt,
+    enlace: input.link,
+    inicio: input.startsAt,
+    fin: input.endsAt,
+    visible: input.visible ? 1 : 0,
+  };
 }
 
-/** Las fechas se guardan como hora local de El Salvador, en formato comparable. */
-export function listActiveAnnouncements(now: string): Publication[] {
-  const rows = db.prepare(`SELECT * FROM publicaciones WHERE tipo = 'anuncio' AND visible = 1
-    AND (inicio = '' OR inicio <= ?) AND (fin = '' OR fin >= ?)
-    ORDER BY creado_en DESC, id DESC`).all(now, now) as unknown as Row[];
-  return rows.map(toPublication);
+/** Todas, incluidas las ocultas: solo para el admin. Las más recientes primero. */
+export function findAll(kind: PublicationKind): Publication[] {
+  return queryAll<PublicationRow>(
+    "SELECT * FROM publicaciones WHERE tipo = ? ORDER BY creado_en DESC, id DESC",
+    kind,
+  ).map(toPublication);
+}
+
+/** Solo las publicadas, para el sitio público. */
+export function findVisible(kind: PublicationKind): Publication[] {
+  return queryAll<PublicationRow>(
+    "SELECT * FROM publicaciones WHERE tipo = ? AND visible = 1 ORDER BY creado_en DESC, id DESC",
+    kind,
+  ).map(toPublication);
+}
+
+/**
+ * Anuncios publicados y dentro de su horario.
+ * `now` y las fechas guardadas van como hora local de El Salvador ("AAAA-MM-DDTHH:mm"),
+ * un formato que se puede comparar como texto.
+ */
+export function findActiveAnnouncements(now: string): Publication[] {
+  return queryAll<PublicationRow>(
+    `SELECT * FROM publicaciones
+     WHERE tipo = 'anuncio' AND visible = 1
+       AND (inicio = '' OR inicio <= @now) AND (fin = '' OR fin >= @now)
+     ORDER BY creado_en DESC, id DESC`,
+    { now },
+  ).map(toPublication);
 }
 
 export function findById(kind: PublicationKind, id: number): Publication | null {
-  const row = db.prepare("SELECT * FROM publicaciones WHERE tipo = ? AND id = ?").get(kind, id) as Row | undefined;
+  const row = queryOne<PublicationRow>("SELECT * FROM publicaciones WHERE tipo = ? AND id = ?", kind, id);
   return row ? toPublication(row) : null;
 }
 
+/** Una publicación oculta nunca debe poder abrirse desde una URL pública. */
 export function findVisibleBySlug(kind: PublicationKind, slug: string): Publication | null {
-  const row = db.prepare("SELECT * FROM publicaciones WHERE tipo = ? AND slug = ? AND visible = 1").get(kind, slug) as Row | undefined;
+  const row = queryOne<PublicationRow>(
+    "SELECT * FROM publicaciones WHERE tipo = ? AND slug = ? AND visible = 1",
+    kind,
+    slug,
+  );
   return row ? toPublication(row) : null;
 }
 
+/** El slug solo debe ser único dentro de su tipo: una noticia y un anuncio pueden compartirlo. */
 export function slugTaken(kind: PublicationKind, slug: string, exceptId = -1): boolean {
-  return !!db.prepare("SELECT id FROM publicaciones WHERE tipo = ? AND slug = ? AND id != ?").get(kind, slug, exceptId);
+  return queryOne("SELECT id FROM publicaciones WHERE tipo = ? AND slug = ? AND id != ?", kind, slug, exceptId) !== undefined;
 }
 
 export function create(kind: PublicationKind, input: PublicationInput): number {
-  const result = db.prepare(`INSERT INTO publicaciones (tipo, slug, titulo, resumen, contenido, imagen, imagen_alt, enlace, inicio, fin, visible) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-    .run(kind, input.slug, input.title, input.summary, input.content, input.image, input.imageAlt, input.link, input.startsAt, input.endsAt, input.visible ? 1 : 0);
-  return Number(result.lastInsertRowid);
+  return execute(
+    `INSERT INTO publicaciones (tipo, slug, titulo, resumen, contenido, imagen, imagen_alt, enlace, inicio, fin,
+                                visible, creado_en, actualizado_en)
+     VALUES (@tipo, @slug, @titulo, @resumen, @contenido, @imagen, @imagen_alt, @enlace, @inicio, @fin,
+             @visible, datetime('now','localtime'), datetime('now','localtime'))`,
+    { ...toRow(input), tipo: kind },
+  );
 }
 
 export function update(kind: PublicationKind, id: number, input: PublicationInput): void {
-  db.prepare(`UPDATE publicaciones SET slug = ?, titulo = ?, resumen = ?, contenido = ?, imagen = ?, imagen_alt = ?, enlace = ?, inicio = ?, fin = ?, visible = ?, actualizado_en = datetime('now') WHERE tipo = ? AND id = ?`)
-    .run(input.slug, input.title, input.summary, input.content, input.image, input.imageAlt, input.link, input.startsAt, input.endsAt, input.visible ? 1 : 0, kind, id);
+  execute(
+    `UPDATE publicaciones SET
+       slug = @slug, titulo = @titulo, resumen = @resumen, contenido = @contenido, imagen = @imagen,
+       imagen_alt = @imagen_alt, enlace = @enlace, inicio = @inicio, fin = @fin, visible = @visible,
+       actualizado_en = datetime('now','localtime')
+     WHERE tipo = @tipo AND id = @id`,
+    { ...toRow(input), tipo: kind, id },
+  );
+}
+
+export function toggleVisible(kind: PublicationKind, id: number): void {
+  execute(
+    "UPDATE publicaciones SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE tipo = ? AND id = ?",
+    kind,
+    id,
+  );
 }
 
 export function remove(kind: PublicationKind, id: number): void {
-  db.prepare("DELETE FROM publicaciones WHERE tipo = ? AND id = ?").run(kind, id);
-}
-
-export function toggle(kind: PublicationKind, id: number): void {
-  db.prepare("UPDATE publicaciones SET visible = 1 - visible, actualizado_en = datetime('now') WHERE tipo = ? AND id = ?").run(kind, id);
+  execute("DELETE FROM publicaciones WHERE tipo = ? AND id = ?", kind, id);
 }

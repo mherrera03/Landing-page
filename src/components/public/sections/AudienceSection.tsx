@@ -1,11 +1,12 @@
 import { AUDIENCES } from "@/constants/audiences";
 import { cn } from "@/lib/utils";
 import { Reveal } from "../motion/Reveal";
+import { Section } from "./Section";
 import { SectionHeading } from "./SectionHeading";
 
 export function AudienceSection() {
   return (
-    <section id="publico" aria-labelledby="publico-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
+    <Section id="publico">
       <div className="container-page">
         <SectionHeading id="publico-titulo" title="¿Quiénes se forman con nosotros?">
           Nuestra oferta está pensada para perfiles distintos, cada uno con sus propias metas.
@@ -35,6 +36,6 @@ export function AudienceSection() {
           ))}
         </ul>
       </div>
-    </section>
+    </Section>
   );
 }

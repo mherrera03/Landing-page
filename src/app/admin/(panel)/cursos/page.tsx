@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
 import { Plus } from "lucide-react";
+import { requireSession } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/courses.repository";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { CourseTable } from "@/components/admin/courses/CourseTable";
-import { FlashMessage } from "@/components/admin/ui/FlashMessage";
+import { FlashFromParams } from "@/components/admin/ui/FlashMessage";
 import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: "Cursos" };
 
-const MENSAJES: Record<string, string> = {
+const MENSAJES = {
   creado: "Curso creado. Ya aparece en la landing.",
   actualizado: "Cambios guardados.",
   eliminado: "Curso eliminado.",
 };
 
 export default async function CursosPage({ searchParams }: PageProps<"/admin/cursos">) {
-  const params = await searchParams;
-  const cursos = repo.findAll();
-
-  const aviso = Object.keys(MENSAJES).find((k) => params[k] === "1");
+  await requireSession();
 
   return (
     <>
@@ -33,9 +31,9 @@ export default async function CursosPage({ searchParams }: PageProps<"/admin/cur
         }
       />
 
-      {aviso && <FlashMessage>{MENSAJES[aviso]}</FlashMessage>}
+      <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <CourseTable courses={cursos} />
+      <CourseTable courses={repo.findAll()} />
     </>
   );
 }

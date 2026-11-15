@@ -4,32 +4,22 @@ import { requireAdmin } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/users.repository";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { UserTable } from "@/components/admin/users/UserTable";
-import { FlashMessage } from "@/components/admin/ui/FlashMessage";
+import { FlashFromParams } from "@/components/admin/ui/FlashMessage";
 import { Button } from "@/components/ui/Button";
 
-export const metadata: Metadata = {
-  title: "Usuarios",
-};
+export const metadata: Metadata = { title: "Usuarios" };
 
-const MENSAJES: Record<string, string> = {
+const MENSAJES = {
   creado: "Usuario creado correctamente.",
   actualizado: "Usuario actualizado correctamente.",
   eliminado: "Usuario eliminado correctamente.",
 };
 
-type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
-export default async function UsuariosPage({ searchParams }: PageProps) {
+export default async function UsuariosPage({ searchParams }: PageProps<"/admin/usuarios">) {
   const session = await requireAdmin();
-  const params = await searchParams;
-  const usuarios = repo.findAll();
-
-  const mensaje = Object.keys(MENSAJES).find((key) => params[key] === "1");
 
   return (
-    <div className="space-y-6">
+    <>
       <PageHeader
         title="Usuarios"
         description="Quién puede entrar al panel y qué puede administrar."
@@ -41,9 +31,9 @@ export default async function UsuariosPage({ searchParams }: PageProps) {
         }
       />
 
-      {mensaje && <FlashMessage>{MENSAJES[mensaje]}</FlashMessage>}
+      <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <UserTable users={usuarios} currentUserId={session.userId} />
-    </div>
+      <UserTable users={repo.findAll()} currentUserId={session.userId} />
+    </>
   );
 }

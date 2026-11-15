@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
-import { AdminSidebar } from "./AdminSidebar";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { AdminSidebar, type AdminUserSummary } from "./AdminSidebar";
 
 type AdminShellProps = {
-  user: { name: string; role: string };
+  user: AdminUserSummary;
   children: ReactNode;
 };
 
@@ -15,16 +16,16 @@ export function AdminShell({ user, children }: AdminShellProps) {
   // Los enlaces del menú llaman a close() al navegar (ver onNavigate)
   const close = useCallback(() => setOpen(false), []);
 
+  useEscapeKey(open, close);
+
+  // Con el menú abierto, el contenido de fondo no debe desplazarse
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open, close]);
+  }, [open]);
 
   return (
     <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-[16rem_1fr]">

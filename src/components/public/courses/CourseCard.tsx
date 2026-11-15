@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { ArrowRight, Clock, Signal, Users } from "lucide-react";
 import { COURSE_CATEGORIES } from "@/constants/course-categories";
-import type { Course } from "@/types/course.types";
+import { COURSE_STATUS_LABELS, type Course } from "@/types/course.types";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ export function CourseCard({ course, index, onOpen }: CourseCardProps) {
         <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-ink/85 via-ink/30 to-transparent" />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4">
           <Badge variant="onImage">{COURSE_CATEGORIES[course.category].label}</Badge>
-          {upcoming && <Badge variant="onImage">Próximamente</Badge>}
+          {upcoming && <Badge variant="onImage">{COURSE_STATUS_LABELS.proximamente}</Badge>}
         </div>
         <h3 className="absolute inset-x-0 bottom-0 p-4 text-xl leading-tight font-bold text-white">{course.title}</h3>
       </div>

@@ -3,9 +3,6 @@
 import { useCallback } from "react";
 import { useLenis } from "lenis/react";
 
-/** Aire que queda entre el header y el contenido de la sección. */
-const AIRE = 0;
-
 /** Dónde debe quedar el scroll para que la sección empiece justo bajo el header. */
 function destino(target: HTMLElement): number {
   const header = document.querySelector("header")?.getBoundingClientRect().height ?? 0;
@@ -16,7 +13,7 @@ function destino(target: HTMLElement): number {
   // donde empieza su contenido, no donde empieza su caja.
   const relleno = parseFloat(getComputedStyle(target).paddingTop) || 0;
 
-  return relleno - header - AIRE;
+  return relleno - header;
 }
 
 /** Desplaza hasta una sección por su id, dejando libre la altura del header fijo. */

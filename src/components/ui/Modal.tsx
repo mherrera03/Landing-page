@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { X } from "lucide-react";
+import { useIsClient } from "@/hooks/useIsClient";
 
 type ModalProps = {
   open: boolean;
@@ -16,14 +17,12 @@ type ModalProps = {
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-const subscribe = () => () => {};
-
 export function Modal({ open, onClose, title, children }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const lenis = useLenis();
-  // true solo en el navegador: el portal necesita document.body
-  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
+  // El portal necesita document.body, que solo existe en el navegador
+  const mounted = useIsClient();
 
   // Bloquea el scroll de fondo y devuelve el foco al elemento que abrió el modal
   useEffect(() => {

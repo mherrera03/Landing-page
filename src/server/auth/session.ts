@@ -2,8 +2,6 @@ import "server-only";
 import { cookies } from "next/headers";
 import { DURACION_HORAS, SESSION_COOKIE, decryptSession, encryptSession, type SessionPayload } from "./session-token";
 
-export { SESSION_COOKIE, type SessionPayload };
-
 export async function createSession(payload: SessionPayload): Promise<void> {
   const token = await encryptSession(payload);
   const cookieStore = await cookies();

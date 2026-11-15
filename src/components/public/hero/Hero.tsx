@@ -2,16 +2,12 @@
 
 import { useRef } from "react";
 import { motion, type Variants } from "motion/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import { ArrowRight } from "lucide-react";
-import type { Course } from "@/types/course.types";
+import { gsap, useGSAP } from "@/lib/gsap";
 import type { LandingSettings } from "@/schemas/landing.schema";
+import type { Course } from "@/types/course.types";
 import { Button } from "@/components/ui/Button";
 import { HeroFeaturedCourse } from "./HeroFeaturedCourse";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -65,9 +61,7 @@ export function Hero({ course, settings }: { course: Course | null; settings: La
 
       <div className="container-page grid items-center gap-10 pt-10 pb-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:pt-16 lg:pb-14">
         <motion.div variants={container} initial="hidden" animate="show">
-          
-
-          <h1 className="mt-5 text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+          <h1 className="mt-5text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
             <span className="-mb-[0.14em] block overflow-hidden pb-[0.14em]">
               <motion.span variants={line} className="block">
                 {settings.heroTitle1}

@@ -1,5 +1,5 @@
 import "server-only";
-import { db } from "../connection";
+import { execute, queryAll } from "../connection";
 import type { LeadInput } from "@/schemas/lead.schema";
 import type { Lead } from "@/types/lead.types";
 
@@ -31,40 +31,25 @@ function toLead(row: LeadRow): Lead {
 
 /** Las más recientes primero: es el orden en que se atienden. */
 export function findAll(): Lead[] {
-  const rows = db.prepare("SELECT * FROM solicitudes ORDER BY creado_en DESC, id DESC").all() as unknown as LeadRow[];
-  return rows.map(toLead);
+  return queryAll<LeadRow>("SELECT * FROM solicitudes ORDER BY creado_en DESC, id DESC").map(toLead);
 }
 
-export function findById(id: number): Lead | null {
-  const row = db.prepare("SELECT * FROM solicitudes WHERE id = ?").get(id) as LeadRow | undefined;
-  return row ? toLead(row) : null;
-}
-
-export function insert(input: LeadInput): number {
-  const result = db
-    .prepare(
-      `INSERT INTO solicitudes (nombre, correo, pais, telefono, interes, mensaje)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-    )
-    .run(input.name, input.email, input.country, input.phone, input.interest, input.message);
-
-  return Number(result.lastInsertRowid);
+export function create(input: LeadInput): number {
+  return execute(
+    "INSERT INTO solicitudes (nombre, correo, pais, telefono, interes, mensaje) VALUES (?, ?, ?, ?, ?, ?)",
+    input.name,
+    input.email,
+    input.country,
+    input.phone,
+    input.interest,
+    input.message,
+  );
 }
 
 export function toggleAttended(id: number): void {
-  db.prepare("UPDATE solicitudes SET atendida = 1 - atendida WHERE id = ?").run(id);
+  execute("UPDATE solicitudes SET atendida = 1 - atendida WHERE id = ?", id);
 }
 
 export function remove(id: number): void {
-  db.prepare("DELETE FROM solicitudes WHERE id = ?").run(id);
-}
-
-export function countAll(): { total: number; pendientes: number } {
-  return db
-    .prepare(
-      `SELECT COUNT(*) AS total,
-              COALESCE(SUM(CASE WHEN atendida = 0 THEN 1 ELSE 0 END), 0) AS pendientes
-       FROM solicitudes`,
-    )
-    .get() as { total: number; pendientes: number };
+  execute("DELETE FROM solicitudes WHERE id = ?", id);
 }

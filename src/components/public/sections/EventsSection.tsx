@@ -1,28 +1,26 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getEvents } from "@/services/events.service";
-import { isPastEvent, todayInElSalvador } from "@/lib/dates";
 import { ROUTES } from "@/constants/routes";
+import { todayInElSalvador } from "@/lib/dates";
+import { splitEvents } from "@/lib/events";
+import { findVisible } from "@/server/database/repositories/events.repository";
 import { EventCarousel } from "../events/EventCarousel";
 import { Reveal } from "../motion/Reveal";
+import { Section } from "./Section";
 
 /** Cuántos eventos caben en el carrusel de la portada; el resto, en "Ver todos". */
 const MAX_EN_CARRUSEL = 6;
 
-export async function EventsSection() {
-  const todos = await getEvents();
-  const hoy = todayInElSalvador();
-  // Los finalizados no son "próximos": se quedan fuera del carrusel
-  const proximos = todos.filter((e) => !isPastEvent(e, hoy)).slice(0, MAX_EN_CARRUSEL);
+export function EventsSection() {
+  const { upcoming, past } = splitEvents(findVisible(), todayInElSalvador());
+
+  // En la portada el evento destacado va primero; el resto, por fecha
+  const proximos = [...upcoming].sort((a, b) => Number(b.featured) - Number(a.featured)).slice(0, MAX_EN_CARRUSEL);
 
   // Si no hay ninguno próximo, se muestra el último que se realizó para que la
   // sección no quede vacía (siempre que exista alguno)
-  const ultimo = todos
-    .filter((e) => isPastEvent(e, hoy))
-    .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))[0];
-
-  const mostrandoPasado = proximos.length === 0 && !!ultimo;
-  const events = mostrandoPasado ? [ultimo] : proximos;
+  const mostrandoPasado = proximos.length === 0 && past.length > 0;
+  const events = mostrandoPasado ? past.slice(0, 1) : proximos;
 
   const heading = (
     <div>
@@ -34,7 +32,7 @@ export async function EventsSection() {
   );
 
   return (
-    <section id="eventos" aria-labelledby="eventos-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
+    <Section id="eventos">
       <div className="container-page">
         <Reveal className="relative overflow-hidden rounded-[2rem] bg-ink px-6 py-10 sm:px-10 lg:px-12 lg:py-12">
           <div aria-hidden="true" className="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-brand opacity-20 blur-3xl" />
@@ -61,6 +59,6 @@ export async function EventsSection() {
           </div>
         </Reveal>
       </div>
-    </section>
+    </Section>
   );
 }

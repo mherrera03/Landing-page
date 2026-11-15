@@ -7,22 +7,19 @@ const MIN_PASSWORD = 8;
 const password = z
   .string()
   .min(MIN_PASSWORD, `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.`)
+  // bcrypt ignora todo lo que pase de 72 bytes
   .max(72, "La contraseña es demasiado larga.");
 
 const base = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(3, "Escribe el nombre completo.")
-    .max(80, "El nombre es demasiado largo."),
+  name: z.string().trim().min(3, "Escribe el nombre completo.").max(80, "El nombre es demasiado largo."),
   email: z
     .string()
     .trim()
     .toLowerCase()
-    .pipe(z.email("Escribe un correo válido."))
-    .pipe(z.string().max(120, "El correo es demasiado largo.")),
+    .max(120, "El correo es demasiado largo.")
+    .pipe(z.email("Escribe un correo válido.")),
   role: z.enum(USER_ROLES, "Selecciona un rol."),
-  active: z.coerce.boolean<boolean>(),
+  active: z.boolean(),
 });
 
 /** Al crear, la contraseña es obligatoria: sin ella la cuenta no podría entrar. */
@@ -33,6 +30,5 @@ export const updateUserSchema = base.extend({
   password: z.union([z.literal(""), password]),
 });
 
-export type CreateUserInput = z.infer<typeof createUserSchema>;
-export type UpdateUserInput = z.infer<typeof updateUserSchema>;
-export type UserFormField = keyof UpdateUserInput;
+export type UserInput = z.infer<typeof updateUserSchema>;
+export type UserFormField = keyof UserInput;

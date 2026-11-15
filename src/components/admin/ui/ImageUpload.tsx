@@ -1,73 +1,83 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ImageUp, Trash2 } from "lucide-react";
 import { Field } from "@/components/ui/Field";
+import { IMAGE_MIME_TYPES, MAX_IMAGE_MB, imageProblem } from "@/lib/image-rules";
 import { cn } from "@/lib/utils";
 
-const MAX_MB = 4;
-const ACEPTADOS = "image/webp,image/jpeg,image/png,image/avif";
-
 type ImageUploadProps = {
+  label: string;
   /** Ruta de la imagen ya guardada (al editar). */
   defaultValue?: string;
   error?: string;
-  label?: string;
   required?: boolean;
-  /** Pista sobre el formato recomendado. */
-  folderHint?: string;
-  inputName?: string;
-  pathName?: string;
+  /** Recomendación sobre la forma o el tamaño de la imagen. */
+  hint?: string;
+  /** Nombre del campo con el archivo. */
+  fileField?: string;
+  /** Nombre del campo oculto con la ruta de la imagen ya guardada. */
+  pathField?: string;
 };
 
 /**
- * Sube una imagen o arrástrala. El archivo viaja en `imagenArchivo`;
- * `image` lleva la ruta actual por si no se cambia la imagen.
+ * Sube una imagen o arrástrala. El archivo viaja en `fileField`; `pathField`
+ * lleva la ruta actual por si no se cambia la imagen.
+ *
+ * Cuando el servidor guarda una imagen nueva, `defaultValue` cambia y el campo
+ * se reinicia con ella: el archivo elegido ya no hace falta.
  */
-export function ImageUpload({
+export function ImageUpload(props: ImageUploadProps) {
+  return <ImageUploadField key={props.defaultValue ?? ""} {...props} />;
+}
+
+function ImageUploadField({
+  label,
   defaultValue = "",
   error,
-  label = "Imagen del curso",
   required = true,
-  folderHint = "Se recomienda horizontal (16:11).",
-  inputName = "imagenArchivo",
-  pathName = "image",
+  hint = "Se recomienda horizontal (16:11).",
+  fileField = "imagenArchivo",
+  pathField = "image",
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState(defaultValue);
-  const [fileName, setFileName] = useState<string | null>(null);
+  /** Vista previa del archivo elegido. Mientras no haya uno, se muestra la imagen guardada. */
+  const [chosen, setChosen] = useState<{ name: string; url: string } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
-  function tomarArchivo(file: File | undefined) {
-    if (!file) return;
-    setLocalError(null);
+  // Las URL de vista previa ocupan memoria hasta que se liberan
+  useEffect(() => {
+    if (!chosen) return;
+    return () => URL.revokeObjectURL(chosen.url);
+  }, [chosen]);
 
-    if (!ACEPTADOS.split(",").includes(file.type)) {
-      setLocalError("Formato no permitido. Usa WebP, JPG, PNG o AVIF.");
-      return;
-    }
-    if (file.size > MAX_MB * 1024 * 1024) {
-      setLocalError(`La imagen pesa ${(file.size / 1024 / 1024).toFixed(1)} MB. El máximo son ${MAX_MB} MB.`);
-      return;
-    }
-
-    setFileName(file.name);
-    setPreview(URL.createObjectURL(file));
-  }
-
-  function quitar() {
-    setPreview(defaultValue);
-    setFileName(null);
-    setLocalError(null);
+  function clear() {
+    setChosen(null);
     if (inputRef.current) inputRef.current.value = "";
   }
 
+  function take(file: File | undefined) {
+    if (!file) return;
+
+    const problem = imageProblem(file);
+    setLocalError(problem);
+    if (problem) {
+      // Un archivo que no sirve no debe viajar con el formulario
+      clear();
+      return;
+    }
+
+    setChosen({ name: file.name, url: URL.createObjectURL(file) });
+  }
+
+  const preview = chosen?.url ?? defaultValue;
+
   return (
-    <Field id={inputName} label={label} required={required} optional={!required} error={localError ?? error} className="sm:col-span-2">
+    <Field id={fileField} label={label} required={required} optional={!required} error={localError ?? error} className="sm:col-span-2">
       {/* Conserva la imagen guardada si no se sube una nueva */}
-      <input type="hidden" name={pathName} value={defaultValue} />
+      <input type="hidden" name={pathField} value={defaultValue} />
 
       <div
         onDragOver={(e) => {
@@ -80,7 +90,7 @@ export function ImageUpload({
           setDragging(false);
           // El archivo soltado debe quedar en el input para viajar en FormData.
           if (inputRef.current) inputRef.current.files = e.dataTransfer.files;
-          tomarArchivo(e.dataTransfer.files[0]);
+          take(e.dataTransfer.files[0]);
         }}
         className={cn(
           "flex flex-col gap-4 rounded-xl border-2 border-dashed p-4 transition-colors duration-200 sm:flex-row sm:items-center",
@@ -89,7 +99,7 @@ export function ImageUpload({
       >
         <div className="relative aspect-[16/11] w-full shrink-0 overflow-hidden rounded-lg bg-surface sm:w-40">
           {preview ? (
-            <Image src={preview} alt="" fill sizes="160px" className="object-cover" unoptimized={preview.startsWith("blob:")} />
+            <Image src={preview} alt="" fill sizes="160px" className="object-cover" unoptimized={chosen !== null} />
           ) : (
             <span className="grid h-full place-items-center text-xs text-muted">Sin imagen</span>
           )}
@@ -98,12 +108,12 @@ export function ImageUpload({
         <div className="min-w-0 flex-1">
           <input
             ref={inputRef}
-            id={inputName}
-            name={inputName}
+            id={fileField}
+            name={fileField}
             type="file"
-            accept={ACEPTADOS}
+            accept={IMAGE_MIME_TYPES.join(",")}
             className="sr-only"
-            onChange={(e) => tomarArchivo(e.target.files?.[0])}
+            onChange={(e) => take(e.target.files?.[0])}
           />
 
           <div className="flex flex-wrap items-center gap-2">
@@ -116,10 +126,13 @@ export function ImageUpload({
               {preview ? "Cambiar imagen" : "Elegir imagen"}
             </button>
 
-            {fileName && (
+            {chosen && (
               <button
                 type="button"
-                onClick={quitar}
+                onClick={() => {
+                  setLocalError(null);
+                  clear();
+                }}
                 className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line px-3.5 text-sm font-semibold text-muted transition-colors duration-200 hover:text-danger"
               >
                 <Trash2 className="size-4" aria-hidden="true" />
@@ -129,9 +142,9 @@ export function ImageUpload({
           </div>
 
           <p className="mt-2 text-xs text-muted">
-            {fileName ?? "Arrastra una imagen aquí o elige una desde tu computadora."}
+            {chosen?.name ?? "Arrastra una imagen aquí o elige una desde tu computadora."}
             <br />
-            WebP, JPG, PNG o AVIF · máximo {MAX_MB} MB · {folderHint}
+            WebP, JPG, PNG o AVIF · máximo {MAX_IMAGE_MB} MB · {hint}
           </p>
         </div>
       </div>

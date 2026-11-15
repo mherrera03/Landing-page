@@ -1,10 +1,11 @@
 import { SERVICE_GROUPS } from "@/constants/services";
 import { Reveal } from "../motion/Reveal";
+import { Section } from "./Section";
 import { SectionHeading } from "./SectionHeading";
 
 export function ServicesSection() {
   return (
-    <section id="servicios" aria-labelledby="servicios-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
+    <Section id="servicios">
       <div className="container-page">
         <div className="relative overflow-hidden rounded-[2.25rem] bg-ink px-6 py-10 sm:px-10 lg:px-14 lg:py-12">
           {/* Resplandores de marca sobre el fondo oscuro */}
@@ -36,6 +37,6 @@ export function ServicesSection() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { requireSession } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/events.repository";
 import { updateEventAction } from "@/server/actions/events.actions";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
@@ -9,8 +10,10 @@ import { DeleteEventButton } from "@/components/admin/events/DeleteEventButton";
 export const metadata: Metadata = { title: "Editar evento" };
 
 export default async function EditarEventoPage({ params }: PageProps<"/admin/eventos/[id]/editar">) {
+  await requireSession();
+
   const { id } = await params;
-  const evento = repo.getEventById(Number(id));
+  const evento = repo.findById(Number(id));
   if (!evento) notFound();
 
   // El id va fijo aquí: no viaja en el formulario, así nadie puede cambiarlo

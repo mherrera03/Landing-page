@@ -1,6 +1,6 @@
 import "server-only";
 import type { DatabaseSync } from "node:sqlite";
-import { transaction } from "../connection";
+import { transaction } from "../transaction";
 import { seed } from "./seed";
 
 /**
@@ -157,6 +157,38 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
       `);
     },
   },
+  {
+    // El módulo de eventos se rehízo en la 0.7.0 sobre la tabla `events`, que
+    // hasta ahora creaba el repositorio la primera vez que se usaba. Aquí queda
+    // registrada con el resto del esquema. IF NOT EXISTS: las bases que ya la
+    // tienen no cambian. La tabla antigua `eventos` (002 a 004) ya no se usa.
+    name: "008_eventos_unificados",
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS events (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          slug TEXT NOT NULL UNIQUE,
+          title TEXT NOT NULL,
+          type TEXT NOT NULL,
+          modality TEXT NOT NULL,
+          event_date TEXT NOT NULL,
+          event_time TEXT NOT NULL,
+          location TEXT,
+          price REAL,
+          capacity INTEGER,
+          registration_url TEXT,
+          status TEXT NOT NULL DEFAULT 'abierto',
+          description TEXT NOT NULL,
+          image TEXT NOT NULL,
+          image_alt TEXT NOT NULL,
+          visible INTEGER NOT NULL DEFAULT 1,
+          featured INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        );
+      `);
+    },
+  },
 ];
 
 export function runMigrations(db: DatabaseSync) {
@@ -172,12 +204,18 @@ export function runMigrations(db: DatabaseSync) {
 
   for (const migration of MIGRATIONS) {
     if (yaAplicada.get(migration.name)) continue;
+
     // Cada migración es atómica: si falla a medias, no deja la base inconsistente
-    transaction(db, () => {
+    const aplicada = transaction(db, () => {
+      // Al compilar, varios procesos abren la base a la vez: otro pudo aplicar
+      // esta migración mientras este esperaba su turno de escritura.
+      if (yaAplicada.get(migration.name)) return false;
       migration.up(db);
       registrar.run(migration.name);
+      return true;
     });
-    console.log(`[db] migración aplicada: ${migration.name}`);
+
+    if (aplicada) console.log(`[db] migración aplicada: ${migration.name}`);
   }
 
   seed(db);

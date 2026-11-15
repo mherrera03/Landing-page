@@ -3,11 +3,8 @@
 import { useEffect, type ReactNode } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import { MotionConfig, useReducedMotion } from "motion/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
-
-gsap.registerPlugin(ScrollTrigger);
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 /** Hace que Lenis avance con el reloj de GSAP y avise a ScrollTrigger en cada scroll. */
 function LenisGsapSync() {

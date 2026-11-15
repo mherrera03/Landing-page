@@ -1,14 +1,16 @@
 export const ROUTES = {
-  home: "/",
   thanks: "/gracias",
   events: "/eventos",
-  news: "/noticias",
   api: {
     leads: "/api/leads",
   },
 } as const;
 
-/** Secciones de la landing (anclas). El id coincide con el atributo id de cada <section>. */
+/**
+ * Enlaces del menú. La mayoría son secciones de la landing (anclas): en esos,
+ * el id coincide con el atributo id de su <section> y sirve para resaltar en el
+ * menú la sección que está a la vista.
+ */
 export const NAV_LINKS = [
   { id: "nosotros", label: "Nosotros", href: "/#nosotros" },
   { id: "servicios", label: "Servicios", href: "/#servicios" },
@@ -16,5 +18,4 @@ export const NAV_LINKS = [
   { id: "eventos", label: "Eventos", href: "/#eventos" },
   { id: "noticias", label: "Noticias", href: "/noticias" },
   { id: "contacto", label: "Contáctanos", href: "/#contacto" },
-  
 ] as const;

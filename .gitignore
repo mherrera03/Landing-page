@@ -23,6 +23,7 @@ legacy/backend/data/.jwt-secret
 
 # Base de datos local (se crea sola al arrancar)
 database/data/
+database/data.real/
 
 # Imágenes subidas desde el admin
 public/images/courses/*

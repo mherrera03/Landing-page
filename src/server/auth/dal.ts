@@ -1,12 +1,15 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { getSession, type SessionPayload } from "./session";
+import { getSession } from "./session";
+import type { SessionPayload } from "./session-token";
 import { findActiveById } from "../database/repositories/users.repository";
 
 /**
  * Capa de acceso a datos: la ÚNICA puerta de entrada al admin.
  * Toda página o acción del admin debe empezar llamando a requireSession().
+ * No basta con que lo haga el layout: Next no lo vuelve a ejecutar al navegar
+ * entre páginas del panel.
  *
  * `cache` evita repetir la consulta cuando varios componentes la piden
  * dentro de la misma petición.
@@ -20,12 +23,12 @@ export const requireSession = cache(async (): Promise<SessionPayload> => {
   const user = findActiveById(session.userId);
   if (!user) redirect("/admin/login");
 
-  return { userId: user.id, name: user.nombre, role: user.rol };
+  return { userId: user.id, name: user.name, role: user.role };
 });
 
 /**
  * Como requireSession(), pero además exige rol de administrador.
- * La usan las páginas y acciones de /admin/usuarios.
+ * La usan las páginas y acciones de /admin/usuarios y /admin/configuracion.
  *
  * Se manda al resumen y no al login: la persona sí tiene sesión, lo que no
  * tiene es permiso, y devolverla al login solo la dejaría dando vueltas.

@@ -1,8 +1,9 @@
 import "server-only";
-import { db } from "../connection";
+import { execute, queryAll, queryOne } from "../connection";
+import type { UserInput } from "@/schemas/user.schema";
 import type { AdminUser, UserRole } from "@/types/user.types";
 
-export type UserRow = {
+type UserRow = {
   id: number;
   nombre: string;
   correo: string;
@@ -11,6 +12,9 @@ export type UserRow = {
   activo: number;
   creado_en: string;
 };
+
+/** Lo que guarda el formulario, sin la contraseña: esa viaja aparte y ya cifrada. */
+type UserData = Omit<UserInput, "password">;
 
 function toUser(row: UserRow): AdminUser {
   return {
@@ -23,68 +27,67 @@ function toUser(row: UserRow): AdminUser {
   };
 }
 
-export function findActiveByEmail(correo: string): UserRow | null {
-  const row = db.prepare("SELECT * FROM usuarios WHERE correo = ? AND activo = 1").get(correo) as UserRow | undefined;
-  return row ?? null;
+/**
+ * Para iniciar sesión: la cuenta junto con el hash de su contraseña.
+ * Es la única consulta que lo devuelve; el resto del panel nunca lo ve.
+ */
+export function findActiveWithPasswordByEmail(email: string): (AdminUser & { passwordHash: string }) | null {
+  const row = queryOne<UserRow>("SELECT * FROM usuarios WHERE correo = ? AND activo = 1", email);
+  return row ? { ...toUser(row), passwordHash: row.password_hash } : null;
 }
 
-export function findActiveById(id: number): UserRow | null {
-  const row = db.prepare("SELECT * FROM usuarios WHERE id = ? AND activo = 1").get(id) as UserRow | undefined;
-  return row ?? null;
+export function findActiveById(id: number): AdminUser | null {
+  const row = queryOne<UserRow>("SELECT * FROM usuarios WHERE id = ? AND activo = 1", id);
+  return row ? toUser(row) : null;
 }
 
 /** Todos, incluidos los desactivados: solo para el panel. */
 export function findAll(): AdminUser[] {
-  const rows = db.prepare("SELECT * FROM usuarios ORDER BY activo DESC, nombre").all() as unknown as UserRow[];
-  return rows.map(toUser);
+  return queryAll<UserRow>("SELECT * FROM usuarios ORDER BY activo DESC, nombre").map(toUser);
 }
 
 export function findById(id: number): AdminUser | null {
-  const row = db.prepare("SELECT * FROM usuarios WHERE id = ?").get(id) as UserRow | undefined;
+  const row = queryOne<UserRow>("SELECT * FROM usuarios WHERE id = ?", id);
   return row ? toUser(row) : null;
 }
 
 /** ¿El correo ya lo usa otra cuenta? Da igual si está desactivada: la columna es única. */
-export function emailTaken(correo: string, exceptId?: number): boolean {
-  return db.prepare("SELECT id FROM usuarios WHERE correo = ? AND id != ?").get(correo, exceptId ?? -1) !== undefined;
+export function emailTaken(email: string, exceptId = -1): boolean {
+  return queryOne("SELECT id FROM usuarios WHERE correo = ? AND id != ?", email, exceptId) !== undefined;
 }
 
-export type UserInput = {
-  name: string;
-  email: string;
-  role: UserRole;
-  active: boolean;
-};
-
-export function insert(input: UserInput, passwordHash: string): number {
-  const result = db
-    .prepare("INSERT INTO usuarios (nombre, correo, password_hash, rol, activo) VALUES (?, ?, ?, ?, ?)")
-    .run(input.name, input.email, passwordHash, input.role, input.active ? 1 : 0);
-
-  return Number(result.lastInsertRowid);
+export function create(input: UserData, passwordHash: string): number {
+  return execute(
+    "INSERT INTO usuarios (nombre, correo, password_hash, rol, activo) VALUES (?, ?, ?, ?, ?)",
+    input.name,
+    input.email,
+    passwordHash,
+    input.role,
+    input.active ? 1 : 0,
+  );
 }
 
-/** `passwordHash` solo viaja si se escribió una contraseña nueva. */
-export function update(id: number, input: UserInput, passwordHash?: string): void {
-  db.prepare("UPDATE usuarios SET nombre = ?, correo = ?, rol = ?, activo = ? WHERE id = ?").run(
+/** `passwordHash` solo viaja si se escribió una contraseña nueva; si no, se conserva la actual. */
+export function update(id: number, input: UserData, passwordHash?: string): void {
+  execute(
+    `UPDATE usuarios
+     SET nombre = ?, correo = ?, rol = ?, activo = ?, password_hash = COALESCE(?, password_hash)
+     WHERE id = ?`,
     input.name,
     input.email,
     input.role,
     input.active ? 1 : 0,
+    passwordHash ?? null,
     id,
   );
-
-  if (passwordHash) {
-    db.prepare("UPDATE usuarios SET password_hash = ? WHERE id = ?").run(passwordHash, id);
-  }
 }
 
 export function toggleActive(id: number): void {
-  db.prepare("UPDATE usuarios SET activo = 1 - activo WHERE id = ?").run(id);
+  execute("UPDATE usuarios SET activo = 1 - activo WHERE id = ?", id);
 }
 
 export function remove(id: number): void {
-  db.prepare("DELETE FROM usuarios WHERE id = ?").run(id);
+  execute("DELETE FROM usuarios WHERE id = ?", id);
 }
 
 /**
@@ -94,15 +97,8 @@ export function remove(id: number): void {
  * tocando es la última con acceso a esta sección.
  */
 export function countOtherActiveAdmins(exceptId: number): number {
-  const { n } = db
-    .prepare("SELECT COUNT(*) AS n FROM usuarios WHERE rol = 'admin' AND activo = 1 AND id != ?")
-    .get(exceptId) as { n: number };
-
-  return n;
-}
-
-export function countAll(): { total: number; activos: number } {
-  return db
-    .prepare("SELECT COUNT(*) AS total, COALESCE(SUM(activo), 0) AS activos FROM usuarios")
-    .get() as { total: number; activos: number };
+  return queryOne<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM usuarios WHERE rol = 'admin' AND activo = 1 AND id != ?",
+    exceptId,
+  )!.n;
 }

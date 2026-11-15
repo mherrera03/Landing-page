@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Check, ChevronDown } from "lucide-react";
+import { stripAccents } from "@/lib/text";
 import { cn } from "@/lib/utils";
 import { Field, controlA11y, fieldControl } from "./Field";
 
-/** Quita tildes y pasa a minúsculas: así "panama" encuentra "Panamá". */
-const normalize = (value: string) =>
-  value
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .trim();
+/** Sin tildes y en minúsculas: así "panama" encuentra "Panamá". */
+const normalize = (value: string) => stripAccents(value).toLowerCase().trim();
 
 type ComboboxProps = {
   id: string;
@@ -21,6 +17,8 @@ type ComboboxProps = {
   onChange: (value: string) => void;
   onBlur?: () => void;
   placeholder?: string;
+  /** Lo que se muestra cuando la búsqueda no encuentra nada. */
+  emptyText?: string;
   required?: boolean;
   error?: string;
   wrapperClassName?: string;
@@ -38,6 +36,7 @@ export function Combobox({
   onChange,
   onBlur,
   placeholder,
+  emptyText = "Sin resultados.",
   required,
   error,
   wrapperClassName,
@@ -69,11 +68,12 @@ export function Combobox({
     if (!open) return;
     const onPointerDown = (e: PointerEvent) => {
       if (rootRef.current?.contains(e.target as Node)) return;
-      close();
+      setOpen(false);
+      setQuery(null);
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  });
+  }, [open]);
 
   function close() {
     setOpen(false);
@@ -90,12 +90,11 @@ export function Combobox({
 
   function select(option: string) {
     onChange(option);
-    setOpen(false);
-    setQuery(null);
+    close();
     inputRef.current?.focus();
   }
 
-  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       if (!open) return openList();
@@ -146,8 +145,7 @@ export function Combobox({
           onKeyDown={onKeyDown}
           onBlur={() => {
             // El clic en una opción no llega aquí: usa pointerdown con preventDefault
-            setQuery(null);
-            setOpen(false);
+            close();
             onBlur?.();
           }}
         />
@@ -170,7 +168,7 @@ export function Combobox({
             className="absolute z-50 mt-1.5 max-h-64 w-full overflow-y-auto overscroll-contain rounded-xl border border-line bg-surface py-1 shadow-lift"
           >
             {filtered.length === 0 ? (
-              <li className="px-4 py-3 text-sm text-muted">No encontramos ese país.</li>
+              <li className="px-4 py-3 text-sm text-muted">{emptyText}</li>
             ) : (
               filtered.map((option, i) => {
                 const selected = option === value;

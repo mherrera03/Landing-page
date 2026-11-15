@@ -2,63 +2,32 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 import { createUserSchema, updateUserSchema, type UserFormField } from "@/schemas/user.schema";
 import { requireAdmin } from "@/server/auth/dal";
 import { hashPassword } from "@/server/auth/password";
 import * as repo from "@/server/database/repositories/users.repository";
+import { parseForm, readId } from "@/server/forms";
+import type { FormState } from "@/types/form.types";
 
-export type UserFormState = {
-  error?: string;
-  fields?: Partial<Record<UserFormField, string>>;
-  /** Lo que se había escrito, para no perderlo si hay un error. */
-  values?: Record<string, string>;
-};
-
-function refreshPages() {
-  revalidatePath("/admin/usuarios");
-  revalidatePath("/admin");
-}
+export type UserFormState = FormState<UserFormField>;
 
 /** La contraseña nunca se devuelve al formulario: se vuelve a escribir. */
-function toFormValues(values: Record<string, string>): Record<string, string> {
-  const { password: _password, ...resto } = values;
-  return resto;
-}
-
-function parseForm(formData: FormData, modo: "crear" | "editar") {
-  const values = Object.fromEntries(
-    [...formData.entries()].filter(([, v]) => typeof v === "string").map(([k, v]) => [k, String(v)]),
-  ) as Record<string, string>;
-
-  const schema = modo === "crear" ? createUserSchema : updateUserSchema;
-  const result = schema.safeParse({ ...values, active: formData.get("active") === "on" });
-
-  if (!result.success) {
-    const fieldErrors = z.flattenError(result.error).fieldErrors;
-    const fields: UserFormState["fields"] = {};
-    for (const key of Object.keys(fieldErrors) as UserFormField[]) fields[key] = fieldErrors[key]?.[0];
-    return { ok: false as const, state: { values: toFormValues(values), fields } };
-  }
-
-  return { ok: true as const, data: result.data, values };
-}
+const FORM_OPTIONS = { switches: ["active"], secrets: ["password"] };
 
 export async function createUserAction(_prev: UserFormState, formData: FormData): Promise<UserFormState> {
   await requireAdmin();
 
-  const parsed = parseForm(formData, "crear");
+  const parsed = await parseForm(formData, createUserSchema, FORM_OPTIONS);
   if (!parsed.ok) return parsed.state;
 
   const { password, ...datos } = parsed.data;
 
   if (repo.emailTaken(datos.email)) {
-    return { values: toFormValues(parsed.values), fields: { email: "Ya existe una cuenta con este correo." } };
+    return { values: parsed.values, fields: { email: "Ya existe una cuenta con este correo." } };
   }
 
-  repo.insert(datos, hashPassword(password));
-  refreshPages();
-
+  repo.create(datos, hashPassword(password));
+  revalidatePath("/admin/usuarios");
   redirect("/admin/usuarios?creado=1");
 }
 
@@ -68,11 +37,11 @@ export async function updateUserAction(id: number, _prev: UserFormState, formDat
   const actual = repo.findById(id);
   if (!actual) return { error: "Esta cuenta ya no existe." };
 
-  const parsed = parseForm(formData, "editar");
+  const parsed = await parseForm(formData, updateUserSchema, FORM_OPTIONS);
   if (!parsed.ok) return parsed.state;
 
   const { password, ...datos } = parsed.data;
-  const values = toFormValues(parsed.values);
+  const { values } = parsed;
 
   if (repo.emailTaken(datos.email, id)) {
     return { values, fields: { email: "Ya existe otra cuenta con este correo." } };
@@ -95,16 +64,15 @@ export async function updateUserAction(id: number, _prev: UserFormState, formDat
   }
 
   repo.update(id, datos, password === "" ? undefined : hashPassword(password));
-  refreshPages();
-
+  revalidatePath("/admin/usuarios");
   redirect("/admin/usuarios?actualizado=1");
 }
 
 export async function toggleUserActiveAction(formData: FormData): Promise<void> {
   const session = await requireAdmin();
 
-  const id = Number(formData.get("id"));
-  if (!Number.isSafeInteger(id) || id <= 0 || id === session.userId) return;
+  const id = readId(formData);
+  if (id === null || id === session.userId) return;
 
   const usuario = repo.findById(id);
   if (!usuario) return;
@@ -113,21 +81,21 @@ export async function toggleUserActiveAction(formData: FormData): Promise<void> 
   if (usuario.active && usuario.role === "admin" && repo.countOtherActiveAdmins(id) === 0) return;
 
   repo.toggleActive(id);
-  refreshPages();
+  revalidatePath("/admin/usuarios");
 }
 
 export async function deleteUserAction(formData: FormData): Promise<void> {
   const session = await requireAdmin();
 
-  const id = Number(formData.get("id"));
+  const id = readId(formData);
 
-  if (Number.isSafeInteger(id) && id > 0 && id !== session.userId) {
+  if (id !== null && id !== session.userId) {
     const usuario = repo.findById(id);
     const ultimoAdmin = usuario?.role === "admin" && usuario.active && repo.countOtherActiveAdmins(id) === 0;
 
     if (usuario && !ultimoAdmin) {
       repo.remove(id);
-      refreshPages();
+      revalidatePath("/admin/usuarios");
     }
   }
 
