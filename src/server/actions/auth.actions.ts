@@ -1,39 +1,32 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { z } from "zod";
 import { loginSchema } from "@/schemas/auth.schema";
-import { findActiveByEmail } from "@/server/database/repositories/users.repository";
+import { findActiveWithPasswordByEmail } from "@/server/database/repositories/users.repository";
 import { verifyPassword } from "@/server/auth/password";
 import { createSession, destroySession } from "@/server/auth/session";
+import { fieldErrors } from "@/server/forms";
+import type { FormState } from "@/types/form.types";
 
-export type LoginState = {
-  error?: string;
-  fields?: Partial<Record<"email" | "password", string>>;
-  email?: string;
-};
+export type LoginState = FormState<"email" | "password">;
 
 export async function loginAction(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const email = String(formData.get("email") ?? "");
+  // La contraseña nunca se devuelve al formulario: se vuelve a escribir
+  const values = { email };
+
   const result = loginSchema.safeParse({ email, password: formData.get("password") });
+  if (!result.success) return { values, fields: fieldErrors(result.error) };
 
-  if (!result.success) {
-    const fieldErrors = z.flattenError(result.error).fieldErrors;
-    return {
-      email,
-      fields: { email: fieldErrors.email?.[0], password: fieldErrors.password?.[0] },
-    };
-  }
-
-  const user = findActiveByEmail(result.data.email);
+  const user = findActiveWithPasswordByEmail(result.data.email);
 
   // Mismo mensaje si el correo no existe o si la contraseña falla:
   // así nadie puede averiguar qué correos están registrados.
-  if (!user || !verifyPassword(result.data.password, user.password_hash)) {
-    return { email, error: "Correo o contraseña incorrectos." };
+  if (!user || !verifyPassword(result.data.password, user.passwordHash)) {
+    return { values, error: "Correo o contraseña incorrectos." };
   }
 
-  await createSession({ userId: user.id, name: user.nombre, role: user.rol });
+  await createSession({ userId: user.id, name: user.name, role: user.role });
 
   const siguiente = String(formData.get("siguiente") ?? "");
   // Solo rutas internas del admin: evita que un enlace manipulado

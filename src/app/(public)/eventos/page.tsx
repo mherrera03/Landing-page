@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
-import { getEvents } from "@/services/events.service";
-import { isPastEvent, todayInElSalvador } from "@/lib/dates";
+import { todayInElSalvador } from "@/lib/dates";
+import { splitEvents } from "@/lib/events";
+import { findVisible } from "@/server/database/repositories/events.repository";
 import { EventsExplorer } from "@/components/public/events/EventsExplorer";
-import type { UgbEvent } from "@/types/event.types";
 
 export const metadata: Metadata = {
   title: "Eventos",
@@ -15,12 +15,7 @@ export default async function EventsPage() {
   // y una página generada al compilar se quedaría con la fecha de ese momento.
   await connection();
 
-  const hoy = todayInElSalvador();
-  const events = await getEvents();
-
-  const porFecha = (a: UgbEvent, b: UgbEvent) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`);
-  const upcoming = events.filter((e) => !isPastEvent(e, hoy)).sort(porFecha);
-  const past = events.filter((e) => isPastEvent(e, hoy)).sort((a, b) => porFecha(b, a)); // el más reciente primero
+  const { upcoming, past } = splitEvents(findVisible(), todayInElSalvador());
 
   return (
     <section aria-labelledby="eventos-titulo" className="py-10 lg:py-16">

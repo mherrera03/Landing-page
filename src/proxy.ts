@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-// Se importa session-token (sin server-only ni next/headers): este archivo
-// corre en el runtime Edge, donde esos módulos no están disponibles.
+// Se importa session-token y no session: aquí la cookie se lee de la petición,
+// sin pasar por next/headers.
 import { decryptSession, SESSION_COOKIE } from "@/server/auth/session-token";
 
 /**

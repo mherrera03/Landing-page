@@ -1,12 +1,39 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Plus } from "lucide-react";
-import { list } from "@/server/database/repositories/publications.repository";
+import { requireSession } from "@/server/auth/dal";
+import { findAll } from "@/server/database/repositories/publications.repository";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { PublicationList } from "@/components/admin/publications/PublicationList";
+import { FlashFromParams } from "@/components/admin/ui/FlashMessage";
+import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: "Anuncios" };
 
-export default function AnnouncementsAdminPage() {
-  return <><PageHeader title="Anuncios" description="Administra los avisos que aparecen en el sitio público." action={<Link href="/admin/anuncios/nuevo" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 font-semibold text-white"><Plus className="size-4" />Nuevo anuncio</Link>} /><PublicationList kind="anuncio" items={list("anuncio")} /></>;
+const MENSAJES = {
+  creado: "Anuncio creado.",
+  actualizado: "Cambios guardados.",
+  eliminado: "Anuncio eliminado.",
+};
+
+export default async function AnunciosAdminPage({ searchParams }: PageProps<"/admin/anuncios">) {
+  await requireSession();
+
+  return (
+    <>
+      <PageHeader
+        title="Anuncios"
+        description="Administra los avisos que aparecen en el sitio público."
+        action={
+          <Button href="/admin/anuncios/nuevo">
+            <Plus className="size-4" aria-hidden="true" />
+            Nuevo anuncio
+          </Button>
+        }
+      />
+
+      <FlashFromParams params={await searchParams} messages={MENSAJES} />
+
+      <PublicationList kind="anuncio" items={findAll("anuncio")} />
+    </>
+  );
 }

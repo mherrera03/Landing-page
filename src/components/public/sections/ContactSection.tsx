@@ -1,15 +1,17 @@
 import { Clock3, Mail, MapPin } from "lucide-react";
 import { SITE } from "@/constants/site";
-import { getSettings } from "@/server/database/repositories/settings.repository";
 import { SPECIALISTS } from "@/constants/team";
+import { getSettings } from "@/server/database/repositories/settings.repository";
 import { ContactForm } from "../contact/ContactForm";
 import { SpecialistCard } from "../contact/SpecialistCard";
 import { Reveal } from "../motion/Reveal";
+import { Section } from "./Section";
 
 export function ContactSection() {
   const { email, address, hours, mapUrl } = getSettings();
+
   return (
-    <section id="contacto" aria-labelledby="contacto-titulo" className="py-10 lg:pt-[55px] lg:pb-[54px]">
+    <Section id="contacto">
       <div className="container-page grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal className="relative overflow-hidden rounded-3xl bg-brand p-8 sm:p-10">
           <span aria-hidden="true" className="absolute -right-6 -bottom-28 text-[16rem] leading-none font-extrabold text-white/20">
@@ -21,7 +23,8 @@ export function ContactSection() {
               Tu próxima formación puede empezar aquí.
             </h2>
             <p className="mt-4 leading-relaxed text-ink/80">
-              Déjanos tus datos y el equipo de {SITE.name} te contactará para brindarte más información sobre el programa que te interesa.
+              Déjanos tus datos y el equipo de {SITE.name} te contactará para brindarte más información sobre el programa que te
+              interesa.
             </p>
             <a
               href={`mailto:${email}`}
@@ -30,8 +33,26 @@ export function ContactSection() {
               <Mail className="size-4" aria-hidden="true" />
               {email}
             </a>
-            {(address || mapUrl) && <p className="mt-4 flex items-start gap-2 text-sm text-ink/80"><MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" /><span>{address || "Ubicación"}{mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="ml-2 font-semibold underline underline-offset-2">Ver mapa</a>}</span></p>}
-            {hours && <p className="mt-2 flex items-start gap-2 text-sm text-ink/80"><Clock3 className="mt-0.5 size-4 shrink-0" aria-hidden="true" />{hours}</p>}
+
+            {(address || mapUrl) && (
+              <p className="mt-4 flex items-start gap-2 text-sm text-ink/80">
+                <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <span>
+                  {address || "Ubicación"}
+                  {mapUrl && (
+                    <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="ml-2 font-semibold underline underline-offset-2">
+                      Ver mapa
+                    </a>
+                  )}
+                </span>
+              </p>
+            )}
+            {hours && (
+              <p className="mt-2 flex items-start gap-2 text-sm text-ink/80">
+                <Clock3 className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                {hours}
+              </p>
+            )}
           </div>
         </Reveal>
 
@@ -58,6 +79,6 @@ export function ContactSection() {
           ))}
         </ul>
       </div>
-    </section>
+    </Section>
   );
 }

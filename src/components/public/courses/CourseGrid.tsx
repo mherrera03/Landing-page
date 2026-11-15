@@ -5,14 +5,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { SearchX } from "lucide-react";
 import { COURSE_CATEGORY_KEYS } from "@/constants/course-categories";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
+import { announceLeadInterest } from "@/lib/lead-interest";
 import type { Course } from "@/types/course.types";
 import { Modal } from "@/components/ui/Modal";
 import { CourseCard } from "./CourseCard";
 import { CourseDetail } from "./CourseDetail";
 import { CourseFilters, type CourseFilter } from "./CourseFilters";
-
-/** Evento con el que la ficha del curso le avisa al formulario de contacto qué curso interesa. */
-export const LEAD_INTEREST_EVENT = "ugb:lead-interest";
 
 export function CourseGrid({ courses }: { courses: Course[] }) {
   const [filter, setFilter] = useState<CourseFilter>("all");
@@ -38,7 +36,8 @@ export function CourseGrid({ courses }: { courses: Course[] }) {
   const requestInfo = useCallback(
     (course: Course) => {
       setSelected(null);
-      window.dispatchEvent(new CustomEvent<string>(LEAD_INTEREST_EVENT, { detail: course.title }));
+      // El formulario de contacto precarga el mensaje con este curso
+      announceLeadInterest(course.title);
       // Espera a que el modal libere el scroll antes de desplazarse
       window.setTimeout(() => scrollToSection("contacto"), 80);
     },

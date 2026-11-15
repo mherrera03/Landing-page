@@ -1,40 +1,47 @@
 import "server-only";
-import bcrypt from "bcryptjs";
 import type { DatabaseSync } from "node:sqlite";
-import { transaction } from "../connection";
+import { hashPassword } from "../../auth/password";
+import { transaction } from "../transaction";
+
+const SEEDS: { tabla: string; sembrar: (db: DatabaseSync) => void }[] = [
+  { tabla: "usuarios", sembrar: seedUsuarios },
+  { tabla: "cursos", sembrar: seedCursos },
+  { tabla: "events", sembrar: seedEventos },
+];
 
 /**
  * Datos iniciales. Solo se insertan si la tabla está vacía,
  * así nunca pisa lo que el admin haya creado.
  */
 export function seed(db: DatabaseSync) {
-  seedUsuarios(db);
-  seedCursos(db);
-  seedEventos(db);
+  for (const { tabla, sembrar } of SEEDS) {
+    // Lo normal: ya hay datos y no hace falta pedir el turno de escritura
+    if (!estaVacia(db, tabla)) continue;
+
+    transaction(db, () => {
+      // Se vuelve a mirar ya dentro de la transacción: al compilar, otro proceso
+      // pudo sembrar la tabla mientras este esperaba, y saldría todo duplicado.
+      if (estaVacia(db, tabla)) sembrar(db);
+    });
+  }
 }
 
-/** ¿La tabla está vacía? Solo entonces se insertan los datos de ejemplo. */
 function estaVacia(db: DatabaseSync, tabla: string): boolean {
   return (db.prepare(`SELECT COUNT(*) AS n FROM ${tabla}`).get() as { n: number }).n === 0;
 }
 
 function seedUsuarios(db: DatabaseSync) {
-  const hayUsuarios = db.prepare("SELECT COUNT(*) AS n FROM usuarios").get() as { n: number };
-  if (hayUsuarios.n === 0) {
-    // ⚠️ Usuario de PRUEBA. Cambiar la contraseña antes de pasar a producción.
-    db.prepare("INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES (?, ?, ?, ?)").run(
-      "Administrador",
-      "admin@ugb.edu.sv",
-      bcrypt.hashSync("admin123", 10),
-      "admin",
-    );
-    console.log("[db] usuario inicial creado: admin@ugb.edu.sv");
-  }
+  // ⚠️ Usuario de PRUEBA. Cambiar la contraseña antes de pasar a producción.
+  db.prepare("INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES (?, ?, ?, ?)").run(
+    "Administrador",
+    "admin@ugb.edu.sv",
+    hashPassword("admin123"),
+    "admin",
+  );
+  console.log("[db] usuario inicial creado: admin@ugb.edu.sv");
 }
 
 function seedCursos(db: DatabaseSync) {
-  if (!estaVacia(db, "cursos")) return;
-
   const insert = db.prepare(`
     INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
                         modalidad, imagen, imagen_alt, estado, destacado, orden)
@@ -105,93 +112,37 @@ function seedCursos(db: DatabaseSync) {
     },
   ];
 
-  transaction(db, () => cursos.forEach((c) => insert.run(c)));
+  for (const curso of cursos) insert.run(curso);
   console.log("[db] cursos iniciales creados");
 }
 
+/**
+ * Un evento de ejemplo: así una copia recién clonada del proyecto no muestra
+ * la sección de eventos en blanco.
+ */
 function seedEventos(db: DatabaseSync) {
-  if (!estaVacia(db, "eventos")) return;
-
-  const insert = db.prepare(`
-    INSERT INTO eventos (slug, titulo, tipo, etiqueta, descripcion, fecha, hora, lugar, costo, enlace, enlace_texto,
-                         imagen, imagen_alt, destacado, orden)
-    VALUES (@slug, @titulo, @tipo, @etiqueta, @descripcion, @fecha, @hora, @lugar, @costo, @enlace, @enlace_texto,
-            @imagen, @imagen_alt, @destacado, @orden)
-  `);
-
-  const eventos = [
-    {
-      slug: "masterclass-interiorismo-2027",
-      titulo: "Adiós al minimalismo frío: así será el interiorismo en 2027",
-      tipo: "masterclass",
-      etiqueta: "Masterclass gratis",
-      descripcion:
-        "Una sesión gratuita para conocer hacia dónde van las tendencias de interiorismo y cómo aplicarlas en tus propios proyectos.",
-      fecha: "2026-10-08",
-      hora: "19:00",
-      lugar: "En línea",
-      costo: "Gratis",
-      enlace: "https://forms.cloud.microsoft/r/uLt18RQCVQ",
-      enlace_texto: "Inscribirme gratis",
-      imagen: "/images/events/masterclass-interiorismo-2027.jpg",
-      imagen_alt:
-        "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
-      destacado: 1,
-      orden: 1,
-    },
-    {
-      slug: "masterclass-abierta",
-      titulo: "Masterclass abierta",
-      tipo: "masterclass",
-      etiqueta: "Próximamente",
-      descripcion: "Sesiones gratuitas con especialistas para conocer de cerca nuestros programas antes de inscribirte.",
-      fecha: null,
-      hora: null,
-      lugar: "Virtual",
-      costo: "",
-      enlace: "",
-      enlace_texto: "",
-      imagen: "",
-      imagen_alt: "",
-      destacado: 0,
-      orden: 2,
-    },
-    {
-      slug: "nuevos-programas-2026",
-      titulo: "Nuevos programas 2026",
-      tipo: "novedad",
-      etiqueta: "Nueva edición",
-      descripcion: "Conoce las próximas aperturas de cohortes y las novedades de nuestra oferta académica.",
-      fecha: null,
-      hora: null,
-      lugar: "",
-      costo: "",
-      enlace: "",
-      enlace_texto: "",
-      imagen: "",
-      imagen_alt: "",
-      destacado: 0,
-      orden: 3,
-    },
-    {
-      slug: "capacitacion-a-medida",
-      titulo: "Capacitación a medida",
-      tipo: "empresas",
-      etiqueta: "Para empresas",
-      descripcion: "Diseñamos programas corporativos según las necesidades de formación de tu organización.",
-      fecha: null,
-      hora: null,
-      lugar: "",
-      costo: "",
-      enlace: "/#contacto",
-      enlace_texto: "Solicitar información",
-      imagen: "",
-      imagen_alt: "",
-      destacado: 0,
-      orden: 4,
-    },
-  ];
-
-  transaction(db, () => eventos.forEach((e) => insert.run(e)));
-  console.log("[db] eventos iniciales creados");
+  db.prepare(`
+    INSERT INTO events (slug, title, type, modality, event_date, event_time, location, price, registration_url,
+                        status, description, image, image_alt, visible, featured, created_at, updated_at)
+    VALUES (@slug, @title, @type, @modality, @event_date, @event_time, @location, @price, @registration_url,
+            @status, @description, @image, @image_alt, 1, 1, @now, @now)
+  `).run({
+    slug: "masterclass-interiorismo-2027",
+    title: "Adiós al minimalismo frío: así será el interiorismo en 2027",
+    type: "Masterclass",
+    modality: "Virtual",
+    event_date: "2026-10-08",
+    event_time: "19:00",
+    location: "En línea",
+    price: 0,
+    registration_url: "https://forms.cloud.microsoft/r/uLt18RQCVQ",
+    status: "finalizado",
+    description:
+      "Una sesión gratuita para conocer hacia dónde van las tendencias de interiorismo y cómo aplicarlas en tus propios proyectos.",
+    image: "/images/events/masterclass-interiorismo-2027.jpg",
+    image_alt:
+      "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
+    now: new Date().toISOString(),
+  });
+  console.log("[db] evento de ejemplo creado");
 }

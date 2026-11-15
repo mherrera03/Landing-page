@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    repo.insert(result.data);
+    repo.create(result.data);
   } catch (error) {
     // Si falla el guardado, el mensaje se perdería en silencio: queda en el
     // registro del servidor para poder recuperarlo a mano.

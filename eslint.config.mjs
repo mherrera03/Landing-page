@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Proyecto anterior (Express + vanilla), solo como referencia:
     "legacy/**",
+    // Copias de trabajo de Claude Code (worktrees): traen su propio .next y legacy
+    ".claude/**",
   ]),
   {
     rules: {

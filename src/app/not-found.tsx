@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export default function NotFound() {
   return (
@@ -8,12 +8,9 @@ export default function NotFound() {
       <p className="mt-4 max-w-md leading-relaxed text-muted">
         Es posible que el enlace haya cambiado o que la página ya no exista.
       </p>
-      <Link
-        href="/"
-        className="mt-8 inline-flex min-h-13 items-center rounded-full bg-ink px-7 font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5"
-      >
+      <Button href="/" size="lg" className="mt-8">
         Volver al inicio
-      </Link>
+      </Button>
     </section>
   );
 }

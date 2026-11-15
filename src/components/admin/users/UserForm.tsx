@@ -1,14 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
-import Link from "next/link";
-import { CircleAlert, Save } from "lucide-react";
+import { useActionState, useState } from "react";
 import type { UserFormState } from "@/server/actions/users.actions";
-import { USER_ROLES, USER_ROLE_HINTS, USER_ROLE_LABELS, type AdminUser } from "@/types/user.types";
+import { USER_ROLES, USER_ROLE_HINTS, USER_ROLE_LABELS, type AdminUser, type UserRole } from "@/types/user.types";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { Button } from "@/components/ui/Button";
+import { FormActions } from "../ui/FormActions";
+import { FormError } from "../ui/FormError";
+import { SubmitButton } from "../ui/SubmitButton";
 import { Switch } from "../ui/Switch";
 
 type UserFormProps = {
@@ -19,21 +18,17 @@ type UserFormProps = {
   esMiCuenta?: boolean;
 };
 
-const ROLE_LABELS = USER_ROLES.map((rol) => USER_ROLE_LABELS[rol]);
-
 export function UserForm({ action, user, esMiCuenta = false }: UserFormProps) {
   const [state, formAction] = useActionState<UserFormState, FormData>(action, {});
+  // Tras un error, el formulario se repinta con lo que la persona había escrito
   const v = state.values ?? {};
   const editando = Boolean(user);
+  // El rol se guarda en estado para que la explicación de abajo cambie al elegir otro
+  const [role, setRole] = useState<UserRole>(user?.role ?? "editor");
 
   return (
     <form action={formAction} className="rounded-2xl border border-line bg-surface p-5 sm:p-7">
-      {state.error && (
-        <p role="alert" className="mb-5 flex items-start gap-2 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
-          <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          {state.error}
-        </p>
-      )}
+      <FormError className="mb-5">{state.error}</FormError>
 
       <div className="grid gap-x-5 sm:grid-cols-2">
         <Input
@@ -43,7 +38,7 @@ export function UserForm({ action, user, esMiCuenta = false }: UserFormProps) {
           required
           autoComplete="name"
           placeholder="Michelle Portillo"
-          defaultValue={v.name ?? user?.name ?? ""}
+          defaultValue={v.name ?? user?.name}
           error={state.fields?.name}
         />
 
@@ -55,7 +50,7 @@ export function UserForm({ action, user, esMiCuenta = false }: UserFormProps) {
           required
           autoComplete="email"
           placeholder="nombre@ugb.edu.sv"
-          defaultValue={v.email ?? user?.email ?? ""}
+          defaultValue={v.email ?? user?.email}
           error={state.fields?.email}
         />
 
@@ -65,9 +60,10 @@ export function UserForm({ action, user, esMiCuenta = false }: UserFormProps) {
           label="Rol"
           required
           placeholder="Selecciona un rol"
-          options={ROLE_LABELS}
+          options={USER_ROLES.map((rol) => USER_ROLE_LABELS[rol])}
           values={USER_ROLES}
-          defaultValue={v.role ?? user?.role ?? "editor"}
+          value={role}
+          onChange={(e) => setRole(e.target.value as UserRole)}
           error={state.fields?.role}
           disabled={esMiCuenta}
         />
@@ -86,12 +82,17 @@ export function UserForm({ action, user, esMiCuenta = false }: UserFormProps) {
       </div>
 
       {esMiCuenta ? (
-        <p className="mt-2 rounded-xl bg-paper px-4 py-3 text-sm text-muted">
-          Esta es tu cuenta: no puedes cambiarte el rol ni quitarte el acceso. Pídeselo a otro administrador.
-        </p>
+        <>
+          <p className="mt-2 rounded-xl bg-paper px-4 py-3 text-sm text-muted">
+            Esta es tu cuenta: no puedes cambiarte el rol ni quitarte el acceso. Pídeselo a otro administrador.
+          </p>
+          {/* Los campos deshabilitados no se envían: así el rol y el acceso llegan igual */}
+          <input type="hidden" name="role" value="admin" />
+          <input type="hidden" name="active" value="on" />
+        </>
       ) : (
         <>
-          <p className="mt-1 text-sm text-muted">{USER_ROLE_HINTS[(v.role ?? user?.role ?? "editor") as "admin" | "editor"]}</p>
+          <p className="mt-1 text-sm text-muted">{USER_ROLE_HINTS[role]}</p>
 
           <div className="mt-4 border-t border-line pt-5">
             <Switch
@@ -109,35 +110,9 @@ export function UserForm({ action, user, esMiCuenta = false }: UserFormProps) {
         </>
       )}
 
-      {/* Los campos deshabilitados no se envían: así el rol y el acceso llegan igual */}
-      {esMiCuenta && (
-        <>
-          <input type="hidden" name="role" value="admin" />
-          <input type="hidden" name="active" value="on" />
-        </>
-      )}
-
-      <div className="mt-6 flex flex-wrap gap-3 border-t border-line pt-5">
-        <SubmitButton isEdit={editando} />
-
-        <Link
-          href="/admin/usuarios"
-          className="inline-flex min-h-12 items-center rounded-full border border-line px-6 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper"
-        >
-          Cancelar
-        </Link>
-      </div>
+      <FormActions cancelHref="/admin/usuarios">
+        <SubmitButton>{editando ? "Guardar cambios" : "Crear usuario"}</SubmitButton>
+      </FormActions>
     </form>
-  );
-}
-
-function SubmitButton({ isEdit }: { isEdit: boolean }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button type="submit" size="lg" loading={pending}>
-      {pending ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear usuario"}
-      {!pending && <Save className="size-4" aria-hidden="true" />}
-    </Button>
   );
 }

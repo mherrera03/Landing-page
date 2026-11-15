@@ -1,7 +1,23 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import type { ReactNode } from "react";
+import { useIsClient } from "@/hooks/useIsClient";
 import { todayInElSalvador } from "@/lib/dates";
+import { cn } from "@/lib/utils";
+import { EVENT_STATUS_LABELS, type UgbEvent } from "@/types/event.types";
+
+function Chip({ highlight = false, children }: { highlight?: boolean; children: ReactNode }) {
+  return (
+    <span
+      className={cn(
+        "inline-block rounded-full px-3 py-0.5 text-sm font-semibold",
+        highlight ? "bg-success/60 text-green-100" : "bg-white/15 text-white/75",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
 
 /** Días entre hoy y la fecha del evento. Negativo si ya pasó. */
 function daysUntil(isoDate: string): number {
@@ -10,38 +26,32 @@ function daysUntil(isoDate: string): number {
   return Math.round((Date.UTC(y1, m1 - 1, d1) - Date.UTC(y2, m2 - 1, d2)) / 86_400_000);
 }
 
-// Sin suscripción: solo sirve para distinguir servidor de navegador
-const subscribe = () => () => {};
-
 /**
- * "Hoy", "Mañana", "En 5 días" o "Finalizado".
+ * "Hoy", "Mañana" o "En 5 días".
  *
- * Se calcula en el navegador a propósito: la landing se genera de forma
- * estática, así que calcularlo en el servidor dejaría el texto congelado
- * en la fecha de la última compilación.
+ * Se calcula solo en el navegador: depende del día de hoy, y si el servidor y
+ * el navegador lo calcularan a un lado y otro de la medianoche, React avisaría
+ * de una diferencia al hidratar.
  */
-export function EventStatus({ date }: { date: string }) {
-  const enNavegador = useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
-
-  if (!enNavegador) return null;
+function Countdown({ date }: { date: string }) {
+  const isClient = useIsClient();
+  if (!isClient) return null;
 
   const dias = daysUntil(date);
-  const label = dias < 0 ? "Finalizado" : dias === 0 ? "Hoy" : dias === 1 ? "Mañana" : `En ${dias} días`;
-  const finalizado = dias < 0;
+  if (dias < 0) return <Chip>{EVENT_STATUS_LABELS.finalizado}</Chip>;
 
-  return (
-    <span
-      className={
-        finalizado
-          ? "inline-block rounded-full bg-white/15 px-3 py-0.5 text-sm font-semibold text-white/75"
-          : "inline-block rounded-full bg-success/60 px-3 py-0.5 text-sm font-semibold text-green-100"
-      }
-    >
-      {label}
-    </span>
-  );
+  return <Chip highlight>{dias === 0 ? "Hoy" : dias === 1 ? "Mañana" : `En ${dias} días`}</Chip>;
+}
+
+type EventStatusProps = {
+  event: Pick<UgbEvent, "date" | "status">;
+  /** El evento ya se realizó (por fecha o porque se marcó como finalizado). */
+  past: boolean;
+};
+
+/** Etiqueta de estado de un evento. El estado manual manda; si sigue abierto, se muestra la cuenta atrás. */
+export function EventStatus({ event, past }: EventStatusProps) {
+  if (past) return <Chip>{EVENT_STATUS_LABELS.finalizado}</Chip>;
+  if (event.status !== "abierto") return <Chip>{EVENT_STATUS_LABELS[event.status]}</Chip>;
+  return <Countdown date={event.date} />;
 }

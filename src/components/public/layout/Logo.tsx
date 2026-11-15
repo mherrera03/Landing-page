@@ -1,23 +1,26 @@
 import Image from "next/image";
+import { SITE } from "@/constants/site";
 import { cn } from "@/lib/utils";
+
+const DEFAULT_LOGO = "/images/logo.png";
 
 type LogoProps = {
   size?: "sm" | "md";
   className?: string;
+  /** Logo cargado desde Configuración. Si no viene (o está vacío), se usa el del proyecto. */
   src?: string;
   alt?: string;
 };
 
-export function Logo({ size = "md", className, src = "/images/logo.png", alt = "UGB Plus" }: LogoProps) {
-  const sm = size === "sm";
+export function Logo({ size = "md", className, src, alt }: LogoProps) {
   return (
     <Image
-      src={src}
-      alt={alt}
+      src={src || DEFAULT_LOGO}
+      alt={alt || SITE.name}
       width={350}
       height={100}
-      priority
-      className={cn("w-auto", sm ? "h-10" : "h-15", className)}
+      preload
+      className={cn("w-auto", size === "sm" ? "h-10" : "h-15", className)}
     />
   );
 }

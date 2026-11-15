@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { requireSession } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/courses.repository";
 import { updateCourseAction } from "@/server/actions/courses.actions";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
@@ -9,6 +10,8 @@ import { DeleteCourseButton } from "@/components/admin/courses/DeleteCourseButto
 export const metadata: Metadata = { title: "Editar curso" };
 
 export default async function EditarCursoPage({ params }: PageProps<"/admin/cursos/[id]/editar">) {
+  await requireSession();
+
   const { id } = await params;
   const curso = repo.findById(Number(id));
   if (!curso) notFound();

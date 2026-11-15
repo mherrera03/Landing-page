@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { NAV_LINKS } from "@/constants/routes";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -19,12 +19,7 @@ type MobileMenuProps = {
 
 /** Menú desplegable para móvil y tablet. Incluye el botón de inscripción. */
 export function MobileMenu({ id, open, activeId, onClose, contactButtonLabel, contactButtonHref }: MobileMenuProps) {
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  useEscapeKey(open, onClose);
 
   return (
     <AnimatePresence>

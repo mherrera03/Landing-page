@@ -1,18 +1,17 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
-import Link from "next/link";
-import { CircleAlert, Save } from "lucide-react";
+import { useActionState } from "react";
 import { COURSE_CATEGORIES, COURSE_CATEGORY_KEYS } from "@/constants/course-categories";
-import { slugify } from "@/schemas/course.schema";
+import { useSlugField } from "@/hooks/useSlugField";
 import type { CourseFormState } from "@/server/actions/courses.actions";
-import { COURSE_LEVELS, COURSE_MODALITIES, type Course } from "@/types/course.types";
+import { COURSE_LEVELS, COURSE_MODALITIES, COURSE_STATUSES, COURSE_STATUS_LABELS, type Course } from "@/types/course.types";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
-import { Button } from "@/components/ui/Button";
+import { FormActions } from "../ui/FormActions";
+import { FormError } from "../ui/FormError";
 import { ImageUpload } from "../ui/ImageUpload";
+import { SubmitButton } from "../ui/SubmitButton";
 import { Switch } from "../ui/Switch";
 
 type CourseFormProps = {
@@ -23,20 +22,13 @@ type CourseFormProps = {
 
 export function CourseForm({ action, course }: CourseFormProps) {
   const [state, formAction] = useActionState<CourseFormState, FormData>(action, {});
+  // Tras un error, el formulario se repinta con lo que la persona había escrito
   const v = state.values ?? {};
-
-  // La dirección se genera desde el título hasta que el usuario la edita a mano
-  const [slug, setSlug] = useState(v.slug ?? course?.slug ?? "");
-  const [slugTocado, setSlugTocado] = useState(Boolean(course));
+  const slugField = useSlugField(course?.slug ?? "", Boolean(course));
 
   return (
     <form action={formAction} className="rounded-2xl border border-line bg-surface p-5 sm:p-7">
-      {state.error && (
-        <p role="alert" className="mb-5 flex items-start gap-2 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
-          <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          {state.error}
-        </p>
-      )}
+      <FormError className="mb-5">{state.error}</FormError>
 
       <div className="grid gap-x-5 sm:grid-cols-2">
         <Input
@@ -48,7 +40,7 @@ export function CourseForm({ action, course }: CourseFormProps) {
           defaultValue={v.title ?? course?.title}
           error={state.fields?.title}
           wrapperClassName="sm:col-span-2"
-          onChange={(e) => !slugTocado && setSlug(slugify(e.target.value))}
+          onChange={slugField.onTitleChange}
         />
 
         <Input
@@ -57,13 +49,10 @@ export function CourseForm({ action, course }: CourseFormProps) {
           label="Dirección en la web"
           required
           placeholder="fundamentos-de-inteligencia-artificial"
-          value={slug}
+          value={slugField.slug}
           error={state.fields?.slug}
           wrapperClassName="sm:col-span-2"
-          onChange={(e) => {
-            setSlugTocado(true);
-            setSlug(e.target.value);
-          }}
+          onChange={slugField.onSlugChange}
         />
 
         <Select
@@ -72,7 +61,7 @@ export function CourseForm({ action, course }: CourseFormProps) {
           label="Categoría"
           required
           placeholder="Selecciona una categoría"
-          options={COURSE_CATEGORY_KEYS.map((k) => COURSE_CATEGORIES[k].label)}
+          options={COURSE_CATEGORY_KEYS.map((key) => COURSE_CATEGORIES[key].label)}
           values={COURSE_CATEGORY_KEYS}
           defaultValue={v.category ?? course?.category ?? ""}
           error={state.fields?.category}
@@ -120,7 +109,7 @@ export function CourseForm({ action, course }: CourseFormProps) {
           min={0}
           optional
           placeholder="Déjalo vacío si aún no abre"
-          defaultValue={v.students ?? (course?.students ?? "")}
+          defaultValue={v.students ?? course?.students ?? ""}
           error={state.fields?.students}
         />
 
@@ -130,8 +119,8 @@ export function CourseForm({ action, course }: CourseFormProps) {
           label="Estado"
           required
           placeholder="Selecciona un estado"
-          options={["Activo", "Próximamente"]}
-          values={["activo", "proximamente"]}
+          options={COURSE_STATUSES.map((status) => COURSE_STATUS_LABELS[status])}
+          values={COURSE_STATUSES}
           defaultValue={v.status ?? course?.status ?? "activo"}
           error={state.fields?.status}
         />
@@ -148,7 +137,7 @@ export function CourseForm({ action, course }: CourseFormProps) {
           wrapperClassName="sm:col-span-2"
         />
 
-        <ImageUpload defaultValue={v.image ?? course?.image} error={state.fields?.image} />
+        <ImageUpload label="Imagen del curso" defaultValue={v.image ?? course?.image} error={state.fields?.image} />
 
         <Input
           id="imageAlt"
@@ -177,25 +166,9 @@ export function CourseForm({ action, course }: CourseFormProps) {
         />
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-3 border-t border-line pt-5">
-        <SubmitButton isEdit={Boolean(course)} />
-        <Link
-          href="/admin/cursos"
-          className="inline-flex min-h-12 items-center rounded-full border border-line px-6 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper"
-        >
-          Cancelar
-        </Link>
-      </div>
+      <FormActions cancelHref="/admin/cursos">
+        <SubmitButton>{course ? "Guardar cambios" : "Crear curso"}</SubmitButton>
+      </FormActions>
     </form>
-  );
-}
-
-function SubmitButton({ isEdit }: { isEdit: boolean }) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" size="lg" loading={pending}>
-      {pending ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear curso"}
-      {!pending && <Save className="size-4" aria-hidden="true" />}
-    </Button>
   );
 }

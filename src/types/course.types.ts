@@ -1,11 +1,17 @@
 export type CourseCategory = "tecnologia" | "negocios" | "habilidades";
-export type CourseStatus = "activo" | "proximamente";
-export type CourseLevel = "Básico" | "Intermedio" | "Avanzado";
-export type CourseModality = "Híbrida" | "Virtual" | "Presencial";
 
-export const COURSE_LEVELS: CourseLevel[] = ["Básico", "Intermedio", "Avanzado"];
-export const COURSE_MODALITIES: CourseModality[] = ["Híbrida", "Virtual", "Presencial"];
-export const COURSE_STATUSES: CourseStatus[] = ["activo", "proximamente"];
+export const COURSE_LEVELS = ["Básico", "Intermedio", "Avanzado"] as const;
+export const COURSE_MODALITIES = ["Híbrida", "Virtual", "Presencial"] as const;
+export const COURSE_STATUSES = ["activo", "proximamente"] as const;
+
+export type CourseLevel = (typeof COURSE_LEVELS)[number];
+export type CourseModality = (typeof COURSE_MODALITIES)[number];
+export type CourseStatus = (typeof COURSE_STATUSES)[number];
+
+export const COURSE_STATUS_LABELS: Record<CourseStatus, string> = {
+  activo: "Activo",
+  proximamente: "Próximamente",
+};
 
 export interface Course {
   id: number;

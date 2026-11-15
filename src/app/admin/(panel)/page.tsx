@@ -1,17 +1,21 @@
 import Link from "next/link";
-import { BookOpen, CalendarDays, Eye, EyeOff, Plus, ArrowRight } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarDays, Eye, EyeOff, Plus } from "lucide-react";
 import { requireSession } from "@/server/auth/dal";
-import * as repo from "@/server/database/repositories/courses.repository";
-import * as eventosRepo from "@/server/database/repositories/events.repository";
+import * as coursesRepo from "@/server/database/repositories/courses.repository";
+import * as eventsRepo from "@/server/database/repositories/events.repository";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { StatCard } from "@/components/admin/dashboard/StatCard";
 import { Button } from "@/components/ui/Button";
 
+/** Cuántos cursos caben en "Últimos cursos"; el resto, en "Ver todos". */
+const RECIENTES = 5;
+
 export default async function DashboardPage() {
   const session = await requireSession();
-  const { total, visibles } = repo.countAll();
-  const eventos = eventosRepo.countAll();
-  const recientes = repo.findAll().slice(0, 5);
+  const cursos = coursesRepo.countAll();
+  const eventos = eventsRepo.countAll();
+  const recientes = coursesRepo.findRecent(RECIENTES);
+  const ocultos = cursos.total - cursos.visibles + (eventos.total - eventos.visibles);
 
   return (
     <>
@@ -27,10 +31,10 @@ export default async function DashboardPage() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={BookOpen} label="Cursos en total" value={total} />
-        <StatCard icon={Eye} label="Cursos visibles" value={visibles} />
+        <StatCard icon={BookOpen} label="Cursos en total" value={cursos.total} />
+        <StatCard icon={Eye} label="Cursos visibles" value={cursos.visibles} />
         <StatCard icon={CalendarDays} label="Eventos en total" value={eventos.total} />
-        <StatCard icon={EyeOff} label="Ocultos (cursos y eventos)" value={total - visibles + (eventos.total - eventos.visibles)} />
+        <StatCard icon={EyeOff} label="Ocultos (cursos y eventos)" value={ocultos} />
       </div>
 
       <section className="mt-8 rounded-2xl border border-line bg-surface">

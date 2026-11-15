@@ -128,12 +128,12 @@ ugb-plus/
 │   │
 │   ├── components/
 │   │   ├── public/
-│   │   │   ├── layout/            ← Header, Navbar, MobileMenu, Footer, Logo
+│   │   │   ├── layout/            ← Header, Navbar, MobileMenu, Footer, Logo, AnnouncementBar, BackLink
 │   │   │   ├── hero/              ← Hero, HeroFeaturedCourse
 │   │   │   ├── courses/           ← CourseCard, CourseGrid, CourseFilters, CourseDetail
-│   │   │   ├── events/            ← EventCarousel, EventSlide, EventsExplorer, EventListCard, EventStatus
+│   │   │   ├── events/            ← EventCarousel, EventSlide, EventsExplorer, EventListCard, EventStatus, RegisterLink
 │   │   │   ├── contact/           ← ContactForm, SpecialistCard
-│   │   │   ├── sections/          ← About, Stats, Services, Audience, Courses, Events, Contact
+│   │   │   ├── sections/          ← About, Stats, Services, Audience, Courses, Events, Contact (sobre Section)
 │   │   │   └── motion/            ← SmoothScroll (Lenis + GSAP), Reveal
 │   │   ├── admin/
 │   │   │   ├── layout/            ← AdminShell, AdminSidebar, PageHeader
@@ -143,26 +143,32 @@ ugb-plus/
 │   │   │   ├── publications/      ← Formularios y listados de noticias y anuncios
 │   │   │   ├── settings/          ← Contacto, portada, identidad y aviso destacado
 │   │   │   ├── dashboard/         ← StatCard
-│   │   │   └── ui/                ← ImageUpload, Switch, FlashMessage
-│   │   └── ui/                    ← Button, Input, Textarea, Select, Combobox, Field, Badge, Modal
+│   │   │   └── ui/                ← ImageUpload, Switch, FlashMessage, ConfirmDeleteButton,
+│   │   │                            SubmitButton, FormActions, FormError, ListItems
+│   │   └── ui/                    ← Button, GlowButton, Input, PhoneInput, Textarea, Select, Combobox,
+│   │                                Field, Badge, Modal
 │   │
 │   ├── server/                    ← Todo lo que solo corre en el servidor
 │   │   ├── auth/                  ← session, session-token, dal, password
 │   │   ├── database/
 │   │   │   ├── connection.ts      ← Conexión SQLite
+│   │   │   ├── transaction.ts     ← Envoltorio para transacciones
 │   │   │   ├── migrations/        ← Migraciones + datos iniciales
 │   │   │   └── repositories/      ← Consultas de cursos, eventos, noticias, avisos y usuarios
 │   │   ├── actions/               ← Server Actions del admin (crear, editar, borrar)
+│   │   ├── forms.ts               ← Utilidades comunes de las acciones (validar, responder errores)
 │   │   └── storage/uploads.ts     ← Subida de imágenes
 │   │
-│   ├── services/                  ← courses.service, events.service (lo que lee la landing)
-│   ├── schemas/                   ← Zod: auth, course, event, lead, publication, settings, user
-│   ├── types/                     ← course, event, lead, publication, user
+│   ├── schemas/                   ← Zod: auth, brand, course, event, landing, lead, publication,
+│   │                                settings, user (+ shared: reglas comunes)
+│   ├── types/                     ← course, event, form, lead, publication, user
 │   ├── constants/                 ← site, routes, admin-nav, course-categories,
-│   │                                services, audiences, stats, team, countries
-│   ├── hooks/                     ← useActiveSection, useScrollToSection
-│   ├── lib/                       ← utils, dates, format-event
-│   └── styles/                    ← variables, animations, public, admin
+│   │                                services, audiences, stats, team, countries, country-phone
+│   ├── hooks/                     ← useActiveSection, useScrollToSection, useEscapeKey, useIsClient,
+│   │                                useSlugField
+│   ├── lib/                       ← utils, dates, events, text, gsap, image-rules, phone,
+│   │                                lead-email, lead-interest
+│   └── styles/                    ← variables, animations, public
 │
 └── legacy/                        ← Proyecto anterior (Express + HTML/CSS/JS), solo referencia
 ```
@@ -173,7 +179,7 @@ ugb-plus/
 contacto salen de lo que haya en el panel. El recorrido siempre es el mismo:
 
 ```
-página  →  services/  →  server/database/repositories/  →  SQLite
+página  →  server/database/repositories/  →  SQLite
 ```
 
 **El panel escribe con Server Actions.** Los formularios del admin no llaman a una API: envían sus

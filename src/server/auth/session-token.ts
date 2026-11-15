@@ -1,11 +1,12 @@
 import { SignJWT, jwtVerify } from "jose";
+import type { UserRole } from "@/types/user.types";
 
 /**
  * Firma y verificación del token de sesión.
  *
- * Este archivo NO importa `server-only` ni `next/headers` a propósito:
- * lo usa `proxy.ts`, que corre en el runtime Edge, donde esos módulos no existen.
- * El manejo de la cookie vive en session.ts (solo servidor).
+ * Este archivo NO importa `server-only` ni `next/headers` a propósito: lo usa
+ * `proxy.ts`, que lee la cookie directamente de la petición. El manejo de la
+ * cookie desde páginas y acciones vive en session.ts.
  */
 export const SESSION_COOKIE = "ugbplus_session";
 export const DURACION_HORAS = 8;
@@ -13,7 +14,7 @@ export const DURACION_HORAS = 8;
 export type SessionPayload = {
   userId: number;
   name: string;
-  role: "admin" | "editor";
+  role: UserRole;
 };
 
 /**
@@ -23,13 +24,10 @@ export type SessionPayload = {
  */
 function getKey() {
   const secret = process.env.SESSION_SECRET;
-  if (!secret) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("Falta SESSION_SECRET en las variables de entorno.");
-    }
-    return new TextEncoder().encode("secreto-solo-para-desarrollo-no-usar-en-produccion");
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("Falta SESSION_SECRET en las variables de entorno.");
   }
-  return new TextEncoder().encode(secret);
+  return new TextEncoder().encode(secret || "secreto-solo-para-desarrollo-no-usar-en-produccion");
 }
 
 export async function encryptSession(payload: SessionPayload): Promise<string> {
@@ -44,7 +42,7 @@ export async function decryptSession(token: string | undefined): Promise<Session
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, getKey(), { algorithms: ["HS256"] });
-    return { userId: payload.userId as number, name: payload.name as string, role: payload.role as SessionPayload["role"] };
+    return { userId: payload.userId as number, name: payload.name as string, role: payload.role as UserRole };
   } catch {
     return null; // token inválido, manipulado o expirado
   }

@@ -37,9 +37,9 @@ export function Select({
           <option value="" disabled={!allowEmpty}>
             {placeholder}
           </option>
-          {options.map((label, i) => (
-            <option key={label} value={values?.[i] ?? label}>
-              {label}
+          {options.map((option, i) => (
+            <option key={option} value={values?.[i] ?? option}>
+              {option}
             </option>
           ))}
         </select>

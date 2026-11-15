@@ -1,5 +1,6 @@
 import "server-only";
-import { db } from "../connection";
+import { execute, inTransaction, queryAll, queryOne } from "../connection";
+import type { CourseInput } from "@/schemas/course.schema";
 import type { Course, CourseCategory, CourseLevel, CourseModality, CourseStatus } from "@/types/course.types";
 
 /** Fila tal cual viene de SQLite (sin tipos booleanos ni nulos de TypeScript). */
@@ -45,24 +46,6 @@ function toCourse(row: CourseRow): Course {
   };
 }
 
-/** Datos que el admin envía al crear o editar un curso. */
-export type CourseInput = {
-  slug: string;
-  title: string;
-  category: CourseCategory;
-  description: string;
-  students: number | null;
-  level: CourseLevel;
-  durationHours: number;
-  modality: CourseModality | null;
-  image: string;
-  imageAlt: string;
-  status: CourseStatus;
-  featured: boolean;
-  visible: boolean;
-  order: number;
-};
-
 function toRow(input: CourseInput) {
   return {
     slug: input.slug,
@@ -78,97 +61,93 @@ function toRow(input: CourseInput) {
     estado: input.status,
     destacado: input.featured ? 1 : 0,
     visible: input.visible ? 1 : 0,
-    orden: input.order,
   };
 }
 
 /** Solo los visibles, para la landing. */
 export function findVisible(): Course[] {
-  const rows = db.prepare("SELECT * FROM cursos WHERE visible = 1 ORDER BY orden, id").all() as CourseRow[];
-  return rows.map(toCourse);
+  return queryAll<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY orden, id").map(toCourse);
 }
 
 /** Todos, incluidos los ocultos: solo para el admin. */
 export function findAll(): Course[] {
-  const rows = db.prepare("SELECT * FROM cursos ORDER BY orden, id").all() as CourseRow[];
-  return rows.map(toCourse);
+  return queryAll<CourseRow>("SELECT * FROM cursos ORDER BY orden, id").map(toCourse);
+}
+
+/** Los últimos que se tocaron, para el resumen del panel. */
+export function findRecent(limit: number): Course[] {
+  return queryAll<CourseRow>("SELECT * FROM cursos ORDER BY actualizado_en DESC, id DESC LIMIT ?", limit).map(toCourse);
 }
 
 export function findById(id: number): Course | null {
-  const row = db.prepare("SELECT * FROM cursos WHERE id = ?").get(id) as CourseRow | undefined;
+  const row = queryOne<CourseRow>("SELECT * FROM cursos WHERE id = ?", id);
   return row ? toCourse(row) : null;
 }
 
 /** Un curso oculto nunca debe poder abrirse desde una URL pública. */
 export function findVisibleBySlug(slug: string): Course | null {
-  const row = db.prepare("SELECT * FROM cursos WHERE slug = ? AND visible = 1").get(slug) as CourseRow | undefined;
+  const row = queryOne<CourseRow>("SELECT * FROM cursos WHERE slug = ? AND visible = 1", slug);
   return row ? toCourse(row) : null;
 }
 
 /** El curso que se muestra en la portada: el marcado como destacado, o el primero. */
 export function findFeatured(): Course | null {
-  const row = (db.prepare("SELECT * FROM cursos WHERE visible = 1 AND destacado = 1 ORDER BY orden, id LIMIT 1").get() ??
-    db.prepare("SELECT * FROM cursos WHERE visible = 1 ORDER BY orden, id LIMIT 1").get()) as CourseRow | undefined;
+  const row = queryOne<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY destacado DESC, orden, id LIMIT 1");
   return row ? toCourse(row) : null;
 }
 
 /** ¿El slug ya lo usa otro curso? (el slug forma parte de la URL, debe ser único) */
-export function slugTaken(slug: string, exceptId?: number): boolean {
-  const row = db.prepare("SELECT id FROM cursos WHERE slug = ? AND id != ?").get(slug, exceptId ?? -1);
-  return row !== undefined;
+export function slugTaken(slug: string, exceptId = -1): boolean {
+  return queryOne("SELECT id FROM cursos WHERE slug = ? AND id != ?", slug, exceptId) !== undefined;
 }
 
 /** Solo un curso puede estar destacado a la vez. */
 function clearOtherFeatured(exceptId: number) {
-  db.prepare("UPDATE cursos SET destacado = 0 WHERE id != ?").run(exceptId);
+  execute("UPDATE cursos SET destacado = 0 WHERE id != ?", exceptId);
 }
 
+/** El curso nuevo se coloca al final del listado. */
 export function create(input: CourseInput): number {
-  const siguienteOrden = input.order || ((db.prepare("SELECT COALESCE(MAX(orden), 0) + 1 AS n FROM cursos").get() as { n: number }).n);
-
-  const result = db
-    .prepare(
+  return inTransaction(() => {
+    const id = execute(
       `INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
                            modalidad, imagen, imagen_alt, estado, destacado, visible, orden)
        VALUES (@slug, @titulo, @categoria, @descripcion, @estudiantes, @nivel, @duracion_horas,
-               @modalidad, @imagen, @imagen_alt, @estado, @destacado, @visible, @orden)`,
-    )
-    .run({ ...toRow(input), orden: siguienteOrden });
-
-  const id = Number(result.lastInsertRowid);
-  if (input.featured) clearOtherFeatured(id);
-  return id;
+               @modalidad, @imagen, @imagen_alt, @estado, @destacado, @visible,
+               (SELECT COALESCE(MAX(orden), 0) + 1 FROM cursos))`,
+      toRow(input),
+    );
+    if (input.featured) clearOtherFeatured(id);
+    return id;
+  });
 }
 
 export function update(id: number, input: CourseInput): void {
-  db.prepare(
-    `UPDATE cursos SET
-       slug = @slug, titulo = @titulo, categoria = @categoria, descripcion = @descripcion,
-       estudiantes = @estudiantes, nivel = @nivel, duracion_horas = @duracion_horas,
-       modalidad = @modalidad, imagen = @imagen, imagen_alt = @imagen_alt, estado = @estado,
-       destacado = @destacado, visible = @visible, orden = @orden,
-       actualizado_en = datetime('now','localtime')
-     WHERE id = @id`,
-  ).run({ ...toRow(input), id });
-
-  if (input.featured) clearOtherFeatured(id);
+  inTransaction(() => {
+    execute(
+      `UPDATE cursos SET
+         slug = @slug, titulo = @titulo, categoria = @categoria, descripcion = @descripcion,
+         estudiantes = @estudiantes, nivel = @nivel, duracion_horas = @duracion_horas,
+         modalidad = @modalidad, imagen = @imagen, imagen_alt = @imagen_alt, estado = @estado,
+         destacado = @destacado, visible = @visible,
+         actualizado_en = datetime('now','localtime')
+       WHERE id = @id`,
+      { ...toRow(input), id },
+    );
+    if (input.featured) clearOtherFeatured(id);
+  });
 }
 
 export function toggleVisible(id: number): void {
-  db.prepare("UPDATE cursos SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE id = ?").run(id);
+  execute("UPDATE cursos SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE id = ?", id);
 }
 
 export function remove(id: number): void {
-  db.prepare("DELETE FROM cursos WHERE id = ?").run(id);
+  execute("DELETE FROM cursos WHERE id = ?", id);
 }
 
-export function countAll(): { total: number; visibles: number; proximamente: number } {
-  return db
-    .prepare(
-      `SELECT COUNT(*) AS total,
-              SUM(CASE WHEN visible = 1 THEN 1 ELSE 0 END) AS visibles,
-              SUM(CASE WHEN estado = 'proximamente' THEN 1 ELSE 0 END) AS proximamente
-       FROM cursos`,
-    )
-    .get() as { total: number; visibles: number; proximamente: number };
+export function countAll(): { total: number; visibles: number } {
+  return queryOne<{ total: number; visibles: number }>(
+    "SELECT COUNT(*) AS total, COALESCE(SUM(visible), 0) AS visibles FROM cursos",
+  )!;
 }

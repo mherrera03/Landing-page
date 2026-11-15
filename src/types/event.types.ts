@@ -1,24 +1,6 @@
-
-export const EVENT_TYPES = [
-  "Masterclass",
-  "Taller",
-  "Webinar",
-  "Conferencia",
-  "Cohortes",
-  "Empresas",
-] as const;
-
-export const EVENT_MODALITIES = [
-  "Presencial",
-  "Virtual",
-  "Híbrido",
-] as const;
-
-export const EVENT_STATUSES = [
-  "abierto",
-  "proximamente",
-  "finalizado",
-] as const;
+export const EVENT_TYPES = ["Masterclass", "Taller", "Webinar", "Conferencia", "Cohortes", "Empresas"] as const;
+export const EVENT_MODALITIES = ["Presencial", "Virtual", "Híbrido"] as const;
+export const EVENT_STATUSES = ["abierto", "proximamente", "finalizado"] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
 export type EventModality = (typeof EVENT_MODALITIES)[number];
