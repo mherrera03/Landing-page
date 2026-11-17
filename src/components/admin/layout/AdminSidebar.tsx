@@ -13,11 +13,12 @@ export type AdminUserSummary = { name: string; role: UserRole };
 
 type AdminSidebarProps = {
   user: AdminUserSummary;
+  siteUrl: string;
   /** En móvil el menú se muestra dentro de un panel desplegable. */
   onNavigate?: () => void;
 };
 
-export function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
+export function AdminSidebar({ user, siteUrl, onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
   const items = ADMIN_NAV.filter((item) => !item.soloAdmin || user.role === "admin");
 
@@ -55,7 +56,7 @@ export function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
 
       <div className="flex flex-col gap-3 border-t border-line pt-4">
         <Link
-          href="/"
+          href={siteUrl}
           target="_blank"
           onClick={onNavigate}
           className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition-colors duration-200 hover:bg-paper hover:text-ink"

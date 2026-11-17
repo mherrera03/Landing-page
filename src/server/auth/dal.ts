@@ -1,9 +1,21 @@
 import "server-only";
 import { cache } from "react";
-import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
+import { isAdminHost } from "@/lib/hosts";
 import { getSession } from "./session";
 import type { SessionPayload } from "./session-token";
 import { findActiveById } from "../database/repositories/users.repository";
+
+/**
+ * El panel solo existe en su subdominio (ver lib/hosts.ts). El proxy ya lo
+ * filtra por URL, pero las Server Actions viajan como POST a cualquier ruta:
+ * por eso se vuelve a comprobar aquí, que es por donde pasan todas.
+ */
+export async function assertAdminHost(): Promise<void> {
+  const host = (await headers()).get("host");
+  if (!isAdminHost(host)) notFound();
+}
 
 /**
  * Capa de acceso a datos: la ÚNICA puerta de entrada al admin.
@@ -15,6 +27,8 @@ import { findActiveById } from "../database/repositories/users.repository";
  * dentro de la misma petición.
  */
 export const requireSession = cache(async (): Promise<SessionPayload> => {
+  await assertAdminHost();
+
   const session = await getSession();
   if (!session) redirect("/admin/login");
 

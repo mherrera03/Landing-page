@@ -5,12 +5,16 @@ import { loginSchema } from "@/schemas/auth.schema";
 import { findActiveWithPasswordByEmail } from "@/server/database/repositories/users.repository";
 import { verifyPassword } from "@/server/auth/password";
 import { createSession, destroySession } from "@/server/auth/session";
+import { assertAdminHost } from "@/server/auth/dal";
 import { fieldErrors } from "@/server/forms";
 import type { FormState } from "@/types/form.types";
 
 export type LoginState = FormState<"email" | "password">;
 
 export async function loginAction(_prev: LoginState, formData: FormData): Promise<LoginState> {
+  // No se puede iniciar sesión desde el dominio público
+  await assertAdminHost();
+
   const email = String(formData.get("email") ?? "");
   // La contraseña nunca se devuelve al formulario: se vuelve a escribir
   const values = { email };

@@ -7,11 +7,13 @@ import { AdminSidebar, type AdminUserSummary } from "./AdminSidebar";
 
 type AdminShellProps = {
   user: AdminUserSummary;
+  /** URL de la landing: en producción vive en otro dominio. */
+  siteUrl: string;
   children: ReactNode;
 };
 
 /** Menú lateral fijo en escritorio y desplegable en móvil. */
-export function AdminShell({ user, children }: AdminShellProps) {
+export function AdminShell({ user, siteUrl, children }: AdminShellProps) {
   const [open, setOpen] = useState(false);
   // Los enlaces del menú llaman a close() al navegar (ver onNavigate)
   const close = useCallback(() => setOpen(false), []);
@@ -31,7 +33,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
     <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-[16rem_1fr]">
       {/* Escritorio */}
       <aside className="sticky top-0 hidden h-dvh lg:block">
-        <AdminSidebar user={user} />
+        <AdminSidebar user={user} siteUrl={siteUrl} />
       </aside>
 
       {/* Móvil */}
@@ -60,7 +62,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
             >
               <X className="size-5" aria-hidden="true" />
             </button>
-            <AdminSidebar user={user} onNavigate={close} />
+            <AdminSidebar user={user} siteUrl={siteUrl} onNavigate={close} />
           </div>
         </div>
       )}

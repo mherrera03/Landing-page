@@ -8,7 +8,13 @@ import type { UserRole } from "@/types/user.types";
  * `proxy.ts`, que lee la cookie directamente de la petición. El manejo de la
  * cookie desde páginas y acciones vive en session.ts.
  */
-export const SESSION_COOKIE = "ugbplus_session";
+/**
+ * En producción la cookie lleva el prefijo `__Host-`: el navegador solo la
+ * acepta si es Secure, con Path=/ y SIN atributo Domain. Eso la ata al host
+ * exacto que la creó (admin.dominio.com): nunca viaja al dominio público ni
+ * puede ser sobrescrita desde otro subdominio.
+ */
+export const SESSION_COOKIE = process.env.NODE_ENV === "production" ? "__Host-ugbplus_session" : "ugbplus_session";
 export const DURACION_HORAS = 8;
 
 export type SessionPayload = {
@@ -24,8 +30,8 @@ export type SessionPayload = {
  */
 function getKey() {
   const secret = process.env.SESSION_SECRET;
-  if (!secret && process.env.NODE_ENV === "production") {
-    throw new Error("Falta SESSION_SECRET en las variables de entorno.");
+  if (process.env.NODE_ENV === "production" && (!secret || secret.length < 32)) {
+    throw new Error("Falta SESSION_SECRET en las variables de entorno (mínimo 32 caracteres).");
   }
   return new TextEncoder().encode(secret || "secreto-solo-para-desarrollo-no-usar-en-produccion");
 }

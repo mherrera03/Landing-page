@@ -52,6 +52,9 @@ npm run dev
 
 Luego abrir http://localhost:3000 (la landing) o http://localhost:3000/admin (el panel).
 
+En producción la landing y el panel viven en dominios separados (`dominio.com` y
+`admin.dominio.com`): ver [docs/despliegue-vercel.md](docs/despliegue-vercel.md).
+
 > ⚠️ **Ejecuta `npm install` cada vez que bajes cambios** (`git pull`). Si alguien agregó una
 > librería y tú no la instalas, verás un error del tipo *"Module not found: Can't resolve ..."*.
 
