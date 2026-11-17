@@ -13,7 +13,7 @@ export default async function EditarEventoPage({ params }: PageProps<"/admin/eve
   await requireSession();
 
   const { id } = await params;
-  const evento = repo.findById(Number(id));
+  const evento = await repo.findById(Number(id));
   if (!evento) notFound();
 
   // El id va fijo aquí: no viaja en el formulario, así nadie puede cambiarlo

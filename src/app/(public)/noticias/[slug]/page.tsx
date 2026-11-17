@@ -10,12 +10,12 @@ import { BackLink } from "@/components/public/layout/BackLink";
 const getArticle = cache((slug: string) => findVisibleBySlug("noticia", slug));
 
 export async function generateMetadata({ params }: PageProps<"/noticias/[slug]">): Promise<Metadata> {
-  const article = getArticle((await params).slug);
+  const article = await getArticle((await params).slug);
   return { title: article?.title ?? "Noticia no encontrada", description: article?.summary };
 }
 
 export default async function NoticiaPage({ params }: PageProps<"/noticias/[slug]">) {
-  const article = getArticle((await params).slug);
+  const article = await getArticle((await params).slug);
   if (!article) notFound();
 
   const fecha = article.createdAt.slice(0, 10);

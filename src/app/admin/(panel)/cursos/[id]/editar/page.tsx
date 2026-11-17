@@ -13,7 +13,7 @@ export default async function EditarCursoPage({ params }: PageProps<"/admin/curs
   await requireSession();
 
   const { id } = await params;
-  const curso = repo.findById(Number(id));
+  const curso = await repo.findById(Number(id));
   if (!curso) notFound();
 
   // El id va fijo aquí: no viaja en el formulario, así nadie puede cambiarlo

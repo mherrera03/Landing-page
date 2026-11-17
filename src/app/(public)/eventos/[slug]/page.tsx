@@ -14,12 +14,12 @@ import { BackLink } from "@/components/public/layout/BackLink";
 const getEvent = cache(findVisibleBySlug);
 
 export async function generateMetadata({ params }: PageProps<"/eventos/[slug]">): Promise<Metadata> {
-  const event = getEvent((await params).slug);
+  const event = await getEvent((await params).slug);
   return { title: event?.title ?? "Evento no encontrado", description: event?.description };
 }
 
 export default async function EventPage({ params }: PageProps<"/eventos/[slug]">) {
-  const event = getEvent((await params).slug);
+  const event = await getEvent((await params).slug);
   if (!event) notFound();
 
   const past = isPastEvent(event, todayInElSalvador());

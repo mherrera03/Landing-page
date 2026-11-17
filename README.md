@@ -1,6 +1,6 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.8.0-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.9.0-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -36,7 +36,8 @@ Landing page de **UGB Plus · Formación Continua** (Universidad Gerardo Barrios
 | **Lucide React** | Iconos (SVG, sin emojis) |
 | **Lenis** | Scroll suave |
 | **Zod** | Validación compartida entre formulario y servidor |
-| **node:sqlite** | Base de datos (viene incluido en Node, no se instala) |
+| **libSQL / Turso** | Base de datos. SQLite en un archivo en tu equipo; alojado en Turso en producción |
+| **Vercel Blob** | Imágenes subidas desde el panel, solo en producción |
 | **bcryptjs + jose** | Contraseñas cifradas y sesiones firmadas |
 
 ## Cómo correrlo
@@ -313,7 +314,7 @@ Si lo ves, tu `node_modules` es viejo. Borra esa carpeta, haz `git pull` y vuelv
 **Dice que falta Node 22.5 o aparece `Cannot find module node:sqlite`**
 Tu versión de Node es muy antigua. Comprueba con `node -v` e instala Node 22 LTS o superior.
 
-**Aparece "SQLite is an experimental feature"**
+**Aparece "SQLite is an experimental feature"**  *(ya no debería salir)*
 Es normal y no afecta nada: así marca Node su módulo de SQLite en la versión 22.
 
 **`no such table: eventos` (o cursos)**
@@ -341,6 +342,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.9.0 | 2026-11-16 | Listo para Vercel: la base de datos pasa a libSQL/Turso, las imágenes a Vercel Blob y la primera cuenta del panel sale de variables de entorno en lugar de estar escrita en el código |
 | 0.8.0 | 2026-11-04 | El formulario de contacto guarda las solicitudes en la base de datos (antes se perdían) y el panel estrena su bandeja para atenderlas |
 | 0.7.0 | 2026-10-22 | Administración de banners y de usuarios del panel, con roles (admin / editor) y acceso restringido por rol; se unifica el módulo de eventos, que había quedado partido en dos tras un merge |
 | 0.6.0 | 2026-10-08 | Evento destacado con banner, hora y botón de inscripción; primer evento real publicado |

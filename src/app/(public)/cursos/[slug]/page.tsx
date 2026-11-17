@@ -13,12 +13,12 @@ import { BackLink } from "@/components/public/layout/BackLink";
 const getCourse = cache(findVisibleBySlug);
 
 export async function generateMetadata({ params }: PageProps<"/cursos/[slug]">): Promise<Metadata> {
-  const course = getCourse((await params).slug);
+  const course = await getCourse((await params).slug);
   return { title: course?.title ?? "Curso no encontrado", description: course?.description };
 }
 
 export default async function CoursePage({ params }: PageProps<"/cursos/[slug]">) {
-  const course = getCourse((await params).slug);
+  const course = await getCourse((await params).slug);
   if (!course) notFound();
 
   return (

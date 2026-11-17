@@ -96,14 +96,47 @@ Si el dominio es institucional (p. ej. un subdominio de `ugb.edu.sv`), TI solo n
 
 No hace falta `vercel.json` ni rewrites adicionales.
 
-## Pendiente antes del primer despliegue real
+## Base de datos, imágenes y primera cuenta
 
-Hoy el proyecto **no puede funcionar en Vercel** por dos motivos ajenos a los dominios:
+El proyecto decide a dónde escribir según las variables de entorno. Sin ninguna puesta funciona
+contra tu disco, que es lo que quieres en tu equipo; en Vercel hacen falta las tres, porque allí
+el disco es de solo lectura y además se borra en cada despliegue.
 
-1. **Base de datos**: usa SQLite en un archivo local (`database/data/ugbplus.db`). En Vercel el
-   disco es de solo lectura y no persiste entre peticiones. Hay que migrar a una base gestionada
-   (p. ej. Postgres con Neon desde el Marketplace de Vercel).
-2. **Imágenes subidas**: [`uploads.ts`](../src/server/storage/uploads.ts) escribe en
-   `public/images`. Hay que cambiar `saveImage` para subir a Vercel Blob (u otro almacenamiento).
+### Base de datos (Turso)
 
-Además, cambiar la contraseña del usuario de prueba definido en el seed antes de publicar.
+Se usa [Turso](https://turso.tech), que es el mismo SQLite pero alojado: el SQL y las migraciones
+son idénticos a los de tu equipo.
+
+1. Crea una base en Turso y copia su URL (`libsql://…`) y un token de autenticación.
+2. En Vercel, **Settings → Environment Variables**:
+   - `DATABASE_URL`
+   - `DATABASE_AUTH_TOKEN`
+
+Las migraciones se aplican solas la primera vez que arranca, y quedan anotadas en la tabla
+`migraciones` para no repetirse.
+
+Si no defines nada, se usa `database/data/ugbplus.db`, que es lo normal en desarrollo y lo que
+seguiría usándose en un VPS.
+
+### Imágenes (Vercel Blob)
+
+En el proyecto de Vercel, pestaña **Storage → Blob → Create**. Al conectarlo, Vercel añade sola la
+variable `BLOB_READ_WRITE_TOKEN`.
+
+Con esa variable, [`saveImage`](../src/server/storage/uploads.ts) sube a Blob y guarda la URL
+completa; sin ella escribe en `public/images`, como hasta ahora. El resto de la aplicación no
+cambia porque todo pasa por ese archivo.
+
+### Primera cuenta del panel
+
+Define `ADMIN_EMAIL` y `ADMIN_PASSWORD`. Se usan **una sola vez**, al crear la base vacía, para
+dar de alta la primera cuenta de administrador; después se administran desde `/admin/usuarios` y
+puedes borrarlas de Vercel.
+
+En producción, si faltan, **no se crea ninguna cuenta** (queda un aviso en el registro) y habría
+que insertarla a mano. En desarrollo, si faltan, se usa una cuenta de prueba para que el equipo
+pueda entrar recién clonado el proyecto.
+
+> ⚠️ La cuenta de prueba (`admin@ugb.edu.sv`) ya no existe en producción, pero **sigue activa en
+> las bases de datos de desarrollo** creadas antes de este cambio. No subas esa base a ningún
+> sitio público.

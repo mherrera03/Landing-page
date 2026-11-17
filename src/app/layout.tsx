@@ -14,7 +14,7 @@ const poppins = Poppins({
 
 export async function generateMetadata(): Promise<Metadata> {
   await connection();
-  const brand = getBrandSettings();
+  const brand = await getBrandSettings();
   const shareUrl = brand.siteUrl && brand.shareImage ? new URL(brand.shareImage, brand.siteUrl).toString() : undefined;
   return {
     title: { default: `${SITE.name} — ${SITE.tagline}`, template: `%s · ${SITE.name}` },

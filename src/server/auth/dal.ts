@@ -34,7 +34,7 @@ export const requireSession = cache(async (): Promise<SessionPayload> => {
 
   // El proxy solo mira la cookie; aquí confirmamos contra la base de datos,
   // por si el usuario fue desactivado o eliminado después de iniciar sesión.
-  const user = findActiveById(session.userId);
+  const user = await findActiveById(session.userId);
   if (!user) redirect("/admin/login");
 
   return { userId: user.id, name: user.name, role: user.role };

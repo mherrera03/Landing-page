@@ -1,5 +1,5 @@
 import "server-only";
-import { execute, inTransaction, queryAll, queryOne } from "../connection";
+import { execute, inTransaction, queryAll, queryOne, type Tx } from "../connection";
 import type { EventInput } from "@/schemas/event.schema";
 import type { UgbEvent } from "@/types/event.types";
 
@@ -72,40 +72,40 @@ function toRow(input: EventInput) {
 }
 
 /** Todos, incluidos los ocultos: solo para el admin. El más reciente primero. */
-export function findAll(): UgbEvent[] {
-  return queryAll<EventRow>("SELECT * FROM events ORDER BY event_date DESC, event_time DESC").map(toEvent);
+export async function findAll(): Promise<UgbEvent[]> {
+  return (await queryAll<EventRow>("SELECT * FROM events ORDER BY event_date DESC, event_time DESC")).map(toEvent);
 }
 
 /** Solo los visibles, para el sitio público. */
-export function findVisible(): UgbEvent[] {
-  return queryAll<EventRow>(
+export async function findVisible(): Promise<UgbEvent[]> {
+  return (await queryAll<EventRow>(
     "SELECT * FROM events WHERE visible = 1 ORDER BY featured DESC, event_date, event_time",
-  ).map(toEvent);
+  )).map(toEvent);
 }
 
-export function findById(id: number): UgbEvent | null {
-  const row = queryOne<EventRow>("SELECT * FROM events WHERE id = ?", id);
+export async function findById(id: number): Promise<UgbEvent | null> {
+  const row = await queryOne<EventRow>("SELECT * FROM events WHERE id = ?", id);
   return row ? toEvent(row) : null;
 }
 
 /** Un evento oculto nunca debe poder abrirse desde una URL pública. */
-export function findVisibleBySlug(slug: string): UgbEvent | null {
-  const row = queryOne<EventRow>("SELECT * FROM events WHERE slug = ? AND visible = 1", slug);
+export async function findVisibleBySlug(slug: string): Promise<UgbEvent | null> {
+  const row = await queryOne<EventRow>("SELECT * FROM events WHERE slug = ? AND visible = 1", slug);
   return row ? toEvent(row) : null;
 }
 
-export function slugTaken(slug: string, exceptId = -1): boolean {
-  return queryOne("SELECT id FROM events WHERE slug = ? AND id != ?", slug, exceptId) !== undefined;
+export async function slugTaken(slug: string, exceptId = -1): Promise<boolean> {
+  return (await queryOne("SELECT id FROM events WHERE slug = ? AND id != ?", slug, exceptId)) !== undefined;
 }
 
 /** Solo un evento puede estar destacado a la vez. */
-function clearOtherFeatured(exceptId: number) {
-  execute("UPDATE events SET featured = 0 WHERE id != ?", exceptId);
+function clearOtherFeatured(tx: Tx, exceptId: number) {
+  return tx.execute("UPDATE events SET featured = 0 WHERE id != ?", exceptId);
 }
 
-export function create(input: EventInput): number {
-  return inTransaction(() => {
-    const id = execute(
+export function create(input: EventInput): Promise<number> {
+  return inTransaction(async (tx) => {
+    const id = await tx.execute(
       `INSERT INTO events (slug, title, type, modality, event_date, event_time, location, price, capacity,
                            registration_url, status, description, image, image_alt, visible, featured,
                            created_at, updated_at)
@@ -114,14 +114,14 @@ export function create(input: EventInput): number {
                @now, @now)`,
       toRow(input),
     );
-    if (input.featured) clearOtherFeatured(id);
+    if (input.featured) await clearOtherFeatured(tx, id);
     return id;
   });
 }
 
-export function update(id: number, input: EventInput): void {
-  inTransaction(() => {
-    execute(
+export async function update(id: number, input: EventInput): Promise<void> {
+  await inTransaction(async (tx) => {
+    await tx.execute(
       `UPDATE events SET
          slug = @slug, title = @title, type = @type, modality = @modality,
          event_date = @event_date, event_time = @event_time, location = @location,
@@ -131,20 +131,20 @@ export function update(id: number, input: EventInput): void {
        WHERE id = @id`,
       { ...toRow(input), id },
     );
-    if (input.featured) clearOtherFeatured(id);
+    if (input.featured) await clearOtherFeatured(tx, id);
   });
 }
 
-export function toggleVisible(id: number): void {
-  execute("UPDATE events SET visible = 1 - visible, updated_at = ? WHERE id = ?", new Date().toISOString(), id);
+export async function toggleVisible(id: number): Promise<void> {
+  await execute("UPDATE events SET visible = 1 - visible, updated_at = ? WHERE id = ?", new Date().toISOString(), id);
 }
 
-export function remove(id: number): void {
-  execute("DELETE FROM events WHERE id = ?", id);
+export async function remove(id: number): Promise<void> {
+  await execute("DELETE FROM events WHERE id = ?", id);
 }
 
-export function countAll(): { total: number; visibles: number } {
-  return queryOne<{ total: number; visibles: number }>(
+export async function countAll(): Promise<{ total: number; visibles: number }> {
+  return (await queryOne<{ total: number; visibles: number }>(
     "SELECT COUNT(*) AS total, COALESCE(SUM(visible), 0) AS visibles FROM events",
-  )!;
+  ))!;
 }

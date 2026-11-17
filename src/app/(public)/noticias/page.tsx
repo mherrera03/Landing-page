@@ -6,8 +6,8 @@ import { findVisible } from "@/server/database/repositories/publications.reposit
 
 export const metadata: Metadata = { title: "Noticias", description: "Novedades de UGB Plus y su comunidad." };
 
-export default function NoticiasPage() {
-  const noticias = findVisible("noticia");
+export default async function NoticiasPage() {
+  const noticias = await findVisible("noticia");
 
   return (
     <section className="container-page py-12 lg:py-18">

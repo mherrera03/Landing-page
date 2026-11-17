@@ -12,7 +12,7 @@ export async function toggleLeadAttendedAction(formData: FormData): Promise<void
   const id = readId(formData);
   if (id === null) return;
 
-  repo.toggleAttended(id);
+  await repo.toggleAttended(id);
   revalidatePath("/admin/solicitudes");
 }
 
@@ -21,7 +21,7 @@ export async function deleteLeadAction(formData: FormData): Promise<void> {
 
   const id = readId(formData);
   if (id !== null) {
-    repo.remove(id);
+    await repo.remove(id);
     revalidatePath("/admin/solicitudes");
   }
 

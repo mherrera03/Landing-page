@@ -15,7 +15,7 @@ export default async function EventsPage() {
   // y una página generada al compilar se quedaría con la fecha de ese momento.
   await connection();
 
-  const { upcoming, past } = splitEvents(findVisible(), todayInElSalvador());
+  const { upcoming, past } = splitEvents(await findVisible(), todayInElSalvador());
 
   return (
     <section aria-labelledby="eventos-titulo" className="py-10 lg:py-16">

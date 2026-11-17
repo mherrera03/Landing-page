@@ -1,6 +1,5 @@
 import "server-only";
-import type { DatabaseSync } from "node:sqlite";
-import { transaction } from "../transaction";
+import type { Client } from "@libsql/client";
 import { seed } from "./seed";
 
 /**
@@ -8,11 +7,10 @@ import { seed } from "./seed";
  * en la tabla `migraciones`, así agregar una nueva nunca rompe los datos existentes.
  * Para cambiar algo, AGREGA una migración nueva al final; no edites las anteriores.
  */
-const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
+const MIGRATIONS: { name: string; sql: string }[] = [
   {
     name: "001_esquema_inicial",
-    up: (db) => {
-      db.exec(`
+    sql: `
         CREATE TABLE usuarios (
           id             INTEGER PRIMARY KEY AUTOINCREMENT,
           nombre         TEXT NOT NULL,
@@ -56,13 +54,11 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
           atendida  INTEGER NOT NULL DEFAULT 0,
           creado_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
         );
-      `);
-    },
+    `,
   },
   {
     name: "002_eventos",
-    up: (db) => {
-      db.exec(`
+    sql: `
         CREATE TABLE eventos (
           id             INTEGER PRIMARY KEY AUTOINCREMENT,
           slug           TEXT NOT NULL UNIQUE,
@@ -82,33 +78,27 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
         );
 
         CREATE INDEX idx_eventos_visible ON eventos (visible, orden);
-      `);
-    },
+    `,
   },
   {
     name: "003_eventos_destacados",
-    up: (db) => {
-      db.exec(`
+    sql: `
         ALTER TABLE eventos ADD COLUMN imagen     TEXT NOT NULL DEFAULT '';
         ALTER TABLE eventos ADD COLUMN imagen_alt TEXT NOT NULL DEFAULT '';
         -- Hora en formato HH:MM (24 h). Vacía si el evento no tiene hora concreta.
         ALTER TABLE eventos ADD COLUMN hora       TEXT;
         -- El evento destacado se muestra en grande, arriba del resto.
         ALTER TABLE eventos ADD COLUMN destacado  INTEGER NOT NULL DEFAULT 0;
-      `);
-    },
+    `,
   },
   {
     name: "004_eventos_costo",
-    up: (db) => {
-      // Costo del evento: "Gratis", "$25"… Vacío si no aplica.
-      db.exec(`ALTER TABLE eventos ADD COLUMN costo TEXT NOT NULL DEFAULT '';`);
-    },
+    // Costo del evento: "Gratis", "$25"… Vacío si no aplica.
+    sql: `ALTER TABLE eventos ADD COLUMN costo TEXT NOT NULL DEFAULT '';`,
   },
   {
     name: "005_contenido_y_configuracion",
-    up: (db) => {
-      db.exec(`
+    sql: `
         CREATE TABLE publicaciones (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           tipo TEXT NOT NULL CHECK (tipo IN ('noticia', 'anuncio')),
@@ -134,28 +124,23 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
         );
         INSERT INTO configuracion_publica (id, correo, whatsapp_1, whatsapp_2)
         VALUES (1, 'ugbplus@ugb.edu.sv', '50326456571', '50326456572');
-      `);
-    },
+    `,
   },
   {
     name: "006_configuracion_ampliada",
-    up: (db) => {
-      db.exec(`
+    sql: `
         CREATE TABLE configuracion_extra (
           clave TEXT PRIMARY KEY,
           valor TEXT NOT NULL DEFAULT ''
         );
-      `);
-    },
+    `,
   },
   {
     name: "007_programacion_anuncios",
-    up: (db) => {
-      db.exec(`
+    sql: `
         ALTER TABLE publicaciones ADD COLUMN inicio TEXT NOT NULL DEFAULT '';
         ALTER TABLE publicaciones ADD COLUMN fin TEXT NOT NULL DEFAULT '';
-      `);
-    },
+    `,
   },
   {
     // El módulo de eventos se rehízo en la 0.7.0 sobre la tabla `events`, que
@@ -163,8 +148,7 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
     // registrada con el resto del esquema. IF NOT EXISTS: las bases que ya la
     // tienen no cambian. La tabla antigua `eventos` (002 a 004) ya no se usa.
     name: "008_eventos_unificados",
-    up: (db) => {
-      db.exec(`
+    sql: `
         CREATE TABLE IF NOT EXISTS events (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           slug TEXT NOT NULL UNIQUE,
@@ -186,37 +170,45 @@ const MIGRATIONS: { name: string; up: (db: DatabaseSync) => void }[] = [
           created_at TEXT NOT NULL,
           updated_at TEXT NOT NULL
         );
-      `);
-    },
+    `,
   },
 ];
 
-export function runMigrations(db: DatabaseSync) {
-  db.exec(`
+export async function runMigrations(db: Client) {
+  await db.executeMultiple(`
     CREATE TABLE IF NOT EXISTS migraciones (
       name        TEXT PRIMARY KEY,
       aplicada_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
     );
   `);
 
-  const yaAplicada = db.prepare("SELECT 1 FROM migraciones WHERE name = ?");
-  const registrar = db.prepare("INSERT INTO migraciones (name) VALUES (?)");
+  const aplicada = async (name: string) =>
+    (await db.execute({ sql: "SELECT 1 FROM migraciones WHERE name = ?", args: [name] })).rows.length > 0;
 
   for (const migration of MIGRATIONS) {
-    if (yaAplicada.get(migration.name)) continue;
+    if (await aplicada(migration.name)) continue;
 
     // Cada migración es atómica: si falla a medias, no deja la base inconsistente
-    const aplicada = transaction(db, () => {
+    const tx = await db.transaction("write");
+    try {
       // Al compilar, varios procesos abren la base a la vez: otro pudo aplicar
       // esta migración mientras este esperaba su turno de escritura.
-      if (yaAplicada.get(migration.name)) return false;
-      migration.up(db);
-      registrar.run(migration.name);
-      return true;
-    });
+      if ((await tx.execute({ sql: "SELECT 1 FROM migraciones WHERE name = ?", args: [migration.name] })).rows.length) {
+        await tx.rollback();
+        continue;
+      }
 
-    if (aplicada) console.log(`[db] migración aplicada: ${migration.name}`);
+      // executeMultiple admite varias sentencias separadas por ";", que es
+      // justo como están escritas las migraciones
+      await tx.executeMultiple(migration.sql);
+      await tx.execute({ sql: "INSERT INTO migraciones (name) VALUES (?)", args: [migration.name] });
+      await tx.commit();
+      console.log(`[db] migración aplicada: ${migration.name}`);
+    } catch (error) {
+      await tx.rollback();
+      throw error;
+    }
   }
 
-  seed(db);
+  await seed(db);
 }

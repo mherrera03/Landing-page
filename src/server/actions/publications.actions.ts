@@ -55,11 +55,11 @@ export async function createPublicationAction(
   const parsed = await parsePublication(kind, formData);
   if (!parsed.ok) return parsed.state;
 
-  if (repo.slugTaken(kind, parsed.data.slug)) {
+  if (await repo.slugTaken(kind, parsed.data.slug)) {
     return { values: parsed.values, fields: { slug: "Esta dirección ya existe." } };
   }
 
-  repo.create(kind, parsed.data);
+  await repo.create(kind, parsed.data);
   refreshPages(kind, parsed.data.slug);
   redirect(`/admin/${PUBLICATION_PATHS[kind]}?creado=1`);
 }
@@ -72,17 +72,17 @@ export async function updatePublicationAction(
 ): Promise<PublicationFormState> {
   await requireSession();
 
-  const previous = repo.findById(kind, id);
+  const previous = await repo.findById(kind, id);
   if (!previous) return { error: "El contenido ya no existe." };
 
   const parsed = await parsePublication(kind, formData);
   if (!parsed.ok) return parsed.state;
 
-  if (repo.slugTaken(kind, parsed.data.slug, id)) {
+  if (await repo.slugTaken(kind, parsed.data.slug, id)) {
     return { values: parsed.values, fields: { slug: "Esta dirección ya existe." } };
   }
 
-  repo.update(kind, id, parsed.data);
+  await repo.update(kind, id, parsed.data);
   // Si cambió la dirección, la página anterior también debe dejar de mostrarse
   refreshPages(kind, previous.slug, parsed.data.slug);
   redirect(`/admin/${PUBLICATION_PATHS[kind]}?actualizado=1`);
@@ -92,10 +92,10 @@ export async function togglePublicationAction(kind: PublicationKind, formData: F
   await requireSession();
 
   const id = readId(formData);
-  const item = id === null ? null : repo.findById(kind, id);
+  const item = id === null ? null : await repo.findById(kind, id);
   if (!item) return;
 
-  repo.toggleVisible(kind, item.id);
+  await repo.toggleVisible(kind, item.id);
   refreshPages(kind, item.slug);
 }
 
@@ -103,9 +103,9 @@ export async function deletePublicationAction(kind: PublicationKind, formData: F
   await requireSession();
 
   const id = readId(formData);
-  const item = id === null ? null : repo.findById(kind, id);
+  const item = id === null ? null : await repo.findById(kind, id);
   if (item) {
-    repo.remove(kind, item.id);
+    await repo.remove(kind, item.id);
     refreshPages(kind, item.slug);
   }
 

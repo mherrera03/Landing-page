@@ -7,8 +7,8 @@ import { SpecialistCard } from "../contact/SpecialistCard";
 import { Reveal } from "../motion/Reveal";
 import { Section } from "./Section";
 
-export function ContactSection() {
-  const { email, address, hours, mapUrl } = getSettings();
+export async function ContactSection() {
+  const { email, address, hours, mapUrl } = await getSettings();
 
   return (
     <Section id="contacto">

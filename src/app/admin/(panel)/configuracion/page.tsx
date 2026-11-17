@@ -21,10 +21,10 @@ export default async function ConfiguracionPage() {
       />
 
       <div className="space-y-8">
-        <SettingsForm settings={settings.getSettings()} />
-        <LandingSettingsForm settings={settings.getLandingSettings()} />
-        <BrandSettingsForm settings={settings.getBrandSettings()} />
-        <AnnouncementSettingsForm announcements={findVisible("anuncio")} featuredId={settings.getFeaturedAnnouncementId()} />
+        <SettingsForm settings={await settings.getSettings()} />
+        <LandingSettingsForm settings={await settings.getLandingSettings()} />
+        <BrandSettingsForm settings={await settings.getBrandSettings()} />
+        <AnnouncementSettingsForm announcements={await findVisible("anuncio")} featuredId={await settings.getFeaturedAnnouncementId()} />
       </div>
     </>
   );

@@ -33,7 +33,7 @@ export default async function UsuariosPage({ searchParams }: PageProps<"/admin/u
 
       <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <UserTable users={repo.findAll()} currentUserId={session.userId} />
+      <UserTable users={await repo.findAll()} currentUserId={session.userId} />
     </>
   );
 }

@@ -33,7 +33,7 @@ export default async function CursosPage({ searchParams }: PageProps<"/admin/cur
 
       <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <CourseTable courses={repo.findAll()} />
+      <CourseTable courses={await repo.findAll()} />
     </>
   );
 }

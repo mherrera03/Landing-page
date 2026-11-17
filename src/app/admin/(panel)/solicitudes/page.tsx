@@ -28,7 +28,7 @@ export default async function SolicitudesPage({ searchParams }: PageProps<"/admi
 
   const filtro: Filtro = FILTROS.find((f) => f.id === params.estado)?.id ?? "pendientes";
 
-  const todas = repo.findAll();
+  const todas = await repo.findAll();
   const pendientes = todas.filter((lead) => !lead.attended);
   const leads = filtro === "todas" ? todas : filtro === "pendientes" ? pendientes : todas.filter((lead) => lead.attended);
 
@@ -63,7 +63,7 @@ export default async function SolicitudesPage({ searchParams }: PageProps<"/admi
         })}
       </div>
 
-      <LeadList leads={leads} contactEmail={getSettings().email} />
+      <LeadList leads={leads} contactEmail={(await getSettings()).email} />
     </>
   );
 }

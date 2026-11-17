@@ -13,12 +13,12 @@ export default async function EditarUsuarioPage({ params }: PageProps<"/admin/us
   const session = await requireAdmin();
   const { id } = await params;
 
-  const usuario = repo.findById(Number(id));
+  const usuario = await repo.findById(Number(id));
   if (!usuario) notFound();
 
   const esMiCuenta = usuario.id === session.userId;
   // Quedarse sin ningún administrador dejaría esta sección sin quien la use
-  const esUltimoAdmin = usuario.role === "admin" && usuario.active && repo.countOtherActiveAdmins(usuario.id) === 0;
+  const esUltimoAdmin = usuario.role === "admin" && usuario.active && await repo.countOtherActiveAdmins(usuario.id) === 0;
 
   // El id va fijo aquí: no viaja en el formulario, así nadie puede cambiarlo
   const action = updateUserAction.bind(null, usuario.id);

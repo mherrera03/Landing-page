@@ -15,12 +15,12 @@ export default async function HomePage() {
   // Se genera en cada visita: cursos, eventos y cifras salen de la base de datos
   await connection();
 
-  const landing = getLandingSettings();
+  const landing = await getLandingSettings();
   const currentYear = Number(todayInElSalvador().slice(0, 4));
 
   return (
     <>
-      <Hero course={findFeatured()} settings={landing} />
+      <Hero course={await findFeatured()} settings={landing} />
       <AboutSection foundingYear={landing.foundingYear} />
       <StatsSection settings={landing} currentYear={currentYear} />
       <ServicesSection />

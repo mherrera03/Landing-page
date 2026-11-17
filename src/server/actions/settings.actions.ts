@@ -23,7 +23,7 @@ export async function saveSettingsAction(_prev: SettingsState, formData: FormDat
   const parsed = await parseForm(formData, settingsSchema);
   if (!parsed.ok) return parsed.state;
 
-  repo.saveSettings(parsed.data);
+  await repo.saveSettings(parsed.data);
   refreshSite();
   return { saved: true };
 }
@@ -34,7 +34,7 @@ export async function saveLandingAction(_prev: SettingsState, formData: FormData
   const parsed = await parseForm(formData, landingSchema);
   if (!parsed.ok) return parsed.state;
 
-  repo.saveLandingSettings(parsed.data);
+  await repo.saveLandingSettings(parsed.data);
   refreshSite();
   return { saved: true };
 }
@@ -50,7 +50,7 @@ export async function saveBrandAction(_prev: SettingsState, formData: FormData):
   });
   if (!parsed.ok) return parsed.state;
 
-  repo.saveBrandSettings(parsed.data);
+  await repo.saveBrandSettings(parsed.data);
   refreshSite();
   return { saved: true };
 }
@@ -63,11 +63,11 @@ export async function saveFeaturedAnnouncementAction(_prev: SettingsState, formD
   if (!Number.isSafeInteger(id) || id < 0) {
     return { fields: { featuredAnnouncementId: "Selecciona un anuncio válido." } };
   }
-  if (id > 0 && !findPublicationById("anuncio", id)?.visible) {
+  if (id > 0 && !(await findPublicationById("anuncio", id))?.visible) {
     return { fields: { featuredAnnouncementId: "El anuncio debe estar publicado." } };
   }
 
-  repo.saveFeaturedAnnouncementId(id);
+  await repo.saveFeaturedAnnouncementId(id);
   refreshSite();
   return { saved: true };
 }

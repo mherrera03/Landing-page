@@ -27,11 +27,11 @@ export async function createCourseAction(_prev: CourseFormState, formData: FormD
   const parsed = await parseCourse(formData);
   if (!parsed.ok) return parsed.state;
 
-  if (repo.slugTaken(parsed.data.slug)) {
+  if (await repo.slugTaken(parsed.data.slug)) {
     return { values: parsed.values, fields: { slug: "Ya existe un curso con esta dirección." } };
   }
 
-  repo.create(parsed.data);
+  await repo.create(parsed.data);
   refreshPages();
   redirect("/admin/cursos?creado=1");
 }
@@ -39,16 +39,16 @@ export async function createCourseAction(_prev: CourseFormState, formData: FormD
 export async function updateCourseAction(id: number, _prev: CourseFormState, formData: FormData): Promise<CourseFormState> {
   await requireSession();
 
-  if (!repo.findById(id)) return { error: "Este curso ya no existe." };
+  if (!await repo.findById(id)) return { error: "Este curso ya no existe." };
 
   const parsed = await parseCourse(formData);
   if (!parsed.ok) return parsed.state;
 
-  if (repo.slugTaken(parsed.data.slug, id)) {
+  if (await repo.slugTaken(parsed.data.slug, id)) {
     return { values: parsed.values, fields: { slug: "Ya existe otro curso con esta dirección." } };
   }
 
-  repo.update(id, parsed.data);
+  await repo.update(id, parsed.data);
   refreshPages();
   redirect("/admin/cursos?actualizado=1");
 }
@@ -59,7 +59,7 @@ export async function toggleCourseVisibilityAction(formData: FormData): Promise<
   const id = readId(formData);
   if (id === null) return;
 
-  repo.toggleVisible(id);
+  await repo.toggleVisible(id);
   refreshPages();
 }
 
@@ -68,7 +68,7 @@ export async function deleteCourseAction(formData: FormData): Promise<void> {
 
   const id = readId(formData);
   if (id !== null) {
-    repo.remove(id);
+    await repo.remove(id);
     refreshPages();
   }
 

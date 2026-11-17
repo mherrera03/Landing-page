@@ -1,5 +1,5 @@
 import "server-only";
-import { execute, inTransaction, queryAll, queryOne } from "../connection";
+import { execute, inTransaction, queryAll, queryOne, type Tx } from "../connection";
 import type { CourseInput } from "@/schemas/course.schema";
 import type { Course, CourseCategory, CourseLevel, CourseModality, CourseStatus } from "@/types/course.types";
 
@@ -65,51 +65,51 @@ function toRow(input: CourseInput) {
 }
 
 /** Solo los visibles, para la landing. */
-export function findVisible(): Course[] {
-  return queryAll<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY orden, id").map(toCourse);
+export async function findVisible(): Promise<Course[]> {
+  return (await queryAll<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY orden, id")).map(toCourse);
 }
 
 /** Todos, incluidos los ocultos: solo para el admin. */
-export function findAll(): Course[] {
-  return queryAll<CourseRow>("SELECT * FROM cursos ORDER BY orden, id").map(toCourse);
+export async function findAll(): Promise<Course[]> {
+  return (await queryAll<CourseRow>("SELECT * FROM cursos ORDER BY orden, id")).map(toCourse);
 }
 
 /** Los últimos que se tocaron, para el resumen del panel. */
-export function findRecent(limit: number): Course[] {
-  return queryAll<CourseRow>("SELECT * FROM cursos ORDER BY actualizado_en DESC, id DESC LIMIT ?", limit).map(toCourse);
+export async function findRecent(limit: number): Promise<Course[]> {
+  return (await queryAll<CourseRow>("SELECT * FROM cursos ORDER BY actualizado_en DESC, id DESC LIMIT ?", limit)).map(toCourse);
 }
 
-export function findById(id: number): Course | null {
-  const row = queryOne<CourseRow>("SELECT * FROM cursos WHERE id = ?", id);
+export async function findById(id: number): Promise<Course | null> {
+  const row = await queryOne<CourseRow>("SELECT * FROM cursos WHERE id = ?", id);
   return row ? toCourse(row) : null;
 }
 
 /** Un curso oculto nunca debe poder abrirse desde una URL pública. */
-export function findVisibleBySlug(slug: string): Course | null {
-  const row = queryOne<CourseRow>("SELECT * FROM cursos WHERE slug = ? AND visible = 1", slug);
+export async function findVisibleBySlug(slug: string): Promise<Course | null> {
+  const row = await queryOne<CourseRow>("SELECT * FROM cursos WHERE slug = ? AND visible = 1", slug);
   return row ? toCourse(row) : null;
 }
 
 /** El curso que se muestra en la portada: el marcado como destacado, o el primero. */
-export function findFeatured(): Course | null {
-  const row = queryOne<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY destacado DESC, orden, id LIMIT 1");
+export async function findFeatured(): Promise<Course | null> {
+  const row = await queryOne<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY destacado DESC, orden, id LIMIT 1");
   return row ? toCourse(row) : null;
 }
 
 /** ¿El slug ya lo usa otro curso? (el slug forma parte de la URL, debe ser único) */
-export function slugTaken(slug: string, exceptId = -1): boolean {
-  return queryOne("SELECT id FROM cursos WHERE slug = ? AND id != ?", slug, exceptId) !== undefined;
+export async function slugTaken(slug: string, exceptId = -1): Promise<boolean> {
+  return (await queryOne("SELECT id FROM cursos WHERE slug = ? AND id != ?", slug, exceptId)) !== undefined;
 }
 
 /** Solo un curso puede estar destacado a la vez. */
-function clearOtherFeatured(exceptId: number) {
-  execute("UPDATE cursos SET destacado = 0 WHERE id != ?", exceptId);
+function clearOtherFeatured(tx: Tx, exceptId: number) {
+  return tx.execute("UPDATE cursos SET destacado = 0 WHERE id != ?", exceptId);
 }
 
 /** El curso nuevo se coloca al final del listado. */
-export function create(input: CourseInput): number {
-  return inTransaction(() => {
-    const id = execute(
+export function create(input: CourseInput): Promise<number> {
+  return inTransaction(async (tx) => {
+    const id = await tx.execute(
       `INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
                            modalidad, imagen, imagen_alt, estado, destacado, visible, orden)
        VALUES (@slug, @titulo, @categoria, @descripcion, @estudiantes, @nivel, @duracion_horas,
@@ -117,14 +117,14 @@ export function create(input: CourseInput): number {
                (SELECT COALESCE(MAX(orden), 0) + 1 FROM cursos))`,
       toRow(input),
     );
-    if (input.featured) clearOtherFeatured(id);
+    if (input.featured) await clearOtherFeatured(tx, id);
     return id;
   });
 }
 
-export function update(id: number, input: CourseInput): void {
-  inTransaction(() => {
-    execute(
+export async function update(id: number, input: CourseInput): Promise<void> {
+  await inTransaction(async (tx) => {
+    await tx.execute(
       `UPDATE cursos SET
          slug = @slug, titulo = @titulo, categoria = @categoria, descripcion = @descripcion,
          estudiantes = @estudiantes, nivel = @nivel, duracion_horas = @duracion_horas,
@@ -134,20 +134,20 @@ export function update(id: number, input: CourseInput): void {
        WHERE id = @id`,
       { ...toRow(input), id },
     );
-    if (input.featured) clearOtherFeatured(id);
+    if (input.featured) await clearOtherFeatured(tx, id);
   });
 }
 
-export function toggleVisible(id: number): void {
-  execute("UPDATE cursos SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE id = ?", id);
+export async function toggleVisible(id: number): Promise<void> {
+  await execute("UPDATE cursos SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE id = ?", id);
 }
 
-export function remove(id: number): void {
-  execute("DELETE FROM cursos WHERE id = ?", id);
+export async function remove(id: number): Promise<void> {
+  await execute("DELETE FROM cursos WHERE id = ?", id);
 }
 
-export function countAll(): { total: number; visibles: number } {
-  return queryOne<{ total: number; visibles: number }>(
+export async function countAll(): Promise<{ total: number; visibles: number }> {
+  return (await queryOne<{ total: number; visibles: number }>(
     "SELECT COUNT(*) AS total, COALESCE(SUM(visible), 0) AS visibles FROM cursos",
-  )!;
+  ))!;
 }

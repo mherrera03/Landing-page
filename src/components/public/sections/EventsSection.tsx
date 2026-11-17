@@ -11,8 +11,8 @@ import { Section } from "./Section";
 /** Cuántos eventos caben en el carrusel de la portada; el resto, en "Ver todos". */
 const MAX_EN_CARRUSEL = 6;
 
-export function EventsSection() {
-  const { upcoming, past } = splitEvents(findVisible(), todayInElSalvador());
+export async function EventsSection() {
+  const { upcoming, past } = splitEvents(await findVisible(), todayInElSalvador());
 
   // En la portada el evento destacado va primero; el resto, por fecha
   const proximos = [...upcoming].sort((a, b) => Number(b.featured) - Number(a.featured)).slice(0, MAX_EN_CARRUSEL);

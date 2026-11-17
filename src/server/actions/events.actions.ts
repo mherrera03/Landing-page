@@ -27,11 +27,11 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
   const parsed = await parseEvent(formData);
   if (!parsed.ok) return parsed.state;
 
-  if (repo.slugTaken(parsed.data.slug)) {
+  if (await repo.slugTaken(parsed.data.slug)) {
     return { values: parsed.values, fields: { slug: "Ya existe un evento con esta dirección." } };
   }
 
-  repo.create(parsed.data);
+  await repo.create(parsed.data);
   refreshPages();
   redirect("/admin/eventos?creado=1");
 }
@@ -39,16 +39,16 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
 export async function updateEventAction(id: number, _prev: EventFormState, formData: FormData): Promise<EventFormState> {
   await requireSession();
 
-  if (!repo.findById(id)) return { error: "Este evento ya no existe." };
+  if (!await repo.findById(id)) return { error: "Este evento ya no existe." };
 
   const parsed = await parseEvent(formData);
   if (!parsed.ok) return parsed.state;
 
-  if (repo.slugTaken(parsed.data.slug, id)) {
+  if (await repo.slugTaken(parsed.data.slug, id)) {
     return { values: parsed.values, fields: { slug: "Ya existe otro evento con esta dirección." } };
   }
 
-  repo.update(id, parsed.data);
+  await repo.update(id, parsed.data);
   refreshPages();
   redirect("/admin/eventos?actualizado=1");
 }
@@ -59,7 +59,7 @@ export async function toggleEventVisibilityAction(formData: FormData): Promise<v
   const id = readId(formData);
   if (id === null) return;
 
-  repo.toggleVisible(id);
+  await repo.toggleVisible(id);
   refreshPages();
 }
 
@@ -68,7 +68,7 @@ export async function deleteEventAction(formData: FormData): Promise<void> {
 
   const id = readId(formData);
   if (id !== null) {
-    repo.remove(id);
+    await repo.remove(id);
     refreshPages();
   }
 

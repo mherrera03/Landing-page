@@ -7,8 +7,8 @@ import { findActiveAnnouncements } from "@/server/database/repositories/publicat
 
 export const metadata: Metadata = { title: "Anuncios", description: "Avisos públicos de UGB Plus." };
 
-export default function AnunciosPage() {
-  const anuncios = findActiveAnnouncements(nowInElSalvador());
+export default async function AnunciosPage() {
+  const anuncios = await findActiveAnnouncements(nowInElSalvador());
 
   return (
     <section className="container-page max-w-4xl py-12 lg:py-18">

@@ -33,7 +33,7 @@ export default async function EventosPage({ searchParams }: PageProps<"/admin/ev
 
       <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <EventTable events={repo.findAll()} />
+      <EventTable events={await repo.findAll()} />
     </>
   );
 }

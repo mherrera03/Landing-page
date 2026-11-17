@@ -14,12 +14,12 @@ export default async function PublicLayout({ children }: { children: ReactNode }
   await connection();
 
   // En la franja va el anuncio elegido en Configuración; si no está activo, el más reciente que sí lo esté
-  const activos = findActiveAnnouncements(nowInElSalvador());
-  const destacadoId = settings.getFeaturedAnnouncementId();
+  const activos = await findActiveAnnouncements(nowInElSalvador());
+  const destacadoId = await settings.getFeaturedAnnouncementId();
   const anuncio = activos.find((item) => item.id === destacadoId) ?? activos[0];
 
-  const brand = settings.getBrandSettings();
-  const landing = settings.getLandingSettings();
+  const brand = await settings.getBrandSettings();
+  const landing = await settings.getLandingSettings();
 
   return (
     <SmoothScroll>
@@ -39,7 +39,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
       <main id="contenido" className="flex-1">
         {children}
       </main>
-      <Footer settings={settings.getSettings()} brand={brand} />
+      <Footer settings={await settings.getSettings()} brand={brand} />
     </SmoothScroll>
   );
 }

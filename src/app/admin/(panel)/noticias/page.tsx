@@ -33,7 +33,7 @@ export default async function NoticiasAdminPage({ searchParams }: PageProps<"/ad
 
       <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <PublicationList kind="noticia" items={findAll("noticia")} />
+      <PublicationList kind="noticia" items={await findAll("noticia")} />
     </>
   );
 }

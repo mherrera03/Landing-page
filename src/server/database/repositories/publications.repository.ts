@@ -55,19 +55,19 @@ function toRow(input: PublicationInput) {
 }
 
 /** Todas, incluidas las ocultas: solo para el admin. Las más recientes primero. */
-export function findAll(kind: PublicationKind): Publication[] {
-  return queryAll<PublicationRow>(
+export async function findAll(kind: PublicationKind): Promise<Publication[]> {
+  return (await queryAll<PublicationRow>(
     "SELECT * FROM publicaciones WHERE tipo = ? ORDER BY creado_en DESC, id DESC",
     kind,
-  ).map(toPublication);
+  )).map(toPublication);
 }
 
 /** Solo las publicadas, para el sitio público. */
-export function findVisible(kind: PublicationKind): Publication[] {
-  return queryAll<PublicationRow>(
+export async function findVisible(kind: PublicationKind): Promise<Publication[]> {
+  return (await queryAll<PublicationRow>(
     "SELECT * FROM publicaciones WHERE tipo = ? AND visible = 1 ORDER BY creado_en DESC, id DESC",
     kind,
-  ).map(toPublication);
+  )).map(toPublication);
 }
 
 /**
@@ -75,24 +75,24 @@ export function findVisible(kind: PublicationKind): Publication[] {
  * `now` y las fechas guardadas van como hora local de El Salvador ("AAAA-MM-DDTHH:mm"),
  * un formato que se puede comparar como texto.
  */
-export function findActiveAnnouncements(now: string): Publication[] {
-  return queryAll<PublicationRow>(
+export async function findActiveAnnouncements(now: string): Promise<Publication[]> {
+  return (await queryAll<PublicationRow>(
     `SELECT * FROM publicaciones
      WHERE tipo = 'anuncio' AND visible = 1
        AND (inicio = '' OR inicio <= @now) AND (fin = '' OR fin >= @now)
      ORDER BY creado_en DESC, id DESC`,
     { now },
-  ).map(toPublication);
+  )).map(toPublication);
 }
 
-export function findById(kind: PublicationKind, id: number): Publication | null {
-  const row = queryOne<PublicationRow>("SELECT * FROM publicaciones WHERE tipo = ? AND id = ?", kind, id);
+export async function findById(kind: PublicationKind, id: number): Promise<Publication | null> {
+  const row = await queryOne<PublicationRow>("SELECT * FROM publicaciones WHERE tipo = ? AND id = ?", kind, id);
   return row ? toPublication(row) : null;
 }
 
 /** Una publicación oculta nunca debe poder abrirse desde una URL pública. */
-export function findVisibleBySlug(kind: PublicationKind, slug: string): Publication | null {
-  const row = queryOne<PublicationRow>(
+export async function findVisibleBySlug(kind: PublicationKind, slug: string): Promise<Publication | null> {
+  const row = await queryOne<PublicationRow>(
     "SELECT * FROM publicaciones WHERE tipo = ? AND slug = ? AND visible = 1",
     kind,
     slug,
@@ -101,11 +101,11 @@ export function findVisibleBySlug(kind: PublicationKind, slug: string): Publicat
 }
 
 /** El slug solo debe ser único dentro de su tipo: una noticia y un anuncio pueden compartirlo. */
-export function slugTaken(kind: PublicationKind, slug: string, exceptId = -1): boolean {
-  return queryOne("SELECT id FROM publicaciones WHERE tipo = ? AND slug = ? AND id != ?", kind, slug, exceptId) !== undefined;
+export async function slugTaken(kind: PublicationKind, slug: string, exceptId = -1): Promise<boolean> {
+  return (await queryOne("SELECT id FROM publicaciones WHERE tipo = ? AND slug = ? AND id != ?", kind, slug, exceptId)) !== undefined;
 }
 
-export function create(kind: PublicationKind, input: PublicationInput): number {
+export function create(kind: PublicationKind, input: PublicationInput): Promise<number> {
   return execute(
     `INSERT INTO publicaciones (tipo, slug, titulo, resumen, contenido, imagen, imagen_alt, enlace, inicio, fin,
                                 visible, creado_en, actualizado_en)
@@ -115,8 +115,8 @@ export function create(kind: PublicationKind, input: PublicationInput): number {
   );
 }
 
-export function update(kind: PublicationKind, id: number, input: PublicationInput): void {
-  execute(
+export async function update(kind: PublicationKind, id: number, input: PublicationInput): Promise<void> {
+  await execute(
     `UPDATE publicaciones SET
        slug = @slug, titulo = @titulo, resumen = @resumen, contenido = @contenido, imagen = @imagen,
        imagen_alt = @imagen_alt, enlace = @enlace, inicio = @inicio, fin = @fin, visible = @visible,
@@ -126,14 +126,14 @@ export function update(kind: PublicationKind, id: number, input: PublicationInpu
   );
 }
 
-export function toggleVisible(kind: PublicationKind, id: number): void {
-  execute(
+export async function toggleVisible(kind: PublicationKind, id: number): Promise<void> {
+  await execute(
     "UPDATE publicaciones SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE tipo = ? AND id = ?",
     kind,
     id,
   );
 }
 
-export function remove(kind: PublicationKind, id: number): void {
-  execute("DELETE FROM publicaciones WHERE tipo = ? AND id = ?", kind, id);
+export async function remove(kind: PublicationKind, id: number): Promise<void> {
+  await execute("DELETE FROM publicaciones WHERE tipo = ? AND id = ?", kind, id);
 }

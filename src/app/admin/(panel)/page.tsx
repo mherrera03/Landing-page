@@ -12,9 +12,9 @@ const RECIENTES = 5;
 
 export default async function DashboardPage() {
   const session = await requireSession();
-  const cursos = coursesRepo.countAll();
-  const eventos = eventsRepo.countAll();
-  const recientes = coursesRepo.findRecent(RECIENTES);
+  const cursos = await coursesRepo.countAll();
+  const eventos = await eventsRepo.countAll();
+  const recientes = await coursesRepo.findRecent(RECIENTES);
   const ocultos = cursos.total - cursos.visibles + (eventos.total - eventos.visibles);
 
   return (

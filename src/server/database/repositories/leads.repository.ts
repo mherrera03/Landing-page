@@ -30,11 +30,11 @@ function toLead(row: LeadRow): Lead {
 }
 
 /** Las más recientes primero: es el orden en que se atienden. */
-export function findAll(): Lead[] {
-  return queryAll<LeadRow>("SELECT * FROM solicitudes ORDER BY creado_en DESC, id DESC").map(toLead);
+export async function findAll(): Promise<Lead[]> {
+  return (await queryAll<LeadRow>("SELECT * FROM solicitudes ORDER BY creado_en DESC, id DESC")).map(toLead);
 }
 
-export function create(input: LeadInput): number {
+export function create(input: LeadInput): Promise<number> {
   return execute(
     "INSERT INTO solicitudes (nombre, correo, pais, telefono, interes, mensaje) VALUES (?, ?, ?, ?, ?, ?)",
     input.name,
@@ -46,10 +46,10 @@ export function create(input: LeadInput): number {
   );
 }
 
-export function toggleAttended(id: number): void {
-  execute("UPDATE solicitudes SET atendida = 1 - atendida WHERE id = ?", id);
+export async function toggleAttended(id: number): Promise<void> {
+  await execute("UPDATE solicitudes SET atendida = 1 - atendida WHERE id = ?", id);
 }
 
-export function remove(id: number): void {
-  execute("DELETE FROM solicitudes WHERE id = ?", id);
+export async function remove(id: number): Promise<void> {
+  await execute("DELETE FROM solicitudes WHERE id = ?", id);
 }

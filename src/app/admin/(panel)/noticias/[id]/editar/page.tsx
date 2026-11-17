@@ -12,7 +12,7 @@ export default async function EditarNoticiaPage({ params }: PageProps<"/admin/no
   await requireSession();
 
   const { id } = await params;
-  const noticia = findById("noticia", Number(id));
+  const noticia = await findById("noticia", Number(id));
   if (!noticia) notFound();
 
   // El tipo y el id van fijos aquí: no viajan en el formulario, así nadie puede cambiarlos

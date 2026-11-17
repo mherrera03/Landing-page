@@ -12,7 +12,7 @@ export default async function EditarAnuncioPage({ params }: PageProps<"/admin/an
   await requireSession();
 
   const { id } = await params;
-  const anuncio = findById("anuncio", Number(id));
+  const anuncio = await findById("anuncio", Number(id));
   if (!anuncio) notFound();
 
   // El tipo y el id van fijos aquí: no viajan en el formulario, así nadie puede cambiarlos

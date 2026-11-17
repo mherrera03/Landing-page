@@ -1,9 +1,8 @@
 import "server-only";
-import type { DatabaseSync } from "node:sqlite";
+import type { Client, InValue, Transaction } from "@libsql/client";
 import { hashPassword } from "../../auth/password";
-import { transaction } from "../transaction";
 
-const SEEDS: { tabla: string; sembrar: (db: DatabaseSync) => void }[] = [
+const SEEDS: { tabla: string; sembrar: (tx: Transaction) => Promise<void> }[] = [
   { tabla: "usuarios", sembrar: seedUsuarios },
   { tabla: "cursos", sembrar: seedCursos },
   { tabla: "events", sembrar: seedEventos },
@@ -13,41 +12,70 @@ const SEEDS: { tabla: string; sembrar: (db: DatabaseSync) => void }[] = [
  * Datos iniciales. Solo se insertan si la tabla está vacía,
  * así nunca pisa lo que el admin haya creado.
  */
-export function seed(db: DatabaseSync) {
+export async function seed(db: Client) {
   for (const { tabla, sembrar } of SEEDS) {
     // Lo normal: ya hay datos y no hace falta pedir el turno de escritura
-    if (!estaVacia(db, tabla)) continue;
+    if (!(await estaVacia(db, tabla))) continue;
 
-    transaction(db, () => {
+    const tx = await db.transaction("write");
+    try {
       // Se vuelve a mirar ya dentro de la transacción: al compilar, otro proceso
       // pudo sembrar la tabla mientras este esperaba, y saldría todo duplicado.
-      if (estaVacia(db, tabla)) sembrar(db);
-    });
+      const { rows } = await tx.execute(`SELECT COUNT(*) AS n FROM ${tabla}`);
+      // Las inserciones van por `tx`: con el cliente suelto chocarían contra
+      // el bloqueo de escritura que esta misma transacción ya tiene tomado.
+      if (Number(rows[0].n) === 0) await sembrar(tx);
+      await tx.commit();
+    } catch (error) {
+      await tx.rollback();
+      throw error;
+    }
   }
 }
 
-function estaVacia(db: DatabaseSync, tabla: string): boolean {
-  return (db.prepare(`SELECT COUNT(*) AS n FROM ${tabla}`).get() as { n: number }).n === 0;
+async function estaVacia(db: Client, tabla: string): Promise<boolean> {
+  const { rows } = await db.execute(`SELECT COUNT(*) AS n FROM ${tabla}`);
+  return Number(rows[0].n) === 0;
 }
 
-function seedUsuarios(db: DatabaseSync) {
-  // ⚠️ Usuario de PRUEBA. Cambiar la contraseña antes de pasar a producción.
-  db.prepare("INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES (?, ?, ?, ?)").run(
-    "Administrador",
-    "admin@ugb.edu.sv",
-    hashPassword("admin123"),
-    "admin",
-  );
-  console.log("[db] usuario inicial creado: admin@ugb.edu.sv");
+/**
+ * La primera cuenta del panel. En producción se define con ADMIN_EMAIL y
+ * ADMIN_PASSWORD; si faltan, no se crea ninguna cuenta y hay que insertarla
+ * a mano. En desarrollo caen a unas credenciales de prueba para que el equipo
+ * pueda entrar recién clonado el proyecto.
+ */
+function credencialesIniciales(): { correo: string; contrasena: string } | null {
+  const correo = process.env.ADMIN_EMAIL;
+  const contrasena = process.env.ADMIN_PASSWORD;
+
+  if (correo && contrasena) return { correo, contrasena };
+
+  if (process.env.NODE_ENV === "production") {
+    console.warn("[db] sin ADMIN_EMAIL y ADMIN_PASSWORD no se crea la cuenta inicial del panel");
+    return null;
+  }
+
+  return { correo: "admin@ugb.edu.sv", contrasena: "admin123" };
 }
 
-function seedCursos(db: DatabaseSync) {
-  const insert = db.prepare(`
+async function seedUsuarios(tx: Transaction) {
+  const credenciales = credencialesIniciales();
+  if (!credenciales) return;
+
+  await tx.execute({
+    sql: "INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES (?, ?, ?, ?)",
+    args: ["Administrador", credenciales.correo, hashPassword(credenciales.contrasena), "admin"],
+  });
+  console.log(`[db] usuario inicial creado: ${credenciales.correo}`);
+}
+
+async function seedCursos(tx: Transaction) {
+  const sql = `
     INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
                         modalidad, imagen, imagen_alt, estado, destacado, orden)
     VALUES (@slug, @titulo, @categoria, @descripcion, @estudiantes, @nivel, @duracion_horas,
             @modalidad, @imagen, @imagen_alt, @estado, @destacado, @orden)
-  `);
+  `;
 
   const cursos = [
     {
@@ -112,7 +140,7 @@ function seedCursos(db: DatabaseSync) {
     },
   ];
 
-  for (const curso of cursos) insert.run(curso);
+  for (const curso of cursos) await tx.execute({ sql, args: curso as Record<string, InValue> });
   console.log("[db] cursos iniciales creados");
 }
 
@@ -120,13 +148,15 @@ function seedCursos(db: DatabaseSync) {
  * Un evento de ejemplo: así una copia recién clonada del proyecto no muestra
  * la sección de eventos en blanco.
  */
-function seedEventos(db: DatabaseSync) {
-  db.prepare(`
+async function seedEventos(tx: Transaction) {
+  const sql = `
     INSERT INTO events (slug, title, type, modality, event_date, event_time, location, price, registration_url,
                         status, description, image, image_alt, visible, featured, created_at, updated_at)
     VALUES (@slug, @title, @type, @modality, @event_date, @event_time, @location, @price, @registration_url,
             @status, @description, @image, @image_alt, 1, 1, @now, @now)
-  `).run({
+  `;
+
+  await tx.execute({ sql, args: {
     slug: "masterclass-interiorismo-2027",
     title: "Adiós al minimalismo frío: así será el interiorismo en 2027",
     type: "Masterclass",
@@ -143,6 +173,6 @@ function seedEventos(db: DatabaseSync) {
     image_alt:
       "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
     now: new Date().toISOString(),
-  });
+  } });
   console.log("[db] evento de ejemplo creado");
 }

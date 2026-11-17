@@ -31,32 +31,32 @@ function toUser(row: UserRow): AdminUser {
  * Para iniciar sesión: la cuenta junto con el hash de su contraseña.
  * Es la única consulta que lo devuelve; el resto del panel nunca lo ve.
  */
-export function findActiveWithPasswordByEmail(email: string): (AdminUser & { passwordHash: string }) | null {
-  const row = queryOne<UserRow>("SELECT * FROM usuarios WHERE correo = ? AND activo = 1", email);
+export async function findActiveWithPasswordByEmail(email: string): Promise<(AdminUser & { passwordHash: string }) | null> {
+  const row = await queryOne<UserRow>("SELECT * FROM usuarios WHERE correo = ? AND activo = 1", email);
   return row ? { ...toUser(row), passwordHash: row.password_hash } : null;
 }
 
-export function findActiveById(id: number): AdminUser | null {
-  const row = queryOne<UserRow>("SELECT * FROM usuarios WHERE id = ? AND activo = 1", id);
+export async function findActiveById(id: number): Promise<AdminUser | null> {
+  const row = await queryOne<UserRow>("SELECT * FROM usuarios WHERE id = ? AND activo = 1", id);
   return row ? toUser(row) : null;
 }
 
 /** Todos, incluidos los desactivados: solo para el panel. */
-export function findAll(): AdminUser[] {
-  return queryAll<UserRow>("SELECT * FROM usuarios ORDER BY activo DESC, nombre").map(toUser);
+export async function findAll(): Promise<AdminUser[]> {
+  return (await queryAll<UserRow>("SELECT * FROM usuarios ORDER BY activo DESC, nombre")).map(toUser);
 }
 
-export function findById(id: number): AdminUser | null {
-  const row = queryOne<UserRow>("SELECT * FROM usuarios WHERE id = ?", id);
+export async function findById(id: number): Promise<AdminUser | null> {
+  const row = await queryOne<UserRow>("SELECT * FROM usuarios WHERE id = ?", id);
   return row ? toUser(row) : null;
 }
 
 /** ¿El correo ya lo usa otra cuenta? Da igual si está desactivada: la columna es única. */
-export function emailTaken(email: string, exceptId = -1): boolean {
-  return queryOne("SELECT id FROM usuarios WHERE correo = ? AND id != ?", email, exceptId) !== undefined;
+export async function emailTaken(email: string, exceptId = -1): Promise<boolean> {
+  return (await queryOne("SELECT id FROM usuarios WHERE correo = ? AND id != ?", email, exceptId)) !== undefined;
 }
 
-export function create(input: UserData, passwordHash: string): number {
+export function create(input: UserData, passwordHash: string): Promise<number> {
   return execute(
     "INSERT INTO usuarios (nombre, correo, password_hash, rol, activo) VALUES (?, ?, ?, ?, ?)",
     input.name,
@@ -68,8 +68,8 @@ export function create(input: UserData, passwordHash: string): number {
 }
 
 /** `passwordHash` solo viaja si se escribió una contraseña nueva; si no, se conserva la actual. */
-export function update(id: number, input: UserData, passwordHash?: string): void {
-  execute(
+export async function update(id: number, input: UserData, passwordHash?: string): Promise<void> {
+  await execute(
     `UPDATE usuarios
      SET nombre = ?, correo = ?, rol = ?, activo = ?, password_hash = COALESCE(?, password_hash)
      WHERE id = ?`,
@@ -82,12 +82,12 @@ export function update(id: number, input: UserData, passwordHash?: string): void
   );
 }
 
-export function toggleActive(id: number): void {
-  execute("UPDATE usuarios SET activo = 1 - activo WHERE id = ?", id);
+export async function toggleActive(id: number): Promise<void> {
+  await execute("UPDATE usuarios SET activo = 1 - activo WHERE id = ?", id);
 }
 
-export function remove(id: number): void {
-  execute("DELETE FROM usuarios WHERE id = ?", id);
+export async function remove(id: number): Promise<void> {
+  await execute("DELETE FROM usuarios WHERE id = ?", id);
 }
 
 /**
@@ -96,9 +96,9 @@ export function remove(id: number): void {
  * Sirve para no quedarse sin ningún admin: si esto da 0, la cuenta que se está
  * tocando es la última con acceso a esta sección.
  */
-export function countOtherActiveAdmins(exceptId: number): number {
-  return queryOne<{ n: number }>(
+export async function countOtherActiveAdmins(exceptId: number): Promise<number> {
+  return (await queryOne<{ n: number }>(
     "SELECT COUNT(*) AS n FROM usuarios WHERE rol = 'admin' AND activo = 1 AND id != ?",
     exceptId,
-  )!.n;
+  ))!.n;
 }

@@ -22,7 +22,7 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
   const result = loginSchema.safeParse({ email, password: formData.get("password") });
   if (!result.success) return { values, fields: fieldErrors(result.error) };
 
-  const user = findActiveWithPasswordByEmail(result.data.email);
+  const user = await findActiveWithPasswordByEmail(result.data.email);
 
   // Mismo mensaje si el correo no existe o si la contraseña falla:
   // así nadie puede averiguar qué correos están registrados.

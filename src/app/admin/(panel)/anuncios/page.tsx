@@ -33,7 +33,7 @@ export default async function AnunciosAdminPage({ searchParams }: PageProps<"/ad
 
       <FlashFromParams params={await searchParams} messages={MENSAJES} />
 
-      <PublicationList kind="anuncio" items={findAll("anuncio")} />
+      <PublicationList kind="anuncio" items={await findAll("anuncio")} />
     </>
   );
 }
