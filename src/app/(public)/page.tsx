@@ -8,6 +8,7 @@ import { AudienceSection } from "@/components/public/sections/AudienceSection";
 import { ContactSection } from "@/components/public/sections/ContactSection";
 import { CoursesSection } from "@/components/public/sections/CoursesSection";
 import { EventsSection } from "@/components/public/sections/EventsSection";
+import { NewsSection } from "@/components/public/sections/NewsSection";
 import { ServicesSection } from "@/components/public/sections/ServicesSection";
 import { StatsSection } from "@/components/public/sections/StatsSection";
 
@@ -27,6 +28,7 @@ export default async function HomePage() {
       <AudienceSection />
       <CoursesSection />
       <EventsSection />
+      <NewsSection />
       <ContactSection />
     </>
   );

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { formatLongDate } from "@/lib/dates";
 import { findVisible } from "@/server/database/repositories/publications.repository";
+import { NewsCard } from "@/components/public/news/NewsCard";
 
 export const metadata: Metadata = { title: "Noticias", description: "Novedades de UGB Plus y su comunidad." };
 
@@ -19,40 +17,11 @@ export default async function NoticiasPage() {
         <p className="mt-10 rounded-2xl bg-paper p-10 text-center text-muted">Pronto publicaremos noticias.</p>
       ) : (
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {noticias.map((noticia) => {
-            const fecha = noticia.createdAt.slice(0, 10);
-
-            return (
-              <li key={noticia.id}>
-                <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-soft">
-                  {noticia.image && (
-                    <div className="relative aspect-video">
-                      <Image
-                        src={noticia.image}
-                        alt={noticia.imageAlt}
-                        fill
-                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-6">
-                    <p className="text-xs font-semibold text-muted">
-                      <time dateTime={fecha}>{formatLongDate(fecha)}</time>
-                    </p>
-                    <h2 className="mt-2 text-xl font-bold text-ink">{noticia.title}</h2>
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{noticia.summary}</p>
-                    <Link
-                      href={`/noticias/${noticia.slug}`}
-                      className="mt-auto inline-flex min-h-11 items-center pt-4 font-semibold text-violet-deep"
-                    >
-                      Leer noticia →<span className="sr-only">: {noticia.title}</span>
-                    </Link>
-                  </div>
-                </article>
-              </li>
-            );
-          })}
+          {noticias.map((noticia) => (
+            <li key={noticia.id}>
+              <NewsCard noticia={noticia} />
+            </li>
+          ))}
         </ul>
       )}
     </section>

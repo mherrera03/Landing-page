@@ -1,6 +1,6 @@
 # UGB Plus — Landing + Panel Admin
 
-![Versión](https://img.shields.io/badge/versión-0.9.0-c471ed)
+![Versión](https://img.shields.io/badge/versión-0.9.1-c471ed)
 ![Estado](https://img.shields.io/badge/estado-prueba-12c2e9)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -136,8 +136,9 @@ ugb-plus/
 │   │   │   ├── hero/              ← Hero, HeroFeaturedCourse
 │   │   │   ├── courses/           ← CourseCard, CourseGrid, CourseFilters, CourseDetail
 │   │   │   ├── events/            ← EventCarousel, EventSlide, EventsExplorer, EventListCard, EventStatus, RegisterLink
+│   │   │   ├── news/              ← NewsCard (la comparten la portada y /noticias)
 │   │   │   ├── contact/           ← ContactForm, SpecialistCard
-│   │   │   ├── sections/          ← About, Stats, Services, Audience, Courses, Events, Contact (sobre Section)
+│   │   │   ├── sections/          ← About, Stats, Services, Audience, Courses, Events, News, Contact (sobre Section)
 │   │   │   └── motion/            ← SmoothScroll (Lenis + GSAP), Reveal
 │   │   ├── admin/
 │   │   │   ├── layout/            ← AdminShell, AdminSidebar, PageHeader
@@ -292,6 +293,7 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] Panel de Noticias, Anuncios y Configuración de contacto, portada e identidad
 - [x] Programación y selección del anuncio de la franja superior
 - [x] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
+- [x] Sección de últimas noticias en la portada, con enlace al listado completo
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
 - [ ] Cargar logo oficial y textos definitivos; completar URL pública y preparar sitemap/robots antes de publicar
 - [ ] Confirmar con el cliente las cifras de la landing antes de publicar
@@ -342,6 +344,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
+| 0.9.1 | 2026-11-16 | La portada estrena una sección con las últimas noticias; su tarjeta se comparte con el listado de /noticias |
 | 0.9.0 | 2026-11-16 | Listo para Vercel: la base de datos pasa a libSQL/Turso, las imágenes a Vercel Blob y la primera cuenta del panel sale de variables de entorno en lugar de estar escrita en el código. Las fechas se guardan siempre en hora de El Salvador, ya no en la del servidor |
 | 0.8.0 | 2026-11-04 | El formulario de contacto guarda las solicitudes en la base de datos (antes se perdían) y el panel estrena su bandeja para atenderlas |
 | 0.7.0 | 2026-10-22 | Administración de banners y de usuarios del panel, con roles (admin / editor) y acceso restringido por rol; se unifica el módulo de eventos, que había quedado partido en dos tras un merge |
