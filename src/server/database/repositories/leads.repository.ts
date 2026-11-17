@@ -1,4 +1,5 @@
 import "server-only";
+import { nowForDatabase } from "@/lib/dates";
 import { execute, queryAll } from "../connection";
 import type { LeadInput } from "@/schemas/lead.schema";
 import type { Lead } from "@/types/lead.types";
@@ -36,13 +37,14 @@ export async function findAll(): Promise<Lead[]> {
 
 export function create(input: LeadInput): Promise<number> {
   return execute(
-    "INSERT INTO solicitudes (nombre, correo, pais, telefono, interes, mensaje) VALUES (?, ?, ?, ?, ?, ?)",
+    "INSERT INTO solicitudes (nombre, correo, pais, telefono, interes, mensaje, creado_en) VALUES (?, ?, ?, ?, ?, ?, ?)",
     input.name,
     input.email,
     input.country,
     input.phone,
     input.interest,
     input.message,
+    nowForDatabase(),
   );
 }
 

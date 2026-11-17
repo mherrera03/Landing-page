@@ -1,4 +1,5 @@
 import "server-only";
+import { nowForDatabase } from "@/lib/dates";
 import { execute, inTransaction, queryAll, queryOne, type Tx } from "../connection";
 import type { EventInput } from "@/schemas/event.schema";
 import type { UgbEvent } from "@/types/event.types";
@@ -67,7 +68,7 @@ function toRow(input: EventInput) {
     image_alt: input.imageAlt,
     visible: input.visible ? 1 : 0,
     featured: input.featured ? 1 : 0,
-    now: new Date().toISOString(),
+    now: nowForDatabase(),
   };
 }
 
@@ -136,7 +137,7 @@ export async function update(id: number, input: EventInput): Promise<void> {
 }
 
 export async function toggleVisible(id: number): Promise<void> {
-  await execute("UPDATE events SET visible = 1 - visible, updated_at = ? WHERE id = ?", new Date().toISOString(), id);
+  await execute("UPDATE events SET visible = 1 - visible, updated_at = ? WHERE id = ?", nowForDatabase(), id);
 }
 
 export async function remove(id: number): Promise<void> {

@@ -55,6 +55,32 @@ export function formatDateTime(value: string): string {
   return hora ? `${formatLongDate(fecha)}, ${formatTime(hora)}` : formatLongDate(fecha);
 }
 
+/**
+ * Marca de tiempo para guardar en la base: "AAAA-MM-DD HH:MM:SS" en hora de
+ * El Salvador.
+ *
+ * Se calcula aquí y se envía como parámetro en lugar de usar el
+ * `datetime('now','localtime')` de SQLite: esa función devuelve la hora del
+ * servidor, que en tu equipo es la de El Salvador pero en Turso es UTC. Con
+ * esto, lo guardado no depende de dónde corra la base.
+ *
+ * El formato se ordena bien como texto y lo entiende `formatDateTime`.
+ */
+export function nowForDatabase(): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/El_Salvador",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+  const value = (type: string) => parts.find((part) => part.type === type)?.value ?? "00";
+  return `${value("year")}-${value("month")}-${value("day")} ${value("hour")}:${value("minute")}:${value("second")}`;
+}
+
 /** Fecha de hoy en El Salvador, como "AAAA-MM-DD" (comparable como texto con las fechas de la base). */
 export function todayInElSalvador(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/El_Salvador" }).format(new Date());

@@ -127,6 +127,19 @@ Con esa variable, [`saveImage`](../src/server/storage/uploads.ts) sube a Blob y 
 completa; sin ella escribe en `public/images`, como hasta ahora. El resto de la aplicación no
 cambia porque todo pasa por ese archivo.
 
+### Fechas y zona horaria
+
+Las fechas se guardan como `AAAA-MM-DD HH:MM:SS` en **hora de El Salvador**, y las calcula la
+aplicación con [`nowForDatabase()`](../src/lib/dates.ts), no la base de datos.
+
+El motivo: el `datetime('now','localtime')` de SQLite devuelve la hora del servidor. En tu equipo
+eso es El Salvador, pero en Turso es UTC, así que una solicitud recibida a las 7 de la noche se
+habría guardado como la 1 de la madrugada del día siguiente.
+
+> Si escribes una consulta nueva que inserte filas, **pasa la fecha como parámetro**. Las columnas
+> aún tienen un `DEFAULT (datetime('now','localtime'))` heredado del esquema original, y dejar que
+> se aplique volvería a guardar la hora del servidor.
+
 ### Primera cuenta del panel
 
 Define `ADMIN_EMAIL` y `ADMIN_PASSWORD`. Se usan **una sola vez**, al crear la base vacía, para

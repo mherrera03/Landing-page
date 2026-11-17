@@ -1,4 +1,5 @@
 import "server-only";
+import { nowForDatabase } from "@/lib/dates";
 import { execute, inTransaction, queryAll, queryOne, type Tx } from "../connection";
 import type { CourseInput } from "@/schemas/course.schema";
 import type { Course, CourseCategory, CourseLevel, CourseModality, CourseStatus } from "@/types/course.types";
@@ -111,11 +112,12 @@ export function create(input: CourseInput): Promise<number> {
   return inTransaction(async (tx) => {
     const id = await tx.execute(
       `INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
-                           modalidad, imagen, imagen_alt, estado, destacado, visible, orden)
+                           modalidad, imagen, imagen_alt, estado, destacado, visible, orden,
+                           creado_en, actualizado_en)
        VALUES (@slug, @titulo, @categoria, @descripcion, @estudiantes, @nivel, @duracion_horas,
                @modalidad, @imagen, @imagen_alt, @estado, @destacado, @visible,
-               (SELECT COALESCE(MAX(orden), 0) + 1 FROM cursos))`,
-      toRow(input),
+               (SELECT COALESCE(MAX(orden), 0) + 1 FROM cursos), @now, @now)`,
+      { ...toRow(input), now: nowForDatabase() },
     );
     if (input.featured) await clearOtherFeatured(tx, id);
     return id;
@@ -130,16 +132,16 @@ export async function update(id: number, input: CourseInput): Promise<void> {
          estudiantes = @estudiantes, nivel = @nivel, duracion_horas = @duracion_horas,
          modalidad = @modalidad, imagen = @imagen, imagen_alt = @imagen_alt, estado = @estado,
          destacado = @destacado, visible = @visible,
-         actualizado_en = datetime('now','localtime')
+         actualizado_en = @now
        WHERE id = @id`,
-      { ...toRow(input), id },
+      { ...toRow(input), id, now: nowForDatabase() },
     );
     if (input.featured) await clearOtherFeatured(tx, id);
   });
 }
 
 export async function toggleVisible(id: number): Promise<void> {
-  await execute("UPDATE cursos SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE id = ?", id);
+  await execute("UPDATE cursos SET visible = 1 - visible, actualizado_en = ? WHERE id = ?", nowForDatabase(), id);
 }
 
 export async function remove(id: number): Promise<void> {

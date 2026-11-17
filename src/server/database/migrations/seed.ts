@@ -1,6 +1,7 @@
 import "server-only";
 import type { Client, InValue, Transaction } from "@libsql/client";
 import { hashPassword } from "../../auth/password";
+import { nowForDatabase } from "@/lib/dates";
 
 const SEEDS: { tabla: string; sembrar: (tx: Transaction) => Promise<void> }[] = [
   { tabla: "usuarios", sembrar: seedUsuarios },
@@ -63,8 +64,8 @@ async function seedUsuarios(tx: Transaction) {
   if (!credenciales) return;
 
   await tx.execute({
-    sql: "INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES (?, ?, ?, ?)",
-    args: ["Administrador", credenciales.correo, hashPassword(credenciales.contrasena), "admin"],
+    sql: "INSERT INTO usuarios (nombre, correo, password_hash, rol, creado_en) VALUES (?, ?, ?, ?, ?)",
+    args: ["Administrador", credenciales.correo, hashPassword(credenciales.contrasena), "admin", nowForDatabase()],
   });
   console.log(`[db] usuario inicial creado: ${credenciales.correo}`);
 }
@@ -72,9 +73,10 @@ async function seedUsuarios(tx: Transaction) {
 async function seedCursos(tx: Transaction) {
   const sql = `
     INSERT INTO cursos (slug, titulo, categoria, descripcion, estudiantes, nivel, duracion_horas,
-                        modalidad, imagen, imagen_alt, estado, destacado, orden)
+                        modalidad, imagen, imagen_alt, estado, destacado, orden,
+                        creado_en, actualizado_en)
     VALUES (@slug, @titulo, @categoria, @descripcion, @estudiantes, @nivel, @duracion_horas,
-            @modalidad, @imagen, @imagen_alt, @estado, @destacado, @orden)
+            @modalidad, @imagen, @imagen_alt, @estado, @destacado, @orden, @now, @now)
   `;
 
   const cursos = [
@@ -140,7 +142,8 @@ async function seedCursos(tx: Transaction) {
     },
   ];
 
-  for (const curso of cursos) await tx.execute({ sql, args: curso as Record<string, InValue> });
+  const now = nowForDatabase();
+  for (const curso of cursos) await tx.execute({ sql, args: { ...curso, now } as Record<string, InValue> });
   console.log("[db] cursos iniciales creados");
 }
 
@@ -172,7 +175,7 @@ async function seedEventos(tx: Transaction) {
     image: "/images/events/masterclass-interiorismo-2027.jpg",
     image_alt:
       "Masterclass gratis «Adiós al minimalismo frío: así será el interiorismo en 2027», el jueves 8 de octubre de 2026 a las 7:00 p. m.",
-    now: new Date().toISOString(),
+    now: nowForDatabase(),
   } });
   console.log("[db] evento de ejemplo creado");
 }

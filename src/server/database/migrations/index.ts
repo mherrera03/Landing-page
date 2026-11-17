@@ -1,6 +1,7 @@
 import "server-only";
 import type { Client } from "@libsql/client";
 import { seed } from "./seed";
+import { nowForDatabase } from "@/lib/dates";
 
 /**
  * Migraciones en orden. Cada una corre una sola vez y queda registrada
@@ -172,6 +173,19 @@ const MIGRATIONS: { name: string; sql: string }[] = [
         );
     `,
   },
+  {
+    name: "009_fechas_en_hora_local",
+    // Los eventos guardaban la fecha en ISO y en UTC ("2026-11-11T14:34:44.001Z"),
+    // mientras el resto de tablas usa "AAAA-MM-DD HH:MM:SS" en hora de El Salvador.
+    // Se pasan al mismo formato (UTC−6, sin horario de verano) para que se
+    // ordenen y se muestren igual que las demás.
+    sql: `
+        UPDATE events
+        SET created_at = datetime(created_at, '-6 hours'),
+            updated_at = datetime(updated_at, '-6 hours')
+        WHERE created_at LIKE '%T%';
+    `,
+  },
 ];
 
 export async function runMigrations(db: Client) {
@@ -201,7 +215,7 @@ export async function runMigrations(db: Client) {
       // executeMultiple admite varias sentencias separadas por ";", que es
       // justo como están escritas las migraciones
       await tx.executeMultiple(migration.sql);
-      await tx.execute({ sql: "INSERT INTO migraciones (name) VALUES (?)", args: [migration.name] });
+      await tx.execute({ sql: "INSERT INTO migraciones (name, aplicada_en) VALUES (?, ?)", args: [migration.name, nowForDatabase()] });
       await tx.commit();
       console.log(`[db] migración aplicada: ${migration.name}`);
     } catch (error) {

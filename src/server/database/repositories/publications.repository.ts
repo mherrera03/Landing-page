@@ -1,4 +1,5 @@
 import "server-only";
+import { nowForDatabase } from "@/lib/dates";
 import { execute, queryAll, queryOne } from "../connection";
 import type { PublicationInput } from "@/schemas/publication.schema";
 import type { Publication, PublicationKind } from "@/types/publication.types";
@@ -110,8 +111,8 @@ export function create(kind: PublicationKind, input: PublicationInput): Promise<
     `INSERT INTO publicaciones (tipo, slug, titulo, resumen, contenido, imagen, imagen_alt, enlace, inicio, fin,
                                 visible, creado_en, actualizado_en)
      VALUES (@tipo, @slug, @titulo, @resumen, @contenido, @imagen, @imagen_alt, @enlace, @inicio, @fin,
-             @visible, datetime('now','localtime'), datetime('now','localtime'))`,
-    { ...toRow(input), tipo: kind },
+             @visible, @now, @now)`,
+    { ...toRow(input), tipo: kind, now: nowForDatabase() },
   );
 }
 
@@ -120,15 +121,16 @@ export async function update(kind: PublicationKind, id: number, input: Publicati
     `UPDATE publicaciones SET
        slug = @slug, titulo = @titulo, resumen = @resumen, contenido = @contenido, imagen = @imagen,
        imagen_alt = @imagen_alt, enlace = @enlace, inicio = @inicio, fin = @fin, visible = @visible,
-       actualizado_en = datetime('now','localtime')
+       actualizado_en = @now
      WHERE tipo = @tipo AND id = @id`,
-    { ...toRow(input), tipo: kind, id },
+    { ...toRow(input), tipo: kind, id, now: nowForDatabase() },
   );
 }
 
 export async function toggleVisible(kind: PublicationKind, id: number): Promise<void> {
   await execute(
-    "UPDATE publicaciones SET visible = 1 - visible, actualizado_en = datetime('now','localtime') WHERE tipo = ? AND id = ?",
+    "UPDATE publicaciones SET visible = 1 - visible, actualizado_en = ? WHERE tipo = ? AND id = ?",
+    nowForDatabase(),
     kind,
     id,
   );

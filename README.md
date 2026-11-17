@@ -342,7 +342,7 @@ Si tu sistema tiene activado "reducir movimiento", la página las desactiva a pr
 
 | Versión | Fecha | Cambios |
 |---|---|---|
-| 0.9.0 | 2026-11-16 | Listo para Vercel: la base de datos pasa a libSQL/Turso, las imágenes a Vercel Blob y la primera cuenta del panel sale de variables de entorno en lugar de estar escrita en el código |
+| 0.9.0 | 2026-11-16 | Listo para Vercel: la base de datos pasa a libSQL/Turso, las imágenes a Vercel Blob y la primera cuenta del panel sale de variables de entorno en lugar de estar escrita en el código. Las fechas se guardan siempre en hora de El Salvador, ya no en la del servidor |
 | 0.8.0 | 2026-11-04 | El formulario de contacto guarda las solicitudes en la base de datos (antes se perdían) y el panel estrena su bandeja para atenderlas |
 | 0.7.0 | 2026-10-22 | Administración de banners y de usuarios del panel, con roles (admin / editor) y acceso restringido por rol; se unifica el módulo de eventos, que había quedado partido en dos tras un merge |
 | 0.6.0 | 2026-10-08 | Evento destacado con banner, hora y botón de inscripción; primer evento real publicado |

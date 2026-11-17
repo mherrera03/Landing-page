@@ -1,4 +1,5 @@
 import "server-only";
+import { nowForDatabase } from "@/lib/dates";
 import { execute, queryAll, queryOne } from "../connection";
 import type { UserInput } from "@/schemas/user.schema";
 import type { AdminUser, UserRole } from "@/types/user.types";
@@ -58,12 +59,13 @@ export async function emailTaken(email: string, exceptId = -1): Promise<boolean>
 
 export function create(input: UserData, passwordHash: string): Promise<number> {
   return execute(
-    "INSERT INTO usuarios (nombre, correo, password_hash, rol, activo) VALUES (?, ?, ?, ?, ?)",
+    "INSERT INTO usuarios (nombre, correo, password_hash, rol, activo, creado_en) VALUES (?, ?, ?, ?, ?, ?)",
     input.name,
     input.email,
     passwordHash,
     input.role,
     input.active ? 1 : 0,
+    nowForDatabase(),
   );
 }
 
