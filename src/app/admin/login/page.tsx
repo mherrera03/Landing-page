@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/public/layout/Logo";
 import { LoginForm } from "@/components/admin/auth/LoginForm";
+import { publicSiteUrl } from "@/lib/hosts";
 
 export const metadata: Metadata = { title: "Iniciar sesión" };
 
@@ -21,7 +22,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
         </div>
 
         <Link
-          href="/"
+          href={publicSiteUrl("/")}
           className="mt-5 inline-flex min-h-11 items-center gap-2 px-2 text-sm text-muted transition-colors duration-200 hover:text-ink"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
