@@ -9,7 +9,8 @@
 
 Landing page de **UGB Plus · Formación Continua** (Universidad Gerardo Barrios), administrable desde un panel propio.
 
-> ⚠️ Proyecto en etapa de **prueba**: no está en producción. Los cursos, cifras y fechas son de ejemplo.
+> ⚠️ Proyecto en etapa de **prueba**: todavía no está en producción. Las cifras de la portada las
+> dio el cliente y son reales; los cursos que trae la base recién creada sí son de ejemplo.
 
 ## Índice
 - [Tecnologías](#tecnologías)
@@ -296,7 +297,7 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] Sección de últimas noticias en la portada, con enlace al listado completo
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
 - [ ] Cargar logo oficial y textos definitivos; completar URL pública y preparar sitemap/robots antes de publicar
-- [ ] Confirmar con el cliente las cifras de la landing antes de publicar
+- [x] Confirmar con el cliente las cifras de la landing
 
 <details>
 <summary><b>Troubleshooting</b></summary>

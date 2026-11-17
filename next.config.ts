@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * Solo afecta a `next dev`. Sin esto, el servidor de desarrollo rechaza las
+   * peticiones que llegan desde otro dominio y el canal de recarga automática
+   * (/_next/hmr) responde "Unauthorized" una y otra vez. Pasa al enseñar el
+   * sitio por un túnel, que es como se comparte la vista previa.
+   */
+  allowedDevOrigins: ["*.trycloudflare.com", "**.devtunnels.ms", "*.ngrok-free.app", "*.ngrok.io"],
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 85],
