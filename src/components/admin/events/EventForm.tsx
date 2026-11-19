@@ -26,7 +26,7 @@ export function EventForm({ action, event }: EventFormProps) {
   const slugField = useSlugField(event?.slug ?? "", Boolean(event));
 
   return (
-    <form action={formAction} className="rounded-2xl border border-line bg-surface p-5 sm:p-7">
+    <form action={formAction} className="admin-card p-5 sm:p-7">
       <FormError className="mb-5">{state.error}</FormError>
 
       <div className="grid gap-x-5 sm:grid-cols-2">

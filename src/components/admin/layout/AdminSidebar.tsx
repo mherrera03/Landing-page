@@ -18,18 +18,38 @@ type AdminSidebarProps = {
   onNavigate?: () => void;
 };
 
+/** Iniciales para el avatar: "María López" → "ML". */
+function initials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]!.toUpperCase())
+    .join("");
+}
+
 export function AdminSidebar({ user, siteUrl, onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
   const items = ADMIN_NAV.filter((item) => !item.soloAdmin || user.role === "admin");
 
   return (
-    <div className="flex h-full flex-col gap-6 border-r border-line bg-surface p-4">
-      <Link href="/admin" onClick={onNavigate} className="inline-block rounded-lg px-2 pt-2" aria-label="Ir al resumen">
-        <Logo size="sm" />
+    <div className="admin-sidebar flex h-full flex-col gap-7 p-4 text-white">
+      <Link
+        href="/admin"
+        onClick={onNavigate}
+        className="flex items-center gap-3 rounded-2xl px-2 pt-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        aria-label="Ir al resumen"
+      >
+        {/* El logo es oscuro: va sobre una placa clara para que se lea */}
+        <span className="rounded-xl bg-white px-2.5 py-1.5 shadow-[0_8px_24px_rgb(196_113_237/0.35)]">
+          <Logo size="sm" className="h-8" />
+        </span>
+        <span className="text-[0.65rem] font-semibold tracking-[0.2em] text-white/55 uppercase">Panel</span>
       </Link>
 
       <nav aria-label="Secciones del panel" className="flex-1">
-        <ul className="flex flex-col gap-0.5">
+        <p className="mb-2 px-3 text-[0.65rem] font-semibold tracking-[0.2em] text-white/40 uppercase">Contenido</p>
+        <ul className="flex flex-col gap-1">
           {items.map(({ href, label, icon: Icon }) => {
             // "/admin" solo se marca activo en su propia página, no en las hijas
             const activo = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
@@ -41,11 +61,24 @@ export function AdminSidebar({ user, siteUrl, onNavigate }: AdminSidebarProps) {
                   onClick={onNavigate}
                   aria-current={activo ? "page" : undefined}
                   className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors duration-200",
-                    activo ? "bg-ink text-white" : "text-ink hover:bg-paper",
+                    "group relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors duration-200",
+                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+                    activo
+                      ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]"
+                      : "text-white/65 hover:bg-white/5 hover:text-white",
                   )}
                 >
-                  <Icon className="size-4.5 shrink-0" aria-hidden="true" />
+                  {activo && (
+                    <span aria-hidden="true" className="bg-brand absolute inset-y-2 -left-4 w-1 rounded-r-full" />
+                  )}
+                  <span
+                    className={cn(
+                      "grid size-7 shrink-0 place-items-center rounded-lg transition-colors duration-200",
+                      activo ? "bg-brand text-ink" : "bg-white/5 text-white/70 group-hover:text-white",
+                    )}
+                  >
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
                   {label}
                 </Link>
               </li>
@@ -54,24 +87,31 @@ export function AdminSidebar({ user, siteUrl, onNavigate }: AdminSidebarProps) {
         </ul>
       </nav>
 
-      <div className="flex flex-col gap-3 border-t border-line pt-4">
+      <div className="flex flex-col gap-3">
         <Link
           href={siteUrl}
           target="_blank"
           onClick={onNavigate}
-          className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition-colors duration-200 hover:bg-paper hover:text-ink"
+          className="flex min-h-11 items-center gap-3 rounded-xl border border-white/10 px-3 text-sm font-medium text-white/75 transition-colors duration-200 hover:border-white/25 hover:bg-white/5 hover:text-white"
         >
-          <ExternalLink className="size-4.5 shrink-0" aria-hidden="true" />
+          <ExternalLink className="size-4 shrink-0" aria-hidden="true" />
           Ver la landing
         </Link>
 
-        <div className="rounded-xl bg-paper p-3">
-          <p className="truncate text-sm font-bold text-ink">{user.name}</p>
-          <p className="text-xs text-muted">{USER_ROLE_LABELS[user.role]}</p>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur">
+          <div className="flex items-center gap-3">
+            <span className="bg-brand grid size-10 shrink-0 place-items-center rounded-full text-sm font-bold text-ink">
+              {initials(user.name)}
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-semibold text-white">{user.name}</span>
+              <span className="block text-xs text-white/55">{USER_ROLE_LABELS[user.role]}</span>
+            </span>
+          </div>
           <form action={logoutAction}>
             <button
               type="submit"
-              className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-lg px-2 text-sm font-semibold text-danger transition-colors duration-200 hover:bg-danger/10"
+              className="mt-3 flex min-h-11 w-full items-center gap-2 rounded-xl px-2 text-sm font-semibold text-[#ff8a92] transition-colors duration-200 hover:bg-[#f64f59]/15"
             >
               <LogOut className="size-4 shrink-0" aria-hidden="true" />
               Cerrar sesión

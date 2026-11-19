@@ -28,7 +28,7 @@ export function PublicationForm({ kind, action, item }: PublicationFormProps) {
   const isNews = kind === "noticia";
 
   return (
-    <form action={formAction} className="space-y-5 rounded-2xl border border-line bg-surface p-5 sm:p-7">
+    <form action={formAction} className="space-y-5 admin-card p-5 sm:p-7">
       <FormError>{state.error}</FormError>
 
       <Input

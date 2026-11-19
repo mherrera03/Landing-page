@@ -11,15 +11,16 @@ import { cn } from "@/lib/utils";
 
 /** Botón secundario de una fila: borde fino, misma altura que el resto de acciones. */
 export const rowButton =
-  "inline-flex min-h-11 items-center gap-2 rounded-xl border border-line px-3.5 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper";
+  "inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink transition-colors duration-200 hover:border-[#c471ed]/40 hover:bg-violet-soft hover:text-violet-deep";
 
 /** Fila de un listado. `dimmed` la atenúa: contenido oculto, cuenta sin acceso… */
 export function ListRow({ dimmed = false, children }: { dimmed?: boolean; children: ReactNode }) {
   return (
     <li
       className={cn(
-        "flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 sm:flex-row sm:items-center",
-        dimmed && "opacity-70",
+        "admin-card group/row relative flex flex-col gap-4 overflow-hidden p-4 transition-[transform,box-shadow] duration-300 ease-out-expo sm:flex-row sm:items-center",
+        "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-brand before:opacity-0 before:transition-opacity hover:-translate-y-0.5 hover:shadow-soft hover:before:opacity-100",
+        dimmed && "opacity-70 saturate-50",
       )}
     >
       {children}
@@ -30,7 +31,7 @@ export function ListRow({ dimmed = false, children }: { dimmed?: boolean; childr
 /** Miniatura a la izquierda de la fila. Es decorativa: el título va justo al lado. */
 export function RowThumbnail({ src }: { src: string }) {
   return (
-    <div className="relative h-20 w-full shrink-0 overflow-hidden rounded-xl bg-paper sm:h-16 sm:w-24">
+    <div className="relative h-20 w-full shrink-0 overflow-hidden rounded-xl bg-violet-soft ring-1 ring-ink/5 sm:h-16 sm:w-24">
       {src && <Image src={src} alt="" fill sizes="(min-width: 640px) 96px, 100vw" className="object-cover" />}
     </div>
   );
@@ -83,7 +84,7 @@ export function EditLink({ href, title }: { href: string; title: string }) {
   return (
     <Link
       href={href}
-      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-ink-soft"
+      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgb(0_1_32/0.18)] transition-[background-color,box-shadow] duration-200 hover:bg-ink-soft hover:shadow-[0_10px_26px_rgb(196_113_237/0.4)]"
     >
       <Pencil className="size-4" aria-hidden="true" />
       Editar <span className="sr-only">{title}</span>
@@ -101,7 +102,8 @@ type EmptyStateProps = {
 /** Lo que se muestra cuando un listado todavía no tiene nada. */
 export function EmptyState({ title, children, action }: EmptyStateProps) {
   return (
-    <div className="rounded-2xl border border-dashed border-ink/20 bg-surface px-6 py-14 text-center">
+    <div className="rounded-[1.25rem] border border-dashed border-[#c471ed]/35 bg-surface/70 px-6 py-14 text-center backdrop-blur">
+      <span aria-hidden="true" className="bg-brand mx-auto mb-4 block size-12 rounded-2xl opacity-90 shadow-[0_10px_30px_rgb(196_113_237/0.35)]" />
       <p className="font-semibold text-ink">{title}</p>
       <p className="mt-1 text-sm text-muted">{children}</p>
       {action && (

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 /** Aviso de confirmación tras guardar, crear o eliminar. */
 export function FlashMessage({ children }: { children: ReactNode }) {
   return (
-    <p role="status" className="mb-5 flex items-center gap-2.5 rounded-xl bg-success/10 px-4 py-3 text-sm font-medium text-success">
+    <p role="status" className="mb-5 flex items-center gap-2.5 rounded-xl border border-success/20 bg-success/8 px-4 py-3 text-sm font-medium text-success shadow-[0_6px_18px_rgb(15_123_83/0.08)]">
       <CheckCircle2 className="size-4.5 shrink-0" aria-hidden="true" />
       {children}
     </p>

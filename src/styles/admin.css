@@ -1,0 +1,40 @@
+/* =========================================================
+   Estilos del panel administrativo
+   ========================================================= */
+
+/* Tarjeta base del panel: formularios, listados, bloques del resumen */
+@utility admin-card {
+  border-radius: 1.25rem;
+  border: 1px solid rgb(0 1 32 / 0.07);
+  background-color: var(--color-surface);
+  box-shadow:
+    0 1px 2px rgb(0 1 32 / 0.04),
+    0 12px 32px -12px rgb(0 1 32 / 0.1);
+}
+
+/* Fondo del área de contenido: papel con destellos suaves de la marca */
+@utility admin-canvas {
+  background-color: #f6f6fb;
+  background-image:
+    radial-gradient(48rem 22rem at 100% -4rem, rgb(196 113 237 / 0.13), transparent 70%),
+    radial-gradient(36rem 18rem at 20% -6rem, rgb(18 194 233 / 0.11), transparent 70%),
+    radial-gradient(30rem 16rem at 60% -8rem, rgb(246 79 89 / 0.06), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* Menú lateral oscuro con un resplandor de la marca abajo */
+@utility admin-sidebar {
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(22rem 18rem at 0% 100%, rgb(196 113 237 / 0.28), transparent 70%),
+    radial-gradient(18rem 14rem at 100% 85%, rgb(18 194 233 / 0.18), transparent 70%),
+    radial-gradient(16rem 12rem at 50% 0%, rgb(246 79 89 / 0.1), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* Filete con el degradado de marca (línea fina decorativa) */
+@utility admin-rule {
+  height: 3px;
+  border-radius: 9999px;
+  background-image: var(--grad);
+}
