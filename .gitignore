@@ -47,3 +47,6 @@ public/images/branding/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Mockups de brainstorming (locales, no se versionan)
+.superpowers/
