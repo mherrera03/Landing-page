@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { useLenis } from "lenis/react";
+import { pinHeader } from "@/lib/header-pin";
 
 /** Dónde debe quedar el scroll para que la sección empiece justo bajo el header. */
 function destino(target: HTMLElement): number {
@@ -25,14 +26,19 @@ export function useScrollToSection() {
       const target = document.getElementById(id);
       if (!target) return;
 
-      const offset = destino(target);
+      // Se pasa la posición exacta en píxeles, no el elemento: con un elemento,
+      // Lenis descuenta además el scroll-padding-top del CSS (que ya incluye el
+      // header) y la sección quedaba 88 px más abajo de lo debido.
+      const top = Math.max(target.getBoundingClientRect().top + window.scrollY + destino(target), 0);
 
       if (lenis) {
-        lenis.scrollTo(target, { offset });
+        // Se fija con margen por si el desplazamiento se interrumpe; al terminar se suelta
+        pinHeader(2500);
+        lenis.scrollTo(top, { onComplete: () => pinHeader(200) });
       } else {
+        pinHeader(300);
         // Sin Lenis (el usuario pidió reducir movimiento): salto nativo
-        const top = target.getBoundingClientRect().top + window.scrollY + offset;
-        window.scrollTo({ top: Math.max(top, 0) });
+        window.scrollTo({ top });
       }
     },
     [lenis],

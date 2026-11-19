@@ -8,7 +8,6 @@ export async function CoursesSection() {
     <Section id="programas">
       <div className="container-page">
         <SectionHeading id="programas-titulo" kicker="Explora" title="Programas y cursos">
-          Filtra por área y abre cada curso para conocer su nivel, duración y modalidad.
         </SectionHeading>
         <CourseGrid courses={await findVisible()} />
       </div>

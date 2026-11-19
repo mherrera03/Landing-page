@@ -21,8 +21,7 @@ export function AboutSection({ foundingYear }: { foundingYear: number }) {
     <Section id="nosotros">
       <div className="container-page">
         <SectionHeading id="nosotros-titulo" kicker="UGB Plus" title="Formación continua, simple y cercana.">
-          Reunimos en un solo lugar la oferta de actualización profesional de la universidad, para que encuentres rápido el
-          programa que necesitas.
+      
         </SectionHeading>
 
         {/* Izquierda: el texto largo. Derecha: dos tarjetas cortas que lo aligeran. */}

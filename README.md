@@ -102,7 +102,7 @@ ugb-plus/
 │   │   ├── branding/        ← Logos e imágenes para compartir subidas desde el panel
 │   │   ├── courses/         ← Imágenes de cursos (subidas desde el admin)
 │   │   ├── events/          ← Imágenes de eventos
-│   │   └── news, announcements, team, placeholders/
+│   │   └── news, announcements, placeholders/
 │   └── icons/  y  fonts/
 │
 ├── src/

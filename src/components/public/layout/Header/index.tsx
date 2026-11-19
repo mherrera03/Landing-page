@@ -1,18 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { NAV_LINKS } from "@/constants/routes";
 import { SITE } from "@/constants/site";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { GlowButton } from "@/components/ui/GlowButton";
+import { isHeaderPinned } from "@/lib/header-pin";
 import { cn } from "@/lib/utils";
 import { Logo } from "../Logo";
 import { MobileMenu } from "../MobileMenu";
 import { Navbar } from "../Navbar";
 
 const SECTION_IDS = NAV_LINKS.map((link) => link.id);
+
+/** Movimientos de scroll más cortos que esto se ignoran, para que el header no tiemble. */
+const UMBRAL_PX = 6;
 
 type HeaderProps = {
   logoImage: string;
@@ -25,16 +29,41 @@ type HeaderProps = {
 export function Header({ logoImage, logoAlt, contactButtonLabel, contactButtonHref }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // En móvil y tablet se oculta al bajar y vuelve al subir (en escritorio siempre se ve)
+  const [hidden, setHidden] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const activeId = useActiveSection(SECTION_IDS);
   const menuId = useId();
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    let ultimoY = window.scrollY;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+
+      // Cerca del inicio, o mientras la página baja sola tras tocar el menú, siempre visible
+      const alto = headerRef.current?.offsetHeight ?? 0;
+      if (y <= alto || isHeaderPinned()) {
+        setHidden(false);
+        ultimoY = y;
+        return;
+      }
+
+      const delta = y - ultimoY;
+      if (Math.abs(delta) < UMBRAL_PX) return;
+      setHidden(delta > 0); // baja: se oculta · sube: aparece
+      ultimoY = y;
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Con el menú abierto no se oculta
+  const oculto = hidden && !menuOpen;
 
   // Si la ventana crece a escritorio con el menú abierto, se cierra
   useEffect(() => {
@@ -46,9 +75,14 @@ export function Header({ logoImage, logoAlt, contactButtonLabel, contactButtonHr
 
   return (
     <header
+      ref={headerRef}
+      // Quien navega con teclado y llega al header lo vuelve a ver
+      onFocus={() => setHidden(false)}
       className={cn(
-        "sticky top-0 z-50 border-b bg-paper/85 backdrop-blur-lg transition-[border-color,box-shadow] duration-300",
+        "sticky top-0 z-50 border-b bg-paper/85 backdrop-blur-lg transition-[border-color,box-shadow,translate] duration-300 motion-reduce:transition-none",
         scrolled || menuOpen ? "border-ink/10 shadow-[0_8px_30px_rgb(0_1_32/0.06)]" : "border-transparent",
+        // Solo bajo lg: en escritorio el header nunca se oculta. Sin sombra, para que no asome arriba
+        oculto && "max-lg:-translate-y-full max-lg:border-transparent max-lg:shadow-none",
       )}
     >
       <div className="container-page flex h-(--header-h) items-center justify-between gap-6">

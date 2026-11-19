@@ -9,7 +9,6 @@ export function AudienceSection() {
     <Section id="publico">
       <div className="container-page">
         <SectionHeading id="publico-titulo" title="¿Quiénes se forman con nosotros?">
-          Nuestra oferta está pensada para perfiles distintos, cada uno con sus propias metas.
         </SectionHeading>
 
         {/* 6 columnas y cada tarjeta ocupa 2: quedan 3 arriba y 2 centradas abajo */}

@@ -6,6 +6,7 @@ import * as settings from "@/server/database/repositories/settings.repository";
 import { AnnouncementBar } from "@/components/public/layout/AnnouncementBar";
 import { Footer } from "@/components/public/layout/Footer";
 import { Header } from "@/components/public/layout/Header";
+import { WhatsAppButton } from "@/components/public/layout/WhatsAppButton";
 import { SmoothScroll } from "@/components/public/motion/SmoothScroll";
 
 export default async function PublicLayout({ children }: { children: ReactNode }) {
@@ -20,6 +21,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
 
   const brand = await settings.getBrandSettings();
   const landing = await settings.getLandingSettings();
+  const contacto = await settings.getSettings();
 
   return (
     <SmoothScroll>
@@ -39,7 +41,8 @@ export default async function PublicLayout({ children }: { children: ReactNode }
       <main id="contenido" className="flex-1">
         {children}
       </main>
-      <Footer settings={await settings.getSettings()} brand={brand} />
+      <Footer settings={contacto} brand={brand} />
+      <WhatsAppButton number={contacto.whatsapp1} />
     </SmoothScroll>
   );
 }
