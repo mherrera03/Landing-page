@@ -212,6 +212,21 @@ const MIGRATIONS: { name: string; sql: string }[] = [
           ('Xertify', '/images/aliados/xertify.webp', 'instituciones', 5);
     `,
   },
+  {
+    // RECLA se había agregado desde el panel en una base local, que no viaja con
+    // el repositorio. Aquí queda para todos. Si ya existe (la base donde se
+    // creó), solo se cambia su logo por el que sí está en el repositorio.
+    name: "011_aliado_recla",
+    sql: `
+        UPDATE aliados SET logo = '/images/aliados/recla.webp', nombre = 'RECLA, Red de Educación Continua de Latinoamérica y Europa'
+        WHERE nombre = 'RECLA' AND logo LIKE '/images/partners/%';
+
+        INSERT INTO aliados (nombre, logo, grupo, orden)
+        SELECT 'RECLA, Red de Educación Continua de Latinoamérica y Europa', '/images/aliados/recla.webp', 'instituciones',
+               (SELECT COALESCE(MAX(orden), 0) + 1 FROM aliados)
+        WHERE NOT EXISTS (SELECT 1 FROM aliados WHERE nombre LIKE 'RECLA%');
+    `,
+  },
 ];
 
 export async function runMigrations(db: Client) {
