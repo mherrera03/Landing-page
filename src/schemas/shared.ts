@@ -17,12 +17,16 @@ export const slugField = z
  * podría colar una dirección externa, que next/image se niega a mostrar.
  */
 const LOCAL_IMAGE = /^\/images\/[a-zA-Z0-9/_-]+\.(?:png|jpg|jpeg|webp|avif)$/;
+/** Igual, pero admite SVG: solo para el logo. */
+const LOCAL_IMAGE_OR_SVG = /^\/images\/[a-zA-Z0-9/_-]+\.(?:png|jpg|jpeg|webp|avif|svg)$/;
 const LOCAL_IMAGE_MESSAGE = "Usa una imagen del sitio.";
 
 export const localImage = (requiredMessage: string) =>
   z.string().trim().min(1, requiredMessage).regex(LOCAL_IMAGE, LOCAL_IMAGE_MESSAGE);
 
 export const optionalLocalImage = z.union([z.literal(""), z.string().regex(LOCAL_IMAGE, LOCAL_IMAGE_MESSAGE)]);
+
+export const optionalLocalImageOrSvg = z.union([z.literal(""), z.string().regex(LOCAL_IMAGE_OR_SVG, LOCAL_IMAGE_MESSAGE)]);
 
 /** Solo http y https: un enlace `javascript:` o `data:` nunca debe llegar a un href. */
 export const httpUrl = z

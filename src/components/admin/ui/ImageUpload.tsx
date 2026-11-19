@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ImageUp, Trash2 } from "lucide-react";
 import { Field } from "@/components/ui/Field";
-import { IMAGE_MIME_TYPES, MAX_IMAGE_MB, imageProblem } from "@/lib/image-rules";
+import { MAX_IMAGE_MB, imageFormatsLabel, imageMimeTypes, imageProblem } from "@/lib/image-rules";
 import { cn } from "@/lib/utils";
 
 type ImageUploadProps = {
@@ -19,6 +19,8 @@ type ImageUploadProps = {
   fileField?: string;
   /** Nombre del campo oculto con la ruta de la imagen ya guardada. */
   pathField?: string;
+  /** Acepta también SVG. Solo para el logo: el servidor debe permitirlo igual. */
+  allowSvg?: boolean;
 };
 
 /**
@@ -40,6 +42,7 @@ function ImageUploadField({
   hint = "Se recomienda horizontal (16:11).",
   fileField = "imagenArchivo",
   pathField = "image",
+  allowSvg = false,
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   /** Vista previa del archivo elegido. Mientras no haya uno, se muestra la imagen guardada. */
@@ -61,7 +64,7 @@ function ImageUploadField({
   function take(file: File | undefined) {
     if (!file) return;
 
-    const problem = imageProblem(file);
+    const problem = imageProblem(file, { allowSvg });
     setLocalError(problem);
     if (problem) {
       // Un archivo que no sirve no debe viajar con el formulario
@@ -111,7 +114,7 @@ function ImageUploadField({
             id={fileField}
             name={fileField}
             type="file"
-            accept={IMAGE_MIME_TYPES.join(",")}
+            accept={imageMimeTypes({ allowSvg }).join(",")}
             className="sr-only"
             onChange={(e) => take(e.target.files?.[0])}
           />
@@ -144,7 +147,7 @@ function ImageUploadField({
           <p className="mt-2 text-xs text-muted">
             {chosen?.name ?? "Arrastra una imagen aquí o elige una desde tu computadora."}
             <br />
-            WebP, JPG, PNG o AVIF · máximo {MAX_IMAGE_MB} MB · {hint}
+            {imageFormatsLabel({ allowSvg })} · máximo {MAX_IMAGE_MB} MB · {hint}
           </p>
         </div>
       </div>

@@ -44,7 +44,7 @@ export async function saveBrandAction(_prev: SettingsState, formData: FormData):
 
   const parsed = await parseForm(formData, brandSchema, {
     images: [
-      { folder: "branding", fileField: "logoFile", pathField: "logoImage" },
+      { folder: "branding", fileField: "logoFile", pathField: "logoImage", allowSvg: true },
       { folder: "branding", fileField: "shareFile", pathField: "shareImage" },
     ],
   });

@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { put, del } from "@vercel/blob";
-import { IMAGE_EXTENSIONS, imageProblem, type ImageMimeType } from "@/lib/image-rules";
+import { IMAGE_EXTENSIONS, imageProblem, type ImageMimeType, type ImageRulesOptions } from "@/lib/image-rules";
 
 /**
  * Guarda las imágenes que suben desde el panel.
@@ -29,10 +29,10 @@ function usaBlob(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
-export async function saveImage(file: Blob, folder: UploadFolder): Promise<SaveImageResult> {
+export async function saveImage(file: Blob, folder: UploadFolder, options: ImageRulesOptions = {}): Promise<SaveImageResult> {
   if (file.size === 0) return { ok: false, error: "El archivo está vacío." };
 
-  const problem = imageProblem(file);
+  const problem = imageProblem(file, options);
   if (problem) return { ok: false, error: problem };
 
   // Nombre generado por el servidor: el del archivo original podría traer

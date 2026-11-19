@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", headers: [{ key: "X-Content-Type-Options", value: "nosniff" }] },
       {
+        // El logo puede ser SVG, que admite scripts. En <img> nunca se
+        // ejecutan, pero si alguien abre el archivo directamente, sí: esta
+        // política lo impide.
+        source: "/images/:path(.*\\.svg)",
+        headers: [{ key: "Content-Security-Policy", value: "default-src 'none'; style-src 'unsafe-inline'; sandbox" }],
+      },
+      {
         // El panel nunca debe indexarse, incrustarse en otra página ni
         // filtrar sus URLs como referente al salir a otro sitio.
         source: "/admin/:path*",

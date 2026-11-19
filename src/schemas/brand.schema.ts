@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { SITE } from "@/constants/site";
-import { optionalHttpUrl, optionalLocalImage } from "./shared";
+import { optionalHttpUrl, optionalLocalImage, optionalLocalImageOrSvg } from "./shared";
 
 export const brandSchema = z
   .object({
     siteDescription: z.string().trim().min(30, "Escribe al menos 30 caracteres.").max(300, "Máximo 300 caracteres."),
     siteUrl: optionalHttpUrl,
-    logoImage: optionalLocalImage,
+    logoImage: optionalLocalImageOrSvg,
     logoAlt: z.string().trim().max(150, "Máximo 150 caracteres."),
     shareImage: optionalLocalImage,
     shareImageAlt: z.string().trim().max(200, "Máximo 200 caracteres."),

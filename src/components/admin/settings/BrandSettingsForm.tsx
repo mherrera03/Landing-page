@@ -46,6 +46,7 @@ export function BrandSettingsForm({ settings }: { settings: BrandSettings }) {
         fileField="logoFile"
         pathField="logoImage"
         label="Logo"
+        allowSvg
         hint="Se recomienda un logo horizontal, con fondo transparente."
         defaultValue={v.logoImage}
         error={state.fields?.logoImage}

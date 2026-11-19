@@ -43,6 +43,8 @@ type ImageField = {
   fileField?: string;
   /** Campo oculto con la ruta de la imagen que ya estaba guardada. */
   pathField?: string;
+  /** Acepta también SVG (solo el logo). */
+  allowSvg?: boolean;
 };
 
 /**
@@ -52,9 +54,12 @@ type ImageField = {
  * Se comprueba contra Blob (File lo extiende): según el runtime, el archivo
  * subido no siempre es exactamente la clase File.
  */
-async function resolveImage(formData: FormData, fileField: string, pathField: string, folder: UploadFolder): Promise<SaveImageResult> {
+async function resolveImage(
+  formData: FormData,
+  { folder, fileField = "imagenArchivo", pathField = "image", allowSvg = false }: ImageField,
+): Promise<SaveImageResult> {
   const file = formData.get(fileField);
-  if (file instanceof Blob && file.size > 0) return saveImage(file, folder);
+  if (file instanceof Blob && file.size > 0) return saveImage(file, folder, { allowSvg });
   return { ok: true, path: String(formData.get(pathField) ?? "") };
 }
 
@@ -89,8 +94,9 @@ export async function parseForm<Schema extends z.ZodType>(
   const values = { ...input };
   for (const field of secrets) delete values[field];
 
-  for (const { folder, fileField = "imagenArchivo", pathField = "image" } of images) {
-    const image = await resolveImage(formData, fileField, pathField, folder);
+  for (const field of images) {
+    const { pathField = "image" } = field;
+    const image = await resolveImage(formData, field);
     if (!image.ok) {
       const fields = { [pathField]: image.error } as Partial<Record<FieldOf<Schema>, string>>;
       return { ok: false, state: { values, fields } };
