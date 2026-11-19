@@ -15,16 +15,23 @@ export const slugField = z
  * Ruta de una imagen guardada en el propio sitio (las que genera uploads.ts).
  * La ruta viaja en un campo oculto del formulario: sin esta comprobación se
  * podría colar una dirección externa, que next/image se niega a mostrar.
+ *
+ * En local la ruta empieza por /images/. En producción las imágenes viven en
+ * Vercel Blob y la ruta es una URL de ese servicio: también se acepta.
  */
-const LOCAL_IMAGE = /^\/images\/[a-zA-Z0-9/_-]+\.(?:png|jpg|jpeg|webp|avif)$/;
-/** Igual, pero admite SVG: solo para el logo. */
-const LOCAL_IMAGE_OR_SVG = /^\/images\/[a-zA-Z0-9/_-]+\.(?:png|jpg|jpeg|webp|avif|svg)$/;
+const IMAGE_LOCATION = String.raw`(?:\/images\/|https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/)[a-zA-Z0-9/_-]+`;
+const LOCAL_IMAGE = new RegExp(String.raw`^${IMAGE_LOCATION}\.(?:png|jpg|jpeg|webp|avif)$`);
+/** Igual, pero admite SVG: solo para logos. */
+const LOCAL_IMAGE_OR_SVG = new RegExp(String.raw`^${IMAGE_LOCATION}\.(?:png|jpg|jpeg|webp|avif|svg)$`);
 const LOCAL_IMAGE_MESSAGE = "Usa una imagen del sitio.";
 
 export const localImage = (requiredMessage: string) =>
   z.string().trim().min(1, requiredMessage).regex(LOCAL_IMAGE, LOCAL_IMAGE_MESSAGE);
 
 export const optionalLocalImage = z.union([z.literal(""), z.string().regex(LOCAL_IMAGE, LOCAL_IMAGE_MESSAGE)]);
+
+export const localImageOrSvg = (requiredMessage: string) =>
+  z.string().trim().min(1, requiredMessage).regex(LOCAL_IMAGE_OR_SVG, LOCAL_IMAGE_MESSAGE);
 
 export const optionalLocalImageOrSvg = z.union([z.literal(""), z.string().regex(LOCAL_IMAGE_OR_SVG, LOCAL_IMAGE_MESSAGE)]);
 

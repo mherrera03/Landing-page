@@ -59,9 +59,9 @@ export function Hero({ course, settings }: { course: Course | null; settings: La
         <div className="absolute top-1/3 -right-40 size-[34rem] rounded-full bg-violet/15 blur-3xl" />
       </div>
 
-      <div className="container-page grid items-center gap-10 pt-10 pb-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:pt-16 lg:pb-14">
+      <div className="container-page grid items-center gap-10 pt-6 pb-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:pt-10 lg:pb-14">
         <motion.div variants={container} initial="hidden" animate="show">
-          <h1 className="mt-5text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
+          <h1 className="text-[clamp(2.6rem,6.2vw,4.75rem)] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink">
             <span className="-mb-[0.14em] block overflow-hidden pb-[0.14em]">
               <motion.span variants={line} className="block">
                 {settings.heroTitle1}

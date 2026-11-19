@@ -155,17 +155,6 @@ export function LandingSettingsForm({ settings }: { settings: LandingSettings })
           defaultValue={v.programsDelivered}
           error={state.fields?.programsDelivered}
         />
-        <Input
-          id="satisfactionPercent"
-          name="satisfactionPercent"
-          label="Satisfacción (%)"
-          type="number"
-          min={0}
-          max={100}
-          required
-          defaultValue={v.satisfactionPercent}
-          error={state.fields?.satisfactionPercent}
-        />
       </div>
     </SettingsCard>
   );

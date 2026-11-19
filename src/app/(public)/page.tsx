@@ -1,9 +1,9 @@
 import { connection } from "next/server";
-import { todayInElSalvador } from "@/lib/dates";
 import { findFeatured } from "@/server/database/repositories/courses.repository";
 import { getLandingSettings } from "@/server/database/repositories/settings.repository";
 import { Hero } from "@/components/public/hero/Hero";
 import { AboutSection } from "@/components/public/sections/AboutSection";
+import { AlliancesSection } from "@/components/public/sections/AlliancesSection";
 import { AudienceSection } from "@/components/public/sections/AudienceSection";
 import { ContactSection } from "@/components/public/sections/ContactSection";
 import { CoursesSection } from "@/components/public/sections/CoursesSection";
@@ -17,19 +17,19 @@ export default async function HomePage() {
   await connection();
 
   const landing = await getLandingSettings();
-  const currentYear = Number(todayInElSalvador().slice(0, 4));
 
   return (
     <>
       <Hero course={await findFeatured()} settings={landing} />
       <AboutSection foundingYear={landing.foundingYear} />
-      <StatsSection settings={landing} currentYear={currentYear} />
+      <StatsSection settings={landing} />
       <ServicesSection />
       <AudienceSection />
       <CoursesSection />
       <EventsSection />
       <NewsSection />
       <ContactSection />
+      <AlliancesSection />
     </>
   );
 }

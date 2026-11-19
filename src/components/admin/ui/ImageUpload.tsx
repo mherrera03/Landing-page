@@ -21,6 +21,8 @@ type ImageUploadProps = {
   pathField?: string;
   /** Acepta también SVG. Solo para el logo: el servidor debe permitirlo igual. */
   allowSvg?: boolean;
+  /** Vista previa entera, sin recortar: para logos. */
+  contain?: boolean;
 };
 
 /**
@@ -43,6 +45,7 @@ function ImageUploadField({
   fileField = "imagenArchivo",
   pathField = "image",
   allowSvg = false,
+  contain = false,
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   /** Vista previa del archivo elegido. Mientras no haya uno, se muestra la imagen guardada. */
@@ -102,7 +105,14 @@ function ImageUploadField({
       >
         <div className="relative aspect-[16/11] w-full shrink-0 overflow-hidden rounded-lg bg-surface sm:w-40">
           {preview ? (
-            <Image src={preview} alt="" fill sizes="160px" className="object-cover" unoptimized={chosen !== null} />
+            <Image
+              src={preview}
+              alt=""
+              fill
+              sizes="160px"
+              className={contain ? "object-contain p-3" : "object-cover"}
+              unoptimized={chosen !== null}
+            />
           ) : (
             <span className="grid h-full place-items-center text-xs text-muted">Sin imagen</span>
           )}

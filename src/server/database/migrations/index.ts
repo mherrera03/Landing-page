@@ -186,6 +186,32 @@ const MIGRATIONS: { name: string; sql: string }[] = [
         WHERE created_at LIKE '%T%';
     `,
   },
+  {
+    // Logos de la sección "Alianzas" de la landing. Arranca con los cinco que
+    // estaban fijos en el código; desde aquí se administran en el panel.
+    name: "010_aliados",
+    sql: `
+        CREATE TABLE aliados (
+          id             INTEGER PRIMARY KEY AUTOINCREMENT,
+          nombre         TEXT NOT NULL,
+          logo           TEXT NOT NULL,
+          enlace         TEXT NOT NULL DEFAULT '',
+          grupo          TEXT NOT NULL DEFAULT 'instituciones' CHECK (grupo IN ('instituciones','empresas')),
+          orden          INTEGER NOT NULL DEFAULT 0,
+          visible        INTEGER NOT NULL DEFAULT 1,
+          creado_en      TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+          actualizado_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+        );
+        CREATE INDEX idx_aliados_visible ON aliados (visible, grupo, orden);
+
+        INSERT INTO aliados (nombre, logo, grupo, orden) VALUES
+          ('Unión Europea', '/images/aliados/union-europea.webp', 'instituciones', 1),
+          ('Expertise France, Groupe AFD', '/images/aliados/expertise-france.webp', 'instituciones', 2),
+          ('INCAF, Instituto Nacional de Capacitación y Formación', '/images/aliados/incaf.webp', 'instituciones', 3),
+          ('Fundemas', '/images/aliados/fundemas.webp', 'instituciones', 4),
+          ('Xertify', '/images/aliados/xertify.webp', 'instituciones', 5);
+    `,
+  },
 ];
 
 export async function runMigrations(db: Client) {

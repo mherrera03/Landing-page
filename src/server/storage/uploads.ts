@@ -21,7 +21,7 @@ import { IMAGE_EXTENSIONS, imageProblem, type ImageMimeType, type ImageRulesOpti
  */
 
 /** Carpetas donde el panel puede guardar imágenes. */
-export type UploadFolder = "courses" | "events" | "news" | "announcements" | "branding";
+export type UploadFolder = "courses" | "events" | "news" | "announcements" | "branding" | "partners";
 
 export type SaveImageResult = { ok: true; path: string } | { ok: false; error: string };
 

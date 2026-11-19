@@ -1,4 +1,4 @@
-import { BookOpen, CalendarDays, Inbox, LayoutDashboard, Megaphone, Newspaper, Settings, Users, type LucideIcon } from "lucide-react";
+import { BookOpen, CalendarDays, Handshake, Inbox, LayoutDashboard, Megaphone, Newspaper, Settings, Users, type LucideIcon } from "lucide-react";
 
 export type AdminNavItem = {
   href: string;
@@ -14,6 +14,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin/eventos", label: "Eventos", icon: CalendarDays },
   { href: "/admin/noticias", label: "Noticias", icon: Newspaper },
   { href: "/admin/anuncios", label: "Anuncios", icon: Megaphone },
+  { href: "/admin/aliados", label: "Aliados", icon: Handshake },
   { href: "/admin/solicitudes", label: "Solicitudes", icon: Inbox },
   { href: "/admin/usuarios", label: "Usuarios", icon: Users, soloAdmin: true },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings, soloAdmin: true },

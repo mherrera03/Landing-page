@@ -44,7 +44,6 @@ export const landingSchema = z.object({
   ),
   peopleTrained: integer(0, 100_000_000),
   programsDelivered: integer(0, 1_000_000),
-  satisfactionPercent: integer(0, 100),
 });
 
 export type LandingSettings = z.infer<typeof landingSchema>;
@@ -65,5 +64,4 @@ export const LANDING_DEFAULTS: LandingSettings = {
   foundingYear: 2016,
   peopleTrained: 4999,
   programsDelivered: 99,
-  satisfactionPercent: 98,
 };

@@ -1,7 +1,7 @@
-import { Award, CalendarRange, GraduationCap, Users, type LucideIcon } from "lucide-react";
+import { GraduationCap, Users, type LucideIcon } from "lucide-react";
 
 /** Cifras de la franja "UGB Plus en cifras". El valor de cada una sale de Configuración. */
-export type StatKey = "years" | "people" | "programs" | "satisfaction";
+export type StatKey = "people" | "programs";
 
 export type Stat = {
   key: StatKey;
@@ -9,11 +9,29 @@ export type Stat = {
   prefix?: string;
   suffix?: string;
   label: string;
+  /** Foto de fondo del bloque (opcional). */
+  image?: { src: string; alt: string };
 };
 
 export const STATS: Stat[] = [
-  { key: "years", icon: CalendarRange, prefix: "+", label: "años de trayectoria" },
-  { key: "people", icon: Users, prefix: "+", label: "personas formadas" },
-  { key: "programs", icon: GraduationCap, prefix: "+", label: "programas impartidos" },
-  { key: "satisfaction", icon: Award, suffix: "%", label: "de satisfacción" },
+  {
+    key: "people",
+    icon: Users,
+    prefix: "+",
+    label: "personas formadas",
+    image: {
+      src: "/images/stats/personas-formadas.webp",
+      alt: "Participantes de UGB Plus con sus diplomas en la ceremonia de graduación",
+    },
+  },
+  {
+    key: "programs",
+    icon: GraduationCap,
+    prefix: "+",
+    label: "programas impartidos",
+    image: {
+      src: "/images/stats/programas-impartidos.webp",
+      alt: "Participantes escuchando una ponencia en la clausura de un programa de UGB Plus",
+    },
+  },
 ];
