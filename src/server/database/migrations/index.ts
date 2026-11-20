@@ -227,6 +227,62 @@ const MIGRATIONS: { name: string; sql: string }[] = [
         WHERE NOT EXISTS (SELECT 1 FROM aliados WHERE nombre LIKE 'RECLA%');
     `,
   },
+  {
+    // Las categorías de cursos dejan de estar clavadas en el código y pasan a
+    // ser datos que el panel puede crear y editar.
+    //
+    // `cursos` se reconstruye entera a propósito: SQLite no permite quitar un
+    // CHECK con ALTER TABLE, y mientras el CHECK siguiera ahí ninguna categoría
+    // nueva podría usarse. Las columnas se copian tal cual estaban —mismo orden,
+    // porque el INSERT … SELECT * depende de ello— cambiando solo la línea de
+    // `categoria`. No hay vistas ni disparadores que apunten a esta tabla.
+    //
+    // América/El Salvador es UTC−6 todo el año, de ahí el '-6 hours'.
+    name: "012_categorias",
+    sql: `
+        CREATE TABLE categorias (
+          id             INTEGER PRIMARY KEY AUTOINCREMENT,
+          clave          TEXT NOT NULL UNIQUE,
+          nombre         TEXT NOT NULL,
+          orden          INTEGER NOT NULL DEFAULT 0,
+          creado_en      TEXT NOT NULL DEFAULT (datetime('now','-6 hours')),
+          actualizado_en TEXT NOT NULL DEFAULT (datetime('now','-6 hours'))
+        );
+
+        INSERT INTO categorias (clave, nombre, orden) VALUES
+          ('tecnologia','Tecnología',1),
+          ('negocios','Negocios',2),
+          ('habilidades','Habilidades',3),
+          ('humanidades','Humanidades',4),
+          ('diseno','Diseño',5),
+          ('arquitectura','Arquitectura',6);
+
+        CREATE TABLE cursos_nuevo (
+          id             INTEGER PRIMARY KEY AUTOINCREMENT,
+          slug           TEXT NOT NULL UNIQUE,
+          titulo         TEXT NOT NULL,
+          categoria      TEXT NOT NULL,
+          descripcion    TEXT NOT NULL DEFAULT '',
+          estudiantes    INTEGER,
+          nivel          TEXT NOT NULL CHECK (nivel IN ('Básico','Intermedio','Avanzado')),
+          duracion_horas INTEGER NOT NULL DEFAULT 0,
+          modalidad      TEXT CHECK (modalidad IN ('Híbrida','Virtual','Presencial')),
+          imagen         TEXT NOT NULL DEFAULT '',
+          imagen_alt     TEXT NOT NULL DEFAULT '',
+          estado         TEXT NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo','proximamente')),
+          destacado      INTEGER NOT NULL DEFAULT 0,
+          visible        INTEGER NOT NULL DEFAULT 1,
+          orden          INTEGER NOT NULL DEFAULT 0,
+          creado_en      TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+          actualizado_en TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+        );
+
+        INSERT INTO cursos_nuevo SELECT * FROM cursos;
+        DROP TABLE cursos;
+        ALTER TABLE cursos_nuevo RENAME TO cursos;
+        CREATE INDEX idx_cursos_visible ON cursos (visible, orden);
+    `,
+  },
 ];
 
 export async function runMigrations(db: Client) {
