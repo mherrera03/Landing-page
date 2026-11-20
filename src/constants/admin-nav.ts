@@ -1,4 +1,4 @@
-import { BookOpen, CalendarDays, Handshake, Inbox, LayoutDashboard, Megaphone, Newspaper, Settings, Users, type LucideIcon } from "lucide-react";
+import { BookOpen, CalendarDays, Handshake, Inbox, LayoutDashboard, Megaphone, Newspaper, Settings, Tags, Users, type LucideIcon } from "lucide-react";
 
 export type AdminNavItem = {
   href: string;
@@ -11,6 +11,8 @@ export type AdminNavItem = {
 export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin", label: "Resumen", icon: LayoutDashboard },
   { href: "/admin/cursos", label: "Cursos", icon: BookOpen },
+  // Sin soloAdmin: quien puede editar cursos puede editar sus categorías.
+  { href: "/admin/categorias", label: "Categorías", icon: Tags },
   { href: "/admin/eventos", label: "Eventos", icon: CalendarDays },
   { href: "/admin/noticias", label: "Noticias", icon: Newspaper },
   { href: "/admin/anuncios", label: "Anuncios", icon: Megaphone },

@@ -88,6 +88,18 @@ export async function countCourses(key: string): Promise<number> {
   return row?.total ?? 0;
 }
 
+/**
+ * Cuántos cursos tiene cada categoría, en una sola consulta. El listado del
+ * panel lo necesita para todas las filas a la vez; pedirlo categoría por
+ * categoría serían tantas consultas como filas.
+ */
+export async function courseCountsByKey(): Promise<Record<string, number>> {
+  const filas = await queryAll<{ categoria: string; total: number }>(
+    "SELECT categoria, COUNT(*) AS total FROM cursos GROUP BY categoria",
+  );
+  return Object.fromEntries(filas.map((fila) => [fila.categoria, fila.total]));
+}
+
 /** La clave llega ya resuelta con `freeKey`, no se deduce aquí. */
 export function create(input: CategoryInput, key: string): Promise<number> {
   return execute(
