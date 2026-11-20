@@ -23,6 +23,9 @@ type CourseRow = {
   orden: number;
   creado_en: string;
   actualizado_en: string;
+  /** Vienen del LEFT JOIN con `categorias`, no de la tabla `cursos`. */
+  categoria_nombre: string;
+  categoria_orden: number;
 };
 
 /** Convierte la fila de la base de datos al tipo que usa la interfaz. */
@@ -32,6 +35,8 @@ function toCourse(row: CourseRow): Course {
     slug: row.slug,
     title: row.titulo,
     category: row.categoria,
+    categoryName: row.categoria_nombre,
+    categoryOrder: row.categoria_orden,
     description: row.descripcion,
     students: row.estudiantes,
     level: row.nivel,
@@ -65,35 +70,50 @@ function toRow(input: CourseInput) {
   };
 }
 
+/**
+ * Todas las lecturas resuelven aquí el nombre y el orden de la categoría, para
+ * que ninguna vista tenga que buscarlos por su cuenta ni recibir la lista por
+ * props. `LEFT JOIN` y no `JOIN`: si una categoría se borrara dejando cursos
+ * detrás, esos cursos deben seguir viéndose (con el nombre vacío), no
+ * desaparecer del panel sin explicación.
+ */
+const SELECT_CURSO = `
+  SELECT c.*,
+         COALESCE(cat.nombre, '') AS categoria_nombre,
+         COALESCE(cat.orden, 9999) AS categoria_orden
+  FROM cursos c
+  LEFT JOIN categorias cat ON cat.clave = c.categoria
+`;
+
 /** Solo los visibles, para la landing. */
 export async function findVisible(): Promise<Course[]> {
-  return (await queryAll<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY orden, id")).map(toCourse);
+  return (await queryAll<CourseRow>(`${SELECT_CURSO} WHERE c.visible = 1 ORDER BY c.orden, c.id`)).map(toCourse);
 }
 
 /** Todos, incluidos los ocultos: solo para el admin. */
 export async function findAll(): Promise<Course[]> {
-  return (await queryAll<CourseRow>("SELECT * FROM cursos ORDER BY orden, id")).map(toCourse);
+  return (await queryAll<CourseRow>(`${SELECT_CURSO} ORDER BY c.orden, c.id`)).map(toCourse);
 }
 
 /** Los últimos que se tocaron, para el resumen del panel. */
 export async function findRecent(limit: number): Promise<Course[]> {
-  return (await queryAll<CourseRow>("SELECT * FROM cursos ORDER BY actualizado_en DESC, id DESC LIMIT ?", limit)).map(toCourse);
+  return (await queryAll<CourseRow>(`${SELECT_CURSO} ORDER BY c.actualizado_en DESC, c.id DESC LIMIT ?`, limit)).map(toCourse);
 }
 
 export async function findById(id: number): Promise<Course | null> {
-  const row = await queryOne<CourseRow>("SELECT * FROM cursos WHERE id = ?", id);
+  const row = await queryOne<CourseRow>(`${SELECT_CURSO} WHERE c.id = ?`, id);
   return row ? toCourse(row) : null;
 }
 
 /** Un curso oculto nunca debe poder abrirse desde una URL pública. */
 export async function findVisibleBySlug(slug: string): Promise<Course | null> {
-  const row = await queryOne<CourseRow>("SELECT * FROM cursos WHERE slug = ? AND visible = 1", slug);
+  const row = await queryOne<CourseRow>(`${SELECT_CURSO} WHERE c.slug = ? AND c.visible = 1`, slug);
   return row ? toCourse(row) : null;
 }
 
 /** El curso que se muestra en la portada: el marcado como destacado, o el primero. */
 export async function findFeatured(): Promise<Course | null> {
-  const row = await queryOne<CourseRow>("SELECT * FROM cursos WHERE visible = 1 ORDER BY destacado DESC, orden, id LIMIT 1");
+  const row = await queryOne<CourseRow>(`${SELECT_CURSO} WHERE c.visible = 1 ORDER BY c.destacado DESC, c.orden, c.id LIMIT 1`);
   return row ? toCourse(row) : null;
 }
 
