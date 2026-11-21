@@ -21,7 +21,7 @@ export function CourseCard({ course, index, onOpen }: CourseCardProps) {
     <article
       className={cn(
         "group relative flex h-full flex-col overflow-hidden rounded-3xl border-[1.5px] border-ink bg-surface shadow-hard",
-        "transition-[translate,rotate,box-shadow] duration-300 ease-out-expo",
+        "transition-[translate,rotate,scale,box-shadow] duration-300 ease-out-expo active:scale-[0.98] active:duration-100",
         "hover:-translate-y-1.5 hover:rotate-0 hover:shadow-hard-accent focus-within:-translate-y-1.5 focus-within:rotate-0 focus-within:shadow-hard-accent",
         TILT[index % TILT.length],
       )}
@@ -43,9 +43,9 @@ export function CourseCard({ course, index, onOpen }: CourseCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-4 p-5">
-        <p className="text-sm leading-relaxed text-muted">{course.description}</p>
+        <p className="line-clamp-3 text-sm leading-relaxed text-muted sm:line-clamp-none">{course.description}</p>
 
-        <ul className="flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-4 text-xs font-medium text-muted">
+        <ul className="flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-4 text-[0.8125rem] font-medium text-muted">
           <li className="flex items-center gap-1.5">
             <Users className="size-4" aria-hidden="true" />
             {course.students === null ? "Próxima apertura" : `${course.students} estudiantes`}

@@ -12,7 +12,7 @@ export function SpecialistCard({ specialist }: { specialist: Specialist }) {
         href={`https://wa.me/${whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex min-h-11 items-center gap-2.5 rounded-xl bg-ink px-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-ink-soft"
+        className="inline-flex min-h-11 items-center gap-2.5 rounded-xl bg-ink px-4 text-sm font-semibold text-white transition-colors duration-100 hover:bg-ink-soft active:bg-ink-soft"
       >
         <MessageCircle className="size-4 shrink-0" aria-hidden="true" />
         WhatsApp
@@ -21,7 +21,7 @@ export function SpecialistCard({ specialist }: { specialist: Specialist }) {
 
       <a
         href={`mailto:${email}`}
-        className="inline-flex min-h-11 items-center gap-2.5 rounded-xl border border-line px-4 text-sm font-medium text-muted transition-colors duration-200 hover:border-ink/30 hover:text-ink"
+        className="inline-flex min-h-11 items-center gap-2.5 rounded-xl border border-line px-4 text-sm font-medium text-muted transition-colors duration-100 hover:border-ink/30 hover:text-ink active:border-ink/30 active:text-ink"
       >
         <Mail className="size-4 shrink-0" aria-hidden="true" />
         <span className="truncate">{email}</span>

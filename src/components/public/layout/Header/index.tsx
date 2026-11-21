@@ -79,7 +79,7 @@ export function Header({ logoImage, logoAlt, contactButtonLabel, contactButtonHr
       // Quien navega con teclado y llega al header lo vuelve a ver
       onFocus={() => setHidden(false)}
       className={cn(
-        "sticky top-0 z-50 border-b bg-paper/85 backdrop-blur-lg transition-[border-color,box-shadow,translate] duration-300 motion-reduce:transition-none",
+        "material material-bar sticky top-0 z-50 border-b bg-paper/85 pt-[env(safe-area-inset-top)] backdrop-blur-lg transition-[border-color,box-shadow,translate] duration-300 motion-reduce:transition-none",
         scrolled || menuOpen ? "border-ink/10 shadow-[0_8px_30px_rgb(0_1_32/0.06)]" : "border-transparent",
         // Solo bajo lg: en escritorio el header nunca se oculta. Sin sombra, para que no asome arriba
         oculto && "max-lg:-translate-y-full max-lg:border-transparent max-lg:shadow-none",
@@ -99,7 +99,7 @@ export function Header({ logoImage, logoAlt, contactButtonLabel, contactButtonHr
 
           <button
             type="button"
-            className="grid size-11 place-items-center rounded-xl text-ink transition-colors duration-200 hover:bg-ink/5 lg:hidden"
+            className="grid size-11 place-items-center rounded-xl text-ink transition-colors duration-100 hover:bg-ink/5 active:bg-ink/10 lg:hidden"
             aria-expanded={menuOpen}
             aria-controls={menuId}
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}

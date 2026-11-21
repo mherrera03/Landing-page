@@ -13,7 +13,7 @@ const FEATURES: { icon: LucideIcon; title: string; text: string }[] = [
 const card =
   "group rounded-3xl border border-line bg-surface p-7 transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-1 hover:border-violet/40 hover:shadow-soft sm:p-8";
 
-const paragraph = "mt-3 text-justify leading-relaxed hyphens-auto";
+const paragraph = "mt-3 leading-relaxed text-pretty";
 
 /** `foundingYear` se edita en Configuración: el texto no debe contradecir la cifra de la portada. */
 export function AboutSection({ foundingYear }: { foundingYear: number }) {

@@ -62,7 +62,7 @@ export function EventSlide({ event, priority = false, past = false }: EventSlide
         <h3 className="mt-3 text-[clamp(1.25rem,2.2vw,1.6rem)] leading-tight font-bold text-white">{event.title}</h3>
         <Link
           href={`/eventos/${event.slug}`}
-          className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-white underline-offset-4 hover:underline"
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-white underline-offset-4 hover:underline"
         >
           Ver detalles del evento
         </Link>

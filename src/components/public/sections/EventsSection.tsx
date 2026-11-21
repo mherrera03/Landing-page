@@ -34,7 +34,7 @@ export async function EventsSection() {
   return (
     <Section id="eventos">
       <div className="container-page">
-        <Reveal className="relative overflow-hidden rounded-[2rem] bg-ink px-6 py-10 sm:px-10 lg:px-12 lg:py-12">
+        <Reveal className="on-dark relative overflow-hidden rounded-[2rem] bg-ink px-6 py-10 sm:px-10 lg:px-12 lg:py-12">
           <div aria-hidden="true" className="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-brand opacity-20 blur-3xl" />
 
           <div className="relative">

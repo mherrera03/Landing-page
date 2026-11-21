@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Send } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { z } from "zod";
 import { COUNTRIES } from "@/constants/countries";
 import { DEFAULT_COUNTRY, type Country } from "@/constants/country-phone";
@@ -49,6 +49,10 @@ export function ContactForm() {
   const [touched, setTouched] = useState<Partial<Record<LeadField, boolean>>>({});
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  // Curso que la persona eligió en la ficha: se muestra para que sepa qué quedó precargado y pueda quitarlo
+  const [topic, setTopic] = useState<string | null>(null);
+  // Tras un intento fallido de envío se muestra el resumen "Revisa N campos"
+  const [attempted, setAttempted] = useState(false);
 
   // Solo los dígitos del número nacional; values.phone guarda el número
   // completo con la clave del país ("+503 7777 7777").
@@ -59,6 +63,7 @@ export function ContactForm() {
   useEffect(
     () =>
       onLeadInterest((courseTitle) => {
+        setTopic(courseTitle);
         setValues((v) => ({ ...v, interest: "Cursos", message: `Me interesa el curso: ${courseTitle}.` }));
       }),
     [],
@@ -76,6 +81,14 @@ export function ContactForm() {
     if (errors[field]) validateField(field, { ...values, [field]: value });
   }
 
+  /** Deshace lo precargado desde la ficha del curso, sin tocar lo que la persona ya haya escrito. */
+  function clearTopic() {
+    if (topic === null) return;
+    const prefilled = `Me interesa el curso: ${topic}.`;
+    setValues((v) => (v.message === prefilled ? { ...v, interest: "" as LeadInput["interest"], message: "" } : v));
+    setTopic(null);
+  }
+
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -86,6 +99,7 @@ export function ContactForm() {
       setErrors(next);
       // Se marcan todos los campos: así ningún error queda oculto por no haber pasado por él
       setTouched(Object.fromEntries(FIELDS.map((field) => [field, true])));
+      setAttempted(true);
       // El foco va al primer campo con problema, en el orden del formulario
       const first = FIELDS.find((field) => next[field]);
       formRef.current?.querySelector<HTMLElement>(`#lead-${first}`)?.focus();
@@ -111,6 +125,7 @@ export function ContactForm() {
   }
 
   const showError = (field: LeadField) => (touched[field] ? errors[field] : undefined);
+  const pendingCount = FIELDS.filter((field) => showError(field)).length;
 
   const blur = (field: LeadField) => () => {
     setTouched((t) => ({ ...t, [field]: true }));
@@ -119,12 +134,35 @@ export function ContactForm() {
 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="rounded-3xl border border-line bg-surface p-6 sm:p-8">
+      {/* aria-live: al llegar desde la ficha de un curso, el lector de pantalla anuncia lo precargado */}
+      <div aria-live="polite">
+        {topic && (
+          <p className="mb-5 flex items-center justify-between gap-3 rounded-2xl bg-violet-soft py-2 pr-2 pl-4 text-sm text-ink">
+            <span className="min-w-0">
+              <span className="text-muted">Consulta sobre: </span>
+              <span className="font-semibold">{topic}</span>
+            </span>
+            <button
+              type="button"
+              onClick={clearTopic}
+              className="grid size-11 shrink-0 place-items-center rounded-full text-violet-deep transition-colors duration-100 hover:bg-white active:bg-white"
+              aria-label={`Quitar el curso ${topic} de la consulta`}
+            >
+              <X className="size-4" aria-hidden="true" />
+            </button>
+          </p>
+        )}
+      </div>
+
       <div className="grid gap-x-5 sm:grid-cols-2">
         <Input
           id="lead-name"
           label="Nombre completo"
           required
           autoComplete="name"
+          autoCapitalize="words"
+          autoCorrect="off"
+          enterKeyHint="next"
           placeholder="Tu nombre"
           value={values.name}
           error={showError("name")}
@@ -139,6 +177,10 @@ export function ContactForm() {
           required
           inputMode="email"
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          enterKeyHint="next"
           placeholder="nombre@correo.com"
           value={values.email}
           error={showError("email")}
@@ -170,6 +212,7 @@ export function ContactForm() {
           label="Teléfono"
           required
           autoComplete="tel-national"
+          enterKeyHint="next"
           prefix={dialCode(country)}
           placeholder={examplePhone(country)}
           value={formatNational(country, phoneDigits)}
@@ -213,6 +256,11 @@ export function ContactForm() {
           {errors.form}
         </p>
       )}
+      {attempted && pendingCount > 0 && (
+        <p role="status" className="mb-4 rounded-xl bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
+          {pendingCount === 1 ? "Falta corregir 1 campo, marcado en rojo." : `Faltan por corregir ${pendingCount} campos, marcados en rojo.`}
+        </p>
+      )}
 
       <GlowButton
         type="submit"
@@ -225,7 +273,7 @@ export function ContactForm() {
         {!submitting && <Send className="size-4" aria-hidden="true" />}
       </GlowButton>
 
-      <p className="mt-3 text-xs text-muted">Los campos marcados con * son obligatorios.</p>
+      <p className="mt-3 text-[0.8125rem] text-muted">Los campos con * son obligatorios; el mensaje es opcional.</p>
     </form>
   );
 }

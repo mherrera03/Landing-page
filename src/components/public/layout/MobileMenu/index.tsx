@@ -27,13 +27,13 @@ export function MobileMenu({ id, open, activeId, onClose, contactButtonLabel, co
         <motion.nav
           id={id}
           aria-label="Principal"
-          className="absolute inset-x-0 top-full border-b border-line bg-surface shadow-soft lg:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top,0px))] overflow-y-auto overscroll-contain border-b border-line bg-surface shadow-soft lg:hidden"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8, transition: { duration: 0.15, ease: "easeIn" } }}
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="container-page flex flex-col gap-1 py-4">
+          <div className="container-page flex flex-col gap-1 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
             <ul>
               {NAV_LINKS.map((link, i) => (
                 <motion.li
@@ -47,7 +47,7 @@ export function MobileMenu({ id, open, activeId, onClose, contactButtonLabel, co
                     onClick={onClose}
                     aria-current={link.id === activeId ? "location" : undefined}
                     className={cn(
-                      "flex min-h-12 items-center justify-between rounded-xl px-3 text-base font-semibold transition-colors duration-200 hover:bg-paper",
+                      "flex min-h-12 items-center justify-between rounded-xl px-3 text-base font-semibold transition-colors duration-100 hover:bg-paper active:bg-paper",
                       link.id === activeId ? "text-violet-deep" : "text-ink",
                     )}
                   >

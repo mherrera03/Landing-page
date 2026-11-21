@@ -6,7 +6,7 @@ type Variant = "soft" | "onImage";
 const variants: Record<Variant, string> = {
   soft: "bg-violet-soft text-violet-deep",
   // Fondo oscuro translúcido: legible sobre cualquier foto, clara u oscura
-  onImage: "bg-ink/70 text-white backdrop-blur-md",
+  onImage: "material material-chip bg-ink/70 text-white backdrop-blur-md",
 };
 
 export function Badge({ variant = "soft", className, children }: { variant?: Variant; className?: string; children: ReactNode }) {

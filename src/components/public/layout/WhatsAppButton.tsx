@@ -20,7 +20,7 @@ export function WhatsAppButton({ number }: { number: string }) {
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp (se abre en una pestaña nueva)"
       // Sube lo necesario en iPhone para no quedar bajo la barra de inicio
-      className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] lg:right-6 lg:bottom-6 z-40 grid size-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgb(0_1_32/0.28)] transition-transform duration-200 hover:scale-105 active:scale-95 motion-reduce:transition-none"
+      className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[calc(1rem+env(safe-area-inset-bottom))] lg:right-6 lg:bottom-6 z-40 grid size-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgb(0_1_32/0.28)] transition-transform duration-200 hover:scale-105 active:scale-95 motion-reduce:transition-none"
     >
       {/* Logo de WhatsApp: Lucide no trae logos de marcas */}
       <svg viewBox="0 0 24 24" className="size-7" fill="currentColor" aria-hidden="true">

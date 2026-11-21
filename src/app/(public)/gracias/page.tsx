@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { CheckCircle2 } from "lucide-react";
+import { connection } from "next/server";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 import { SITE } from "@/constants/site";
+import { getSettings } from "@/server/database/repositories/settings.repository";
 import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
@@ -8,9 +10,13 @@ export const metadata: Metadata = {
   description: "Recibimos tu solicitud de información.",
 };
 
-export default function ThanksPage() {
+export default async function ThanksPage() {
+  await connection();
+  // Quien prefiera no esperar tiene otra salida: escribir directo por WhatsApp
+  const whatsapp = (await getSettings()).whatsapp1.replace(/\D/g, "");
+
   return (
-    <section className="container-page flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+    <section className="container-page flex min-h-[60svh] flex-col items-center justify-center py-20 text-center">
       <span className="grid size-16 place-items-center rounded-2xl bg-violet-soft text-violet-deep">
         <CheckCircle2 className="size-9" aria-hidden="true" />
       </span>
@@ -27,6 +33,21 @@ export default function ThanksPage() {
           Volver al inicio
         </Button>
       </div>
+      {whatsapp && (
+        <p className="mt-8 text-sm text-muted">
+          ¿Prefieres hablar ya con alguien?{" "}
+          <a
+            href={`https://wa.me/${whatsapp}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-1.5 font-bold text-violet-deep underline-offset-4 hover:underline"
+          >
+            <MessageCircle className="size-4" aria-hidden="true" />
+            Escríbenos por WhatsApp
+            <span className="sr-only">(se abre en una pestaña nueva)</span>
+          </a>
+        </p>
+      )}
     </section>
   );
 }

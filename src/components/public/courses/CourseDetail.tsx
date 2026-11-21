@@ -35,14 +35,14 @@ export function CourseDetail({ course, onRequestInfo }: CourseDetailProps) {
           {course.title}
         </p>
         <p className="mt-2 leading-relaxed text-muted">{course.description}</p>
-        <Link href={`/cursos/${course.slug}`} className="mt-3 inline-flex min-h-10 items-center text-sm font-bold text-violet-deep underline-offset-4 hover:underline">Ver página del curso</Link>
+        <Link href={`/cursos/${course.slug}`} className="mt-3 inline-flex min-h-11 items-center text-sm font-bold text-violet-deep underline-offset-4 hover:underline">Ver página del curso</Link>
 
         <dl className="my-6 grid grid-cols-3 divide-x divide-line border-y border-line py-4">
           {stats.map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex flex-col items-center gap-1 px-2 text-center">
               <Icon className="size-5 text-violet-deep" aria-hidden="true" />
               <dd className="text-sm font-bold text-ink">{value}</dd>
-              <dt className="text-xs text-muted">{label}</dt>
+              <dt className="text-[0.8125rem] text-muted">{label}</dt>
             </div>
           ))}
         </dl>
@@ -51,7 +51,7 @@ export function CourseDetail({ course, onRequestInfo }: CourseDetailProps) {
           Solicitar información
           <ArrowRight className="size-5 transition-transform duration-200 group-hover/btn:translate-x-1" aria-hidden="true" />
         </Button>
-        <p className="mt-3 text-center text-xs text-muted">Te llevamos al formulario de contacto con este curso ya seleccionado.</p>
+        <p className="mt-3 text-center text-[0.8125rem] text-muted">Te llevamos al formulario de contacto con este curso ya seleccionado.</p>
       </div>
     </div>
   );

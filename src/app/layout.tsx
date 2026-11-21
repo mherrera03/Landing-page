@@ -36,6 +36,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
+  // Sin zoom bloqueado a propósito: los inputs ya miden 16px, que era lo que lo provocaba.
+  // cover: la página llega hasta el notch y los bordes; el contenido se separa con env(safe-area-inset-*).
+  viewportFit: "cover",
+  // Con el teclado abierto el viewport se encoge: el formulario y los bottom sheets lo respetan.
+  interactiveWidget: "resizes-content",
+  // El sitio solo tiene tema claro, así que una sola barra de estado: la franja del anuncio y el pie son ink.
   themeColor: "#000120",
 };
 

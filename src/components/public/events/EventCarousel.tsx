@@ -80,7 +80,7 @@ export function EventCarousel({ events, titleId, heading, past = false }: EventC
       </ul>
 
       {total > 1 && (
-        <div className="mt-6 flex justify-center gap-1.5">
+        <div className="mt-3 flex justify-center gap-1">
           {events.map((event, i) => (
             <button
               key={event.id}
@@ -89,7 +89,7 @@ export function EventCarousel({ events, titleId, heading, past = false }: EventC
               aria-label={`Ir al evento ${i + 1}: ${event.title}`}
               aria-current={i === actual ? "true" : undefined}
               // El área de clic es más grande que el punto que se ve
-              className="grid h-6 place-items-center px-0.5"
+              className="grid h-11 place-items-center px-1"
             >
               <span
                 className={cn(
