@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { COURSE_CATEGORIES, COURSE_CATEGORY_KEYS } from "@/constants/course-categories";
+import Link from "next/link";
 import { useSlugField } from "@/hooks/useSlugField";
 import type { CourseFormState } from "@/server/actions/courses.actions";
+import type { Category } from "@/types/category.types";
 import { COURSE_LEVELS, COURSE_MODALITIES, COURSE_STATUSES, COURSE_STATUS_LABELS, type Course } from "@/types/course.types";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -18,9 +19,11 @@ type CourseFormProps = {
   action: (prev: CourseFormState, formData: FormData) => Promise<CourseFormState>;
   /** Curso a editar. Si no viene, es uno nuevo. */
   course?: Course;
+  /** Las que hay en el panel, en su orden. Alimentan el desplegable. */
+  categories: Category[];
 };
 
-export function CourseForm({ action, course }: CourseFormProps) {
+export function CourseForm({ action, course, categories }: CourseFormProps) {
   const [state, formAction] = useActionState<CourseFormState, FormData>(action, {});
   // Tras un error, el formulario se repinta con lo que la persona había escrito
   const v = state.values ?? {};
@@ -55,17 +58,30 @@ export function CourseForm({ action, course }: CourseFormProps) {
           onChange={slugField.onSlugChange}
         />
 
-        <Select
-          id="category"
-          name="category"
-          label="Categoría"
-          required
-          placeholder="Selecciona una categoría"
-          options={COURSE_CATEGORY_KEYS.map((key) => COURSE_CATEGORIES[key].label)}
-          values={COURSE_CATEGORY_KEYS}
-          defaultValue={v.category ?? course?.category ?? ""}
-          error={state.fields?.category}
-        />
+        {/* Salida de emergencia: no debería pasar, porque no se puede borrar la
+            última categoría, pero sin ninguna el desplegable quedaría vacío y
+            no habría forma de entender por qué no se puede guardar. */}
+        {categories.length === 0 ? (
+          <div className="mb-5 rounded-xl bg-paper px-4 py-3 text-sm leading-relaxed text-muted sm:col-span-2">
+            No hay categorías todavía, y un curso necesita una.{" "}
+            <Link href="/admin/categorias/nueva" className="font-bold text-violet-deep underline-offset-4 hover:underline">
+              Crea la primera
+            </Link>{" "}
+            y vuelve aquí.
+          </div>
+        ) : (
+          <Select
+            id="category"
+            name="category"
+            label="Categoría"
+            required
+            placeholder="Selecciona una categoría"
+            options={categories.map((categoria) => categoria.name)}
+            values={categories.map((categoria) => categoria.key)}
+            defaultValue={v.category ?? course?.category ?? ""}
+            error={state.fields?.category}
+          />
+        )}
 
         <Select
           id="level"

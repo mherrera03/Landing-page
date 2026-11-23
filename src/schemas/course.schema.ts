@@ -1,12 +1,14 @@
 import { z } from "zod";
 import { COURSE_LEVELS, COURSE_MODALITIES, COURSE_STATUSES } from "@/types/course.types";
-import { COURSE_CATEGORY_KEYS } from "@/constants/course-categories";
 import { localImage, slugField } from "./shared";
 
 export const courseSchema = z.object({
   title: z.string().trim().min(5, "El título debe tener al menos 5 caracteres.").max(120, "El título es demasiado largo."),
   slug: slugField,
-  category: z.enum(COURSE_CATEGORY_KEYS, "Selecciona una categoría."),
+  // Que la categoría exista de verdad lo comprueba la acción contra la tabla:
+  // hacerlo aquí exigiría un esquema asíncrono y tocar `parseForm`, que usan
+  // todos los formularios del panel.
+  category: z.string().trim().min(1, "Selecciona una categoría."),
   description: z
     .string()
     .trim()

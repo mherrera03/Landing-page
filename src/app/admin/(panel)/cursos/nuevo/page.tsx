@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { requireSession } from "@/server/auth/dal";
+import * as categoriesRepo from "@/server/database/repositories/categories.repository";
 import { createCourseAction } from "@/server/actions/courses.actions";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { CourseForm } from "@/components/admin/courses/CourseForm";
@@ -12,7 +13,7 @@ export default async function NuevoCursoPage() {
   return (
     <>
       <PageHeader title="Nuevo curso" description="Al guardarlo aparecerá en la landing, salvo que lo dejes oculto." />
-      <CourseForm action={createCourseAction} />
+      <CourseForm action={createCourseAction} categories={await categoriesRepo.findAll()} />
     </>
   );
 }
