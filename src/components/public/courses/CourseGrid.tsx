@@ -90,9 +90,12 @@ export function CourseGrid({ courses }: { courses: Course[] }) {
             Sin AnimatePresence a propósito. Con él, esta rejilla no quitaba del
             DOM las tarjetas filtradas: al elegir una categoría el aviso decía
             "1 curso encontrado" pero seguían viéndose las cuatro, o sea que el
-            filtro no filtraba nada. Se comprobó que no era `mode="popLayout"`
-            ni la prop `layout`: es AnimatePresence con listas de hijos por
-            clave en esta combinación (motion 13.5 + React 19.2 + Next 16).
+            filtro no filtraba nada. Quitando una cosa cada vez se descartó que
+            fuera `mode="popLayout"` o la prop `layout`: fallaba igual sin las
+            dos, y dejaba de fallar al quitar AnimatePresence. Ojo, no es que
+            AnimatePresence esté roto en general — en `ui/Modal.tsx` funciona
+            bien, con un único hijo condicional; lo que falla aquí es con una
+            lista de hijos por clave (motion 13.5 + React 19.2 + Next 16).
             Se pierde el fundido de salida; se gana un filtro que funciona.
           */}
           {visible.map((course, i) => (

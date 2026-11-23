@@ -25,8 +25,12 @@ export async function createCategoryAction(_prev: CategoryFormState, formData: F
   const parsed = await parseForm(formData, categorySchema);
   if (!parsed.ok) return parsed.state;
 
-  // La clave se deduce del nombre y queda fija de por vida. `freeKey` evita el
-  // choque de "Diseño" con "Diseno", que dan la misma base.
+  if (await repo.nameTaken(parsed.data.name)) {
+    return { values: parsed.values, fields: { name: "Ya existe una categoría con ese nombre." } };
+  }
+
+  // La clave se deduce del nombre y queda fija de por vida. `freeKey` es la red
+  // de seguridad por si dos altas simultáneas generan la misma base.
   const key = await repo.freeKey(slugify(parsed.data.name));
 
   await repo.create(parsed.data, key);
@@ -45,6 +49,10 @@ export async function updateCategoryAction(
 
   const parsed = await parseForm(formData, categorySchema);
   if (!parsed.ok) return parsed.state;
+
+  if (await repo.nameTaken(parsed.data.name, id)) {
+    return { values: parsed.values, fields: { name: "Ya existe otra categoría con ese nombre." } };
+  }
 
   // Solo nombre y orden: la clave no se toca, y por eso renombrar no rompe nada.
   await repo.update(id, parsed.data);

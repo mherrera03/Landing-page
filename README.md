@@ -249,6 +249,7 @@ Todas piden sesión iniciada, menos el login.
 | `/admin/login` | Inicio de sesión |
 | `/admin` | Resumen con las cifras del panel |
 | `/admin/cursos` · `/nuevo` · `/[id]/editar` | Administrar cursos |
+| `/admin/categorias` · `/nueva` · `/[id]/editar` | Crear y ordenar las categorías de los cursos |
 | `/admin/eventos` · `/nuevo` · `/[id]/editar` | Administrar eventos |
 | `/admin/noticias` · `/nuevo` · `/[id]/editar` | Administrar noticias |
 | `/admin/anuncios` · `/nuevo` · `/[id]/editar` | Administrar avisos públicos |
@@ -294,6 +295,7 @@ abierta, se le cierra en la siguiente página que abra.
 - [x] Panel de Noticias, Anuncios y Configuración de contacto, portada e identidad
 - [x] Programación y selección del anuncio de la franja superior
 - [x] Páginas de detalle: `/cursos/[slug]`, `/noticias/[slug]`, `/eventos/[slug]`
+- [x] Categorías de cursos administrables desde el panel, sin tocar código
 - [x] Sección de últimas noticias en la portada, con enlace al listado completo
 - [ ] Limpiar la tabla `eventos`, que quedó sin uso tras unificar el módulo en la 0.7.0
 - [ ] Cargar logo oficial y textos definitivos; completar URL pública y preparar sitemap/robots antes de publicar

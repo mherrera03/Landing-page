@@ -1,5 +1,6 @@
 import "server-only";
 import { nowForDatabase } from "@/lib/dates";
+import { slugify } from "@/lib/text";
 import { execute, queryAll, queryOne } from "../connection";
 import type { CategoryInput } from "@/schemas/category.schema";
 import type { Category } from "@/types/category.types";
@@ -86,6 +87,25 @@ export async function freeKey(base: string): Promise<string> {
 export async function countCourses(key: string): Promise<number> {
   const row = await queryOne<{ total: number }>("SELECT COUNT(*) AS total FROM cursos WHERE categoria = ?", key);
   return row?.total ?? 0;
+}
+
+/**
+ * ¿Ya hay otra categoría que se llame así? Se compara por el nombre
+ * "aplanado" con `slugify`, no por el texto tal cual: así "Tecnología",
+ * "tecnologia" y "TECNOLOGÍA" cuentan como el mismo nombre. Dos categorías
+ * que se ven casi iguales en el desplegable de un curso o en los filtros de
+ * la landing no le sirven a nadie, y además repartirían los cursos entre las
+ * dos sin que se note.
+ *
+ * Se compara en JavaScript y no con LOWER() de SQLite porque LOWER() no
+ * toca las vocales acentuadas: dejaría pasar "TECNOLOGÍA".
+ */
+export async function nameTaken(name: string, exceptId = -1): Promise<boolean> {
+  const buscado = slugify(name);
+  if (!buscado) return false;
+
+  const filas = await queryAll<{ id: number; nombre: string }>("SELECT id, nombre FROM categorias");
+  return filas.some((fila) => fila.id !== exceptId && slugify(fila.nombre) === buscado);
 }
 
 /**
