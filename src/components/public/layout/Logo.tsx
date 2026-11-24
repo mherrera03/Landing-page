@@ -2,7 +2,7 @@ import Image from "next/image";
 import { SITE } from "@/constants/site";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_LOGO = "/images/logo.png";
+const DEFAULT_LOGO = "/images/nuevo-logo.svg";
 
 type LogoProps = {
   size?: "sm" | "md";
@@ -17,10 +17,10 @@ export function Logo({ size = "md", className, src, alt }: LogoProps) {
     <Image
       src={src || DEFAULT_LOGO}
       alt={alt || SITE.name}
-      width={350}
-      height={100}
+      width={930}
+      height={240}
       preload
-      className={cn("w-auto", size === "sm" ? "h-10" : "h-15", className)}
+      className={cn("w-auto object-contain", size === "sm" ? "h-10" : "h-15", className)}
     />
   );
 }

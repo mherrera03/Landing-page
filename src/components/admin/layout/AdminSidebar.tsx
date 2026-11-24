@@ -40,10 +40,8 @@ export function AdminSidebar({ user, siteUrl, onNavigate }: AdminSidebarProps) {
         className="flex items-center gap-3 rounded-2xl px-2 pt-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         aria-label="Ir al resumen"
       >
-        {/* El logo es oscuro: va sobre una placa clara para que se lea */}
-        <span className="rounded-xl bg-white px-2.5 py-1.5 shadow-[0_8px_24px_rgb(196_113_237/0.35)]">
-          <Logo size="sm" className="h-8" />
-        </span>
+        {/* Variante del logo con el texto en blanco, para el fondo oscuro del menú */}
+        <Logo size="sm" src="/images/nuevo-logo-blanco.svg" className="h-10" />
         <span className="text-[0.65rem] font-semibold tracking-[0.2em] text-white/55 uppercase">Panel</span>
       </Link>
 

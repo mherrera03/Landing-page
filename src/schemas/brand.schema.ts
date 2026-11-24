@@ -25,7 +25,7 @@ export type BrandSettings = z.infer<typeof brandSchema>;
 export const BRAND_DEFAULTS: BrandSettings = {
   siteDescription: SITE.description,
   siteUrl: "",
-  logoImage: "/images/logo.png",
+  logoImage: "/images/nuevo-logo.svg",
   logoAlt: SITE.name,
   shareImage: "",
   shareImageAlt: "",
