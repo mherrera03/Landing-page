@@ -7,7 +7,7 @@ export function AnnouncementBar({ announcement }: { announcement: Publication })
   const href = announcement.link || "/anuncios";
 
   return (
-    <div role="status" className="bg-ink px-5 py-2 text-center text-sm text-white">
+    <div role="status" className="bg-ink px-5 pt-[calc(0.5rem+env(safe-area-inset-top))] pb-2 text-center text-sm text-white">
       <span className="font-bold">{announcement.title}</span>
       {" · "}
       {announcement.summary}{" "}

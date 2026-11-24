@@ -5,6 +5,24 @@
   html {
     scroll-padding-top: calc(var(--header-h) + 1rem);
     -webkit-tap-highlight-color: transparent;
+    /* Sin inflado de fuentes al girar el celular */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* iOS hace zoom al enfocar un campo menor a 16px y no lo deshace al salir */
+  input,
+  textarea,
+  select {
+    font-size: max(1rem, 16px);
+  }
+
+  /* Los controles no se seleccionan al mantener el dedo; el contenido sí */
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 
   body {
@@ -35,5 +53,36 @@
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
+  }
+}
+
+/* El foco violeta no contrasta sobre fondo ink (≈2.8:1): sobre secciones oscuras es blanco */
+.on-dark :focus-visible {
+  outline-color: #fff;
+}
+
+/* Barras y chips translúcidos: con "reducir transparencia" pasan a ser sólidos */
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .material-bar {
+    background-color: var(--color-paper);
+  }
+  .material-chip {
+    background-color: var(--color-ink);
+  }
+  .material-card {
+    background-color: var(--color-surface);
+  }
+}
+
+/* "Más contraste": texto secundario más oscuro y bordes que sí se ven */
+@media (prefers-contrast: more) {
+  :root {
+    --color-muted: #3a3f4f;
+    --color-line: #8a8fa3;
+    --color-violet-deep: #5b2a8a;
   }
 }

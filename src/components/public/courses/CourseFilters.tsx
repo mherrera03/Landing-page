@@ -33,7 +33,9 @@ export function CourseFilters({ value, options, total, onChange }: CourseFilters
   ];
 
   return (
-    <div role="group" aria-label="Filtrar cursos por categoría" className="mb-8 flex flex-wrap gap-2.5">
+    {/* El contenedor se desliza en horizontal en celular (de Cambios Mobile);
+        las pastillas salen de `pastillas`, que añade "Todos" con su contador. */}
+    <div role="group" aria-label="Filtrar cursos por categoría" className="no-scrollbar mb-6 -mx-5 flex snap-x gap-2.5 overflow-x-auto overscroll-x-contain px-5 pb-1 sm:mx-0 sm:mb-8 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
       {pastillas.map(({ key, label, count }) => {
         const active = key === value;
         return (
@@ -45,7 +47,7 @@ export function CourseFilters({ value, options, total, onChange }: CourseFilters
             aria-pressed={active}
             onClick={() => onChange(key)}
             className={cn(
-              "relative inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors duration-200",
+              "relative inline-flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-full border px-4 text-sm font-semibold whitespace-nowrap select-none transition-[color,border-color,scale] duration-150 active:scale-95",
               active ? "border-ink text-white" : "border-line bg-surface text-ink hover:border-ink/40",
             )}
           >

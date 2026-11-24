@@ -24,7 +24,7 @@ export function AudienceSection() {
                 i === 3 && "lg:col-start-2",
               )}
             >
-              <article className="group h-full rounded-3xl border border-line bg-surface p-6 transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-1 hover:border-violet/40 hover:shadow-soft">
+              <article className="group h-full rounded-3xl border border-line bg-surface p-6 transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-1 hover:border-violet/40 hover:shadow-soft active:border-violet/40">
                 <span className="grid size-12 place-items-center rounded-xl bg-violet-soft text-violet-deep transition-transform duration-300 group-hover:scale-105">
                   <Icon className="size-6" aria-hidden="true" />
                 </span>

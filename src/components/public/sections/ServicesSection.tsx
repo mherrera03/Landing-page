@@ -7,7 +7,7 @@ export function ServicesSection() {
   return (
     <Section id="servicios">
       <div className="container-page">
-        <div className="relative overflow-hidden rounded-[2.25rem] bg-ink px-6 py-10 sm:px-10 lg:px-14 lg:py-12">
+        <div className="on-dark relative overflow-hidden rounded-[2.25rem] bg-ink px-6 py-10 sm:px-10 lg:px-14 lg:py-12">
           {/* Resplandores de marca sobre el fondo oscuro */}
           <div aria-hidden="true" className="pointer-events-none absolute -top-32 -left-24 size-96 rounded-full bg-cyan opacity-20 blur-3xl" />
           <div aria-hidden="true" className="pointer-events-none absolute -right-24 -bottom-32 size-96 rounded-full bg-violet opacity-20 blur-3xl" />

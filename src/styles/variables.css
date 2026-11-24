@@ -56,12 +56,21 @@
   color: transparent;
 }
 
+/* Fila deslizable sin barra de scroll visible (filtros, carruseles) */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility container-page {
   width: 100%;
   max-width: 75rem;
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  /* max(): en horizontal el notch ocupa un lateral y el contenido no debe quedar debajo */
+  padding-inline: max(1.25rem, env(safe-area-inset-left, 0px)) max(1.25rem, env(safe-area-inset-right, 0px));
   @media (width >= 48rem) {
-    padding-inline: 2rem;
+    padding-inline: max(2rem, env(safe-area-inset-left, 0px)) max(2rem, env(safe-area-inset-right, 0px));
   }
 }

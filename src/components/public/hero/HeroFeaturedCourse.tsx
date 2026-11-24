@@ -58,7 +58,7 @@ export function HeroFeaturedCourse({ course }: { course: Course }) {
         </motion.div>
       ))}
 
-      <article className="relative z-10 w-[min(21rem,86%)] rotate-2 rounded-[1.9rem] border border-white/70 bg-white/90 p-4 shadow-lift backdrop-blur-md transition-transform duration-500 ease-out-expo hover:rotate-0 sm:p-5">
+      <article className="material material-card relative z-10 w-[min(21rem,86%)] rotate-2 rounded-[1.9rem] border border-white/70 bg-white/90 p-4 shadow-lift backdrop-blur-md transition-transform duration-500 ease-out-expo hover:rotate-0 sm:p-5">
         <div className="relative aspect-[16/11] overflow-hidden rounded-[1.4rem]">
           <Image
             src={course.image}

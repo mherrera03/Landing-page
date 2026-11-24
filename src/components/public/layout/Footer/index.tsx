@@ -7,7 +7,7 @@ import type { BrandSettings } from "@/schemas/brand.schema";
 import type { PublicSettings } from "@/schemas/settings.schema";
 import { Logo } from "../Logo";
 
-const linkStyle = "group inline-flex min-h-10 items-center gap-2 text-sm text-muted transition-colors duration-200 hover:text-ink";
+const linkStyle = "group inline-flex min-h-11 items-center gap-2 text-sm text-muted transition-colors duration-200 hover:text-ink";
 
 const infoStyle = "flex items-start gap-2 py-2 text-sm text-muted";
 
@@ -124,7 +124,7 @@ export function Footer({ settings, brand }: { settings: PublicSettings; brand: B
       </div>
 
       <div className="border-t border-line">
-        <div className="container-page flex flex-col gap-2 py-5 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-2 pt-5 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {SITE.name} · {SITE.university}. Sitio en etapa de prueba: los cursos, cifras y fechas son
             de ejemplo.
