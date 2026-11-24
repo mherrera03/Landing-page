@@ -32,9 +32,9 @@ export function CourseFilters({ value, options, total, onChange }: CourseFilters
     ...options,
   ];
 
+  // El contenedor se desliza en horizontal en celular (de "Cambios Mobile");
+  // las pastillas salen de `pastillas`, que añade "Todos" con su contador.
   return (
-    {/* El contenedor se desliza en horizontal en celular (de Cambios Mobile);
-        las pastillas salen de `pastillas`, que añade "Todos" con su contador. */}
     <div role="group" aria-label="Filtrar cursos por categoría" className="no-scrollbar mb-6 -mx-5 flex snap-x gap-2.5 overflow-x-auto overscroll-x-contain px-5 pb-1 sm:mx-0 sm:mb-8 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
       {pastillas.map(({ key, label, count }) => {
         const active = key === value;

@@ -115,26 +115,26 @@ export function CourseGrid({ courses }: { courses: Course[] }) {
           </button>
         </div>
       ) : (
-        {/*
-          La fila deslizable en celular es de "Cambios Mobile"; la rejilla en
-          pantallas grandes, la de siempre.
-
-          Va sin AnimatePresence a propósito. Con él, esta rejilla no quitaba
-          del DOM las tarjetas filtradas: al elegir una categoría el aviso
-          decía "1 curso encontrado" pero seguían viéndose las cuatro, o sea
-          que el filtro no filtraba nada. Quitando una cosa cada vez se
-          descartó que fuera `mode="popLayout"` o la prop `layout`: fallaba
-          igual sin las dos, y dejaba de fallar al quitar AnimatePresence. Ojo,
-          no es que AnimatePresence esté roto en general — en `ui/Modal.tsx`
-          funciona bien, con un único hijo condicional; lo que falla aquí es
-          con una lista de hijos por clave (motion 13.5 + React 19.2 + Next 16).
-          Se pierde el fundido de salida; se gana un filtro que funciona.
-        */}
         <ul
           ref={trackRef}
           onScroll={onTrackScroll}
           className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto overscroll-x-contain px-5 pt-1 pb-7 sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8 sm:overflow-visible sm:px-0 sm:pt-0 sm:pb-0 lg:grid-cols-3"
         >
+          {/*
+          La fila deslizable en celular es de "Cambios Mobile"; la rejilla en
+          pantallas grandes, la de siempre.
+
+          Va sin AnimatePresence a propósito. Con él, esta rejilla no quitaba
+          del DOM las tarjetas filtradas: al elegir una categoría el aviso
+          decía "1 curso encontrado" pero seguían viéndose las cuatro, o sea
+          que el filtro no filtraba nada. Quitando una cosa cada vez se
+          descartó que fuera `mode="popLayout"` o la prop `layout`: fallaba
+          igual sin las dos, y dejaba de fallar al quitar AnimatePresence. Ojo,
+          no es que AnimatePresence esté roto en general — en `ui/Modal.tsx`
+          funciona bien, con un único hijo condicional; lo que falla aquí es
+          con una lista de hijos por clave (motion 13.5 + React 19.2 + Next 16).
+          Se pierde el fundido de salida; se gana un filtro que funciona.
+          */}
           {visible.map((course, i) => (
             <motion.li
               key={course.id}
