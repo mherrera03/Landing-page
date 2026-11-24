@@ -1,31 +1,48 @@
 "use client";
 
 import { motion } from "motion/react";
-import { COURSE_CATEGORIES, COURSE_CATEGORY_KEYS } from "@/constants/course-categories";
-import type { CourseCategory } from "@/types/course.types";
 import { cn } from "@/lib/utils";
 
-export type CourseFilter = CourseCategory | "all";
+/**
+ * `null` es "Todos", y es `null` a propósito: antes era la cadena `"all"`, y
+ * desde que las categorías las crea el personal, una llamada "All" generaría
+ * justo esa clave y su pastilla se comportaría como "ver todos".
+ */
+export type CourseFilter = string | null;
+
+export type CourseFilterOption = {
+  /** La clave de la categoría, que es lo que guarda cada curso. */
+  key: string;
+  label: string;
+  count: number;
+};
 
 type CourseFiltersProps = {
   value: CourseFilter;
-  counts: Record<CourseFilter, number>;
+  /** Las categorías con cursos. Sin "Todos": esa la añade este componente. */
+  options: CourseFilterOption[];
+  /** Cuántos cursos hay en total, para el contador de "Todos". */
+  total: number;
   onChange: (filter: CourseFilter) => void;
 };
 
-export function CourseFilters({ value, counts, onChange }: CourseFiltersProps) {
-  const options: { key: CourseFilter; label: string }[] = [
-    { key: "all", label: "Todos" },
-    ...COURSE_CATEGORY_KEYS.map((key) => ({ key, label: COURSE_CATEGORIES[key].label })),
+export function CourseFilters({ value, options, total, onChange }: CourseFiltersProps) {
+  const pastillas: { key: CourseFilter; label: string; count: number }[] = [
+    { key: null, label: "Todos", count: total },
+    ...options,
   ];
 
+  // El contenedor se desliza en horizontal en celular (de "Cambios Mobile");
+  // las pastillas salen de `pastillas`, que añade "Todos" con su contador.
   return (
     <div role="group" aria-label="Filtrar cursos por categoría" className="no-scrollbar mb-6 -mx-5 flex snap-x gap-2.5 overflow-x-auto overscroll-x-contain px-5 pb-1 sm:mx-0 sm:mb-8 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
-      {options.map(({ key, label }) => {
+      {pastillas.map(({ key, label, count }) => {
         const active = key === value;
         return (
           <button
-            key={key}
+            // `slugify` nunca produce guiones bajos, así que este identificador
+            // no puede chocar con la clave de una categoría llamada "Todos".
+            key={key ?? "__todos__"}
             type="button"
             aria-pressed={active}
             onClick={() => onChange(key)}
@@ -44,7 +61,7 @@ export function CourseFilters({ value, counts, onChange }: CourseFiltersProps) {
               />
             )}
             <span className="relative">{label}</span>
-            <span className={cn("relative text-xs tabular-nums", active ? "text-white/70" : "text-muted")}>{counts[key]}</span>
+            <span className={cn("relative text-xs tabular-nums", active ? "text-white/70" : "text-muted")}>{count}</span>
           </button>
         );
       })}

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock, Signal, Users } from "lucide-react";
-import { COURSE_CATEGORIES } from "@/constants/course-categories";
 import type { Course } from "@/types/course.types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -25,7 +24,7 @@ export function CourseDetail({ course, onRequestInfo }: CourseDetailProps) {
         <Image src={course.image} alt={course.imageAlt} fill sizes="(min-width: 640px) 32rem, 100vw" className="object-cover" />
         <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-ink/80 via-ink/20 to-transparent" />
         <div className="absolute bottom-4 left-5 flex gap-2">
-          <Badge variant="onImage">{COURSE_CATEGORIES[course.category].label}</Badge>
+          {course.categoryName && <Badge variant="onImage">{course.categoryName}</Badge>}
           {course.modality && <Badge variant="onImage">{course.modality}</Badge>}
         </div>
       </div>

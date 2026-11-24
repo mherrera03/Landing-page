@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { requireSession } from "@/server/auth/dal";
 import * as repo from "@/server/database/repositories/courses.repository";
+import * as categoriesRepo from "@/server/database/repositories/categories.repository";
 import { updateCourseAction } from "@/server/actions/courses.actions";
 import { PageHeader } from "@/components/admin/layout/PageHeader";
 import { CourseForm } from "@/components/admin/courses/CourseForm";
@@ -22,7 +23,7 @@ export default async function EditarCursoPage({ params }: PageProps<"/admin/curs
   return (
     <>
       <PageHeader title="Editar curso" description={curso.title} action={<DeleteCourseButton id={curso.id} title={curso.title} />} />
-      <CourseForm action={action} course={curso} />
+      <CourseForm action={action} course={curso} categories={await categoriesRepo.findAll()} />
     </>
   );
 }

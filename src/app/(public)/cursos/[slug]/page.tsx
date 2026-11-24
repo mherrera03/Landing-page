@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, Signal } from "lucide-react";
-import { COURSE_CATEGORIES } from "@/constants/course-categories";
 import { findVisibleBySlug } from "@/server/database/repositories/courses.repository";
 import { COURSE_STATUS_LABELS } from "@/types/course.types";
 import { BackLink } from "@/components/public/layout/BackLink";
@@ -33,7 +32,9 @@ export default async function CoursePage({ params }: PageProps<"/cursos/[slug]">
         </div>
 
         <div className="p-6 sm:p-10">
-          <p className="text-sm font-bold tracking-widest text-violet-deep uppercase">{COURSE_CATEGORIES[course.category].label}</p>
+          {course.categoryName && (
+            <p className="text-sm font-bold tracking-widest text-violet-deep uppercase">{course.categoryName}</p>
+          )}
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{course.title}</h1>
           <p className="mt-5 leading-relaxed whitespace-pre-line text-muted">{course.description}</p>
 

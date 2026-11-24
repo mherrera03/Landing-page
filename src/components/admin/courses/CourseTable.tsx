@@ -1,5 +1,4 @@
 import { Star } from "lucide-react";
-import { COURSE_CATEGORIES } from "@/constants/course-categories";
 import { toggleCourseVisibilityAction } from "@/server/actions/courses.actions";
 import { COURSE_STATUS_LABELS, type Course } from "@/types/course.types";
 import { EditLink, EmptyState, ListRow, Pill, RowThumbnail, VisibilityToggle } from "../ui/ListItems";
@@ -31,7 +30,8 @@ export function CourseTable({ courses }: { courses: Course[] }) {
               {!curso.visible && <Pill>Oculto</Pill>}
             </div>
             <p className="mt-0.5 text-sm text-muted">
-              {COURSE_CATEGORIES[curso.category].label} · {curso.level} · {curso.durationHours} h
+              {curso.categoryName && `${curso.categoryName} · `}
+              {curso.level} · {curso.durationHours} h
               {curso.modality && ` · ${curso.modality}`}
             </p>
           </div>
